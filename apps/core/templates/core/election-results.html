@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Election Results - VoteWise{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/css/election-results.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="live-results" id="results">
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <div class="live-badge" id="liveBadge">
+                <span class="live-dot"></span>
+                LIVE RESULTS
+            </div>
+            <h2 class="section-title">Election Results</h2>
+        </div>
+
+        <div class="results-summary">
+            <div class="total-votes">
+                <span class="label">Total Votes Cast</span>
+                <span class="count" id="totalVotes" aria-live="polite">0</span>
+            </div>
+            <div class="status" id="electionStatus">Loading...</div>
+        </div>
+
+        <!-- Loading / Error / No Data -->
+        <div id="loadingContainer" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading live results...</p>
+        </div>
+        <div id="errorContainer" class="error-message" style="display:none;"></div>
+        <div id="noDataContainer" class="no-data-message" style="display:none;">
+            <h3>No Election Active</h3>
+            <p>Check back when voting starts!</p>
+        </div>
+
+        <!-- Candidates Grid -->
+        <div class="candidates-grid" id="candidatesGrid"></div>
+
+        <div class="results-note" id="resultsNote" style="display:none;">
+            <p id="resultsNoteyeongText">Results update every 10 seconds</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'core/js/home.js' %}"></script>
+{% endblock %}

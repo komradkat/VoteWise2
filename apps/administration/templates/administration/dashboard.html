@@ -1,0 +1,97 @@
+{% extends 'administration/base_admin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="admin-header">
+    <h1 class="admin-title">Dashboard Overview</h1>
+    <div class="admin-actions">
+        <button class="btn-primary"
+            style="background: var(--admin-accent); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">
+            <i class="fas fa-plus"></i> New Election
+        </button>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Total Voters</h3>
+            <p>{{ total_voters }}</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Active Elections</h3>
+            <p>{{ active_elections }}</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-user-tie"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Candidates</h3>
+            <p>{{ total_candidates }}</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-vote-yea"></i>
+        </div>
+        <div class="stat-info">
+            <h3>Total Votes Cast</h3>
+            <p>{{ total_votes }}</p>
+        </div>
+    </div>
+</div>
+
+<h2 style="margin: 2rem 0 1.5rem; font-size: 1.5rem; font-weight: 700; color: var(--admin-text);">
+    <i class="fas fa-chart-bar" style="margin-right: 0.5rem; color: var(--admin-accent);"></i>
+    Student Demographics
+</h2>
+
+<div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+    <!-- Course Chart -->
+    <div
+        style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid rgba(226, 232, 240, 0.8);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: #0f172a; margin: 0;">Students by Course</h3>
+            <span
+                style="background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #1e40af; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600;">
+                <i class="fas fa-graduation-cap"></i> {{ total_voters }} Total
+            </span>
+        </div>
+        <div style="height: 300px; position: relative;">
+            <canvas id="courseChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Year Level Chart -->
+    <div
+        style="background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid rgba(226, 232, 240, 0.8);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: #0f172a; margin: 0;">Students by Year</h3>
+            <span
+                style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); color: #166534; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600;">
+                <i class="fas fa-layer-group"></i> 4 Levels
+            </span>
+        </div>
+        <div style="height: 300px; position: relative; display: flex; align-items: center; justify-content: center;">
+            <canvas id="yearChart"></canvas>
+        </div>
+    </div>
+</div>
+</div>
+
+{{ course_labels|json_script:"course-labels-data" }}
+{{ course_counts|json_script:"course-counts-data" }}
+{{ year_labels|json_script:"year-labels-data" }}
+{{ year_counts|json_script:"year-counts-data" }}
+<script src="{% static 'administration/js/dashboard_charts.js' %}"></script>
+{% endblock %}

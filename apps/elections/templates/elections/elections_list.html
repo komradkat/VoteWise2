@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Elections - VoteWise{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'elections/css/voting.css' %}">
+<style>
+    .elections-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+        padding: 2rem 1rem;
+    }
+
+    .elections-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem 1rem;
+    }
+
+    .elections-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+    }
+
+    .elections-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+    }
+
+    .elections-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .election-section {
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 1.5rem;
+        padding-left: 1rem;
+        border-left: 4px solid #2563eb;
+    }
+
+    .election-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .election-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .election-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 1rem;
+        gap: 1rem;
+    }
+
+    .election-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+    }
+
+    .election-status {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .status-active {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+
+    .status-upcoming {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+    }
+
+    .status-ended {
+        background: #e2e8f0;
+        color: #64748b;
+    }
+
+    .election-dates {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .election-date {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #64748b;
+        font-size: 0.95rem;
+    }
+
+    .election-date i {
+        color: #2563eb;
+    }
+
+    .vote-button {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .vote-button:hover {
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .vote-button:disabled,
+    .vote-button.disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #64748b;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="elections-container">
+    <div class="elections-header">
+        <h1>Elections</h1>
+        <p>Vote in active elections or view upcoming and past elections</p>
+    </div>
+
+    <div class="elections-content">
+        <!-- Active Elections -->
+        {% if active_elections %}
+        <div class="election-section">
+            <h2 class="section-title">Active Elections</h2>
+            {% for election in active_elections %}
+            <div class="election-card">
+                <div class="election-card-header">
+                    <div>
+                        <div class="election-name">{{ election.name }}</div>
+                        <div class="election-dates">
+                            <span class="election-date">
+                                <i class="fas fa-calendar-check"></i>
+                                Started: {{ election.start_time|date:"M d, Y H:i" }}
+                            </span>
+                            <span class="election-date">
+                                <i class="fas fa-calendar-times"></i>
+                                Ends: {{ election.end_time|date:"M d, Y H:i" }}
+                            </span>
+                        </div>
+                    </div>
+                    <span class="election-status status-active">
+                        <i class="fas fa-circle"></i> Active
+                    </span>
+                </div>
+                <a href="{% url 'elections:vote' election.id %}" class="vote-button">
+                    <i class="fas fa-vote-yea"></i> Vote Now
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Upcoming Elections -->
+        {% if upcoming_elections %}
+        <div class="election-section">
+            <h2 class="section-title">Upcoming Elections</h2>
+            {% for election in upcoming_elections %}
+            <div class="election-card">
+                <div class="election-card-header">
+                    <div>
+                        <div class="election-name">{{ election.name }}</div>
+                        <div class="election-dates">
+                            <span class="election-date">
+                                <i class="fas fa-calendar-plus"></i>
+                                Starts: {{ election.start_time|date:"M d, Y H:i" }}
+                            </span>
+                            <span class="election-date">
+                                <i class="fas fa-calendar-times"></i>
+                                Ends: {{ election.end_time|date:"M d, Y H:i" }}
+                            </span>
+                        </div>
+                    </div>
+                    <span class="election-status status-upcoming">
+                        <i class="fas fa-clock"></i> Upcoming
+                    </span>
+                </div>
+                <button class="vote-button disabled" disabled>
+                    <i class="fas fa-lock"></i> Not Yet Started
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Past Elections -->
+        {% if past_elections %}
+        <div class="election-section">
+            <h2 class="section-title">Past Elections</h2>
+            {% for election in past_elections %}
+            <div class="election-card">
+                <div class="election-card-header">
+                    <div>
+                        <div class="election-name">{{ election.name }}</div>
+                        <div class="election-dates">
+                            <span class="election-date">
+                                <i class="fas fa-calendar-check"></i>
+                                {{ election.start_time|date:"M d, Y" }} - {{ election.end_time|date:"M d, Y" }}
+                            </span>
+                        </div>
+                    </div>
+                    <span class="election-status status-ended">
+                        <i class="fas fa-check-circle"></i> Ended
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Empty State -->
+        {% if not active_elections and not upcoming_elections and not past_elections %}
+        <div class="empty-state">
+            <i class="fas fa-vote-yea"></i>
+            <h3>No Elections Available</h3>
+            <p>There are currently no elections scheduled. Check back later!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+</style>
+{% endblock %}
+
+{% block title %}Home - VoteWise{% endblock %}
+
+{% block content %}
+
+<!-- Urgency Banner (Live + Closed States) -->
+<div class="urgency-banner" id="urgencyBanner" style="display: none;">
+  <span id="bannerText">Voting closes in <span class="countdown" id="countdown">--:--:--</span></span>
+</div>
+
+<!-- Hero Section -->
+<section class="hero" id="home">
+  <div class="container">
+    <h1>Your Vote Shapes Our Future</h1>
+    <p>Secure, transparent, and accessible voting for every student. Cast your ballot from anywhere, anytime.</p>
+    <div class="buttons">
+      <a href="#" class="cta-button primary">
+        <span>Vote Now</span>
+        <i class="fas fa-arrow-right"></i>
+      </a>
+      <a href="#results" class="cta-button btn-secondary">View Live Results</a>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features" id="features">
+  <div class="container">
+    <h2 class="section-title">Built for Students</h2>
+    <p class="section-subtitle">A modern voting platform designed with security, accessibility, and transparency at
+      its core.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Vote Anywhere</h3>
+        <p>Cast your ballot from any device—phone, tablet, or computer. No apps or downloads required.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Real-Time Updates</h3>
+        <p>Watch results pour in live with our transparent, real-time counting dashboard.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✅</div>
+        <h3>Verified Voters</h3>
+        <p>Only registered students can vote—identity verified through our secure school system.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
+<script src="{% static 'core/js/home.js' %}"></script>
+{% endblock %}

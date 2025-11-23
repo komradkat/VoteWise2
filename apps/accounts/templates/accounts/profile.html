@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - VoteWise{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'accounts/css/dashboard.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="dashboard-sidebar">
+        <div class="dashboard-nav-item active" onclick="switchTab('overview', this)">
+            <i class="fas fa-home"></i> Overview
+        </div>
+        <div class="dashboard-nav-item" onclick="switchTab('profile', this)">
+            <i class="fas fa-user-edit"></i> My Profile
+        </div>
+        <div class="dashboard-nav-item" onclick="switchTab('votes', this)">
+            <i class="fas fa-vote-yea"></i> My Votes
+        </div>
+        <div class="dashboard-nav-item" onclick="switchTab('settings', this)">
+            <i class="fas fa-cog"></i> Settings
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        {% if messages %}
+        {% for message in messages %}
+        <div style="padding: 1rem; margin-bottom: 1rem; border-radius: 6px; background-color: #dcfce7; color: #166534;">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Tab 1: Overview -->
+        <div id="overview" class="tab-pane active">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Welcome back, {{ user.first_name|default:user.username }}!</h2>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                    <div style="background: #eff6ff; padding: 1.5rem; border-radius: 8px;">
+                        <h3 style="color: #1e40af; margin-bottom: 0.5rem;">Status</h3>
+                        <p style="font-size: 1.1rem; font-weight: 600;">
+                            {% if user.student_profile.is_eligible_to_vote %}
+                            <span style="color: #166534;">Eligible to Vote</span>
+                            {% else %}
+                            <span style="color: #991b1b;">Not Eligible</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px;">
+                        <h3 style="color: #166534; margin-bottom: 0.5rem;">Votes Cast</h3>
+                        <p style="font-size: 2rem; font-weight: 700; color: #15803d;">{{ votes.count }}</p>
+                    </div>
+                </div>
+
+                <!-- Vote Now CTA -->
+                <div
+                    style="margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); border-radius: 16px; position: relative; overflow: hidden;">
+                    <!-- Decorative elements -->
+                    <div
+                        style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; filter: blur(40px);">
+                    </div>
+                    <div
+                        style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; filter: blur(30px);">
+                    </div>
+
+                    <div style="position: relative; z-index: 1; text-align: center;">
+                        <div
+                            style="display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; margin-bottom: 1rem;">
+                            <i class="fas fa-vote-yea" style="font-size: 1.8rem; color: white;"></i>
+                        </div>
+                        <h3 style="color: white; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Ready to
+                            Vote?</h3>
+                        <p style="color: rgba(255, 255, 255, 0.9); margin-bottom: 1.5rem; font-size: 1rem;">Participate
+                            in active elections and make your voice heard!</p>
+                        <a href="{% url 'elections:list' %}"
+                            style="display: inline-flex; align-items: center; gap: 0.75rem; background: white; color: #2563eb; padding: 1rem 2.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); transition: all 0.3s ease;"
+                            onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 28px rgba(0, 0, 0, 0.2)';"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(0, 0, 0, 0.15)';">
+                            <i class="fas fa-bolt"></i>
+                            <span>Vote Now</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: My Profile -->
+        <div id="profile" class="tab-pane">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Edit Profile</h2>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+
+                    <h3 style="margin-bottom: 1rem; color: #64748b;">Account Information</h3>
+                    {% for field in user_form %}
+                    <div class="form-group">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div style="color: red; font-size: 0.875rem; margin-top: 0.25rem;">{{ field.errors.0 }}</div>
+                        {% endif %}
+                        {% if field.help_text %}
+                        <div style="color: #94a3b8; font-size: 0.875rem; margin-top: 0.25rem;">{{ field.help_text }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    {% if profile_form %}
+                    <h3 style="margin: 2rem 0 1rem; color: #64748b;">Student Information</h3>
+                    {% for field in profile_form %}
+                    <div class="form-group">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div style="color: red; font-size: 0.875rem; margin-top: 0.25rem;">{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tab 3: My Votes -->
+        <div id="votes" class="tab-pane">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Voting History (Receipts)</h2>
+                </div>
+                {% if votes %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Election</th>
+                                <th>Position</th>
+                                <th>Candidate</th>
+                                <th>Date Voted</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for vote in votes %}
+                            <tr>
+                                <td>{{ vote.election.title }}</td>
+                                <td>{{ vote.position.title }}</td>
+                                <td>{{ vote.candidate.user.get_full_name }}</td>
+                                <td>{{ vote.timestamp|date:"M j, Y H:i" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p style="text-align: center; color: #64748b; padding: 2rem;">You haven't cast any votes yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tab 4: Settings -->
+        <div id="settings" class="tab-pane">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Account Settings</h2>
+                </div>
+                <p>Additional settings and preferences will be available here.</p>
+                <!-- Placeholder for future settings -->
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="{% static 'accounts/js/dashboard.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - VoteWise</title>
+    <link rel="stylesheet" href="{% static 'administration/css/admin.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'administration/css/login.css' %}">
+</head>
+
+<body>
+    <div class="login-card">
+        <div class="login-header">
+            <i class="fas fa-shield-alt"></i>
+            <h1>Admin Access</h1>
+            <p>Secure Election Management System</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="error-alert">
+            <i class="fas fa-exclamation-circle"></i>
+            {% if form.non_field_errors %}
+            {{ form.non_field_errors.0 }}
+            {% else %}
+            Invalid credentials. Please try again.
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_username">Username</label>
+                {{ form.username }}
+            </div>
+            <div class="form-group">
+                <label for="id_password">Password</label>
+                {{ form.password }}
+            </div>
+            <button type="submit" class="btn-login">
+                Sign In to Dashboard
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <a href="{% url 'home' %}" style="color: #64748b; text-decoration: none; font-size: 0.875rem;">
+                <i class="fas fa-arrow-left"></i> Back to Main Site
+            </a>
+        </div>
+    </div>
+
+    <script src="{% static 'administration/js/login.js' %}"></script>
+</body>
+
+</html>
