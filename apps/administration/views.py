@@ -37,7 +37,7 @@ def admin_login(request):
     
     return render(request, 'administration/login.html', {'form': form})
 
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def dashboard(request):
     # Prepare data for charts
     course_data = StudentProfile.objects.values('course').annotate(count=Count('id')).order_by('-count')
@@ -55,12 +55,12 @@ def dashboard(request):
     }
     return render(request, 'administration/dashboard.html', context)
 
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def election_list(request):
     elections = Election.objects.all()
     return render(request, 'administration/election_list.html', {'elections': elections})
 
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def election_create(request):
     if request.method == 'POST':
         form = ElectionForm(request.POST)
@@ -72,7 +72,7 @@ def election_create(request):
         form = ElectionForm()
     return render(request, 'administration/election_form.html', {'form': form, 'title': 'Create Election'})
 
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def election_edit(request, pk):
     election = get_object_or_404(Election, pk=pk)
     if request.method == 'POST':
@@ -86,12 +86,12 @@ def election_edit(request, pk):
     return render(request, 'administration/election_form.html', {'form': form, 'title': 'Edit Election'})
 
 # --- Positions ---
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def position_list(request):
     positions = Position.objects.all()
     return render(request, 'administration/position_list.html', {'positions': positions})
 
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def position_create(request):
     if request.method == 'POST':
         form = PositionForm(request.POST)
@@ -103,7 +103,7 @@ def position_create(request):
         form = PositionForm()
     return render(request, 'administration/position_form.html', {'form': form, 'title': 'Create Position'})
 
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def position_edit(request, pk):
     position = get_object_or_404(Position, pk=pk)
     if request.method == 'POST':
@@ -117,12 +117,12 @@ def position_edit(request, pk):
     return render(request, 'administration/position_form.html', {'form': form, 'title': 'Edit Position'})
 
 # --- Partylists ---
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def partylist_list(request):
     partylists = Partylist.objects.all()
     return render(request, 'administration/partylist_list.html', {'partylists': partylists})
 
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def partylist_create(request):
     if request.method == 'POST':
         form = PartylistForm(request.POST)
@@ -134,7 +134,7 @@ def partylist_create(request):
         form = PartylistForm()
     return render(request, 'administration/partylist_form.html', {'form': form, 'title': 'Create Partylist'})
 
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def partylist_edit(request, pk):
     partylist = get_object_or_404(Partylist, pk=pk)
     if request.method == 'POST':
@@ -148,12 +148,12 @@ def partylist_edit(request, pk):
     return render(request, 'administration/partylist_form.html', {'form': form, 'title': 'Edit Partylist'})
 
 # --- Candidates ---
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def candidate_list(request):
     candidates = Candidate.objects.select_related('student_profile__user', 'election', 'position', 'partylist').all()
     return render(request, 'administration/candidate_list.html', {'candidates': candidates})
 
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def candidate_create(request):
     if request.method == 'POST':
         form = CandidateForm(request.POST, request.FILES)
@@ -165,7 +165,7 @@ def candidate_create(request):
         form = CandidateForm()
     return render(request, 'administration/candidate_form.html', {'form': form, 'title': 'Register Candidate'})
 
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def candidate_edit(request, pk):
     candidate = get_object_or_404(Candidate, pk=pk)
     if request.method == 'POST':
@@ -179,7 +179,7 @@ def candidate_edit(request, pk):
     return render(request, 'administration/candidate_form.html', {'form': form, 'title': 'Edit Candidate'})
 
 # --- Voters ---
-@user_passes_test(is_admin, login_url='admin_login')
+@user_passes_test(is_admin, login_url='administration:login')
 def voter_list(request):
     voters = StudentProfile.objects.select_related('user').prefetch_related('votes').all().order_by('student_id')
     

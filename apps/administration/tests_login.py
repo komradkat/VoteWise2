@@ -6,8 +6,8 @@ from apps.accounts.models import StudentProfile, ElectionAdmin
 class AdminLoginTests(TestCase):
     def setUp(self):
         self.client = Client()
-        self.login_url = reverse('admin_login')
-        self.dashboard_url = reverse('admin_dashboard')
+        self.login_url = reverse('administration:login')
+        self.dashboard_url = reverse('administration:dashboard')
         
         # Create admin user
         self.admin_user = User.objects.create_user(username='admin', password='password')

@@ -6,8 +6,8 @@ class AccountViewTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username='testuser', password='password')
-        self.login_url = reverse('login')
-        self.profile_url = reverse('profile')
+        self.login_url = reverse('accounts:login')
+        self.profile_url = reverse('accounts:profile')
 
     def test_login_view_post(self):
         """Test that valid login redirects to profile."""
@@ -25,7 +25,7 @@ class AccountViewTests(TestCase):
     def test_profile_view_anonymous(self):
         """Test that profile view redirects anonymous users to login."""
         response = self.client.get(self.profile_url)
-        self.assertRedirects(response, f'/login/?next={self.profile_url}')
+        self.assertRedirects(response, f'/auth/login/?next={self.profile_url}')
 
     def test_profile_view_context(self):
         """Test that profile view contains correct context data."""

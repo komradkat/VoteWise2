@@ -17,17 +17,17 @@ class AdminDashboardTests(TestCase):
         # ElectionAdmin links directly to User, not StudentProfile
         self.election_admin = ElectionAdmin.objects.create(user=self.admin_user, admin_type='EMP')
         
-        self.dashboard_url = reverse('admin_dashboard')
-        self.election_list_url = reverse('election_list')
+        self.dashboard_url = reverse('administration:dashboard')
+        self.election_list_url = reverse('administration:elections')
 
     def test_admin_access_denied_for_anonymous(self):
         response = self.client.get(self.dashboard_url)
-        self.assertRedirects(response, f'/login/?next={self.dashboard_url}')
+        self.assertRedirects(response, f'/administration/login/?next={self.dashboard_url}')
 
     def test_admin_access_denied_for_regular_user(self):
         self.client.login(username='user', password='password')
         response = self.client.get(self.dashboard_url)
-        self.assertRedirects(response, f'/login/?next={self.dashboard_url}')
+        self.assertRedirects(response, f'/administration/login/?next={self.dashboard_url}', target_status_code=302)
 
     def test_admin_access_granted_for_admin(self):
         self.client.login(username='admin', password='password')
@@ -39,7 +39,7 @@ class AdminDashboardTests(TestCase):
         self.client.login(username='admin', password='password')
         
         # Create
-        create_url = reverse('election_create')
+        create_url = reverse('administration:election_create')
         data = {
             'name': 'Test Election',
             'start_time': '2025-01-01T00:00',
@@ -56,7 +56,7 @@ class AdminDashboardTests(TestCase):
         
         # Update
         election = Election.objects.first()
-        edit_url = reverse('election_edit', args=[election.pk])
+        edit_url = reverse('administration:election_edit', args=[election.pk])
         data['name'] = 'Updated Election'
         response = self.client.post(edit_url, data)
         self.assertRedirects(response, self.election_list_url)
