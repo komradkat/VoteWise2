@@ -34,7 +34,7 @@ class AccountViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('user_form', response.context)
         self.assertIn('profile_form', response.context)
-        self.assertIn('votes', response.context)
+        self.assertIn('receipts', response.context)
 
     def test_profile_update(self):
         """Test updating user profile."""

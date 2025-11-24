@@ -13,40 +13,75 @@
         <div style="text-align: center; margin-bottom: 3rem;">
             <div class="live-badge" id="liveBadge">
                 <span class="live-dot"></span>
-                LIVE RESULTS
+                {% if election.is_active %}LIVE RESULTS{% else %}FINAL RESULTS{% endif %}
             </div>
-            <h2 class="section-title">Election Results</h2>
+            <h2 class="section-title">
+                {% if election %}
+                {{ election.name }}
+                {% else %}
+                Election Results
+                {% endif %}
+            </h2>
         </div>
 
         <div class="results-summary">
             <div class="total-votes">
-                <span class="label">Total Votes Cast</span>
-                <span class="count" id="totalVotes" aria-live="polite">0</span>
+                <span class="label">Total Ballots Cast</span>
+                <span class="count">{{ total_ballots }}</span>
             </div>
-            <div class="status" id="electionStatus">Loading...</div>
+            <div class="status {% if not election.is_active %}closed{% endif %}">
+                {% if election.is_active %}ONGOING{% else %}CLOSED{% endif %}
+            </div>
         </div>
 
-        <!-- Loading / Error / No Data -->
-        <div id="loadingContainer" class="loading-spinner">
-            <div class="spinner"></div>
-            <p>Loading live results...</p>
+        {% if not election %}
+        <div class="no-data-message">
+            <h3>No Election Data Available</h3>
+            <p>Please check back later.</p>
         </div>
-        <div id="errorContainer" class="error-message" style="display:none;"></div>
-        <div id="noDataContainer" class="no-data-message" style="display:none;">
-            <h3>No Election Active</h3>
-            <p>Check back when voting starts!</p>
+        {% else %}
+
+        <!-- Positions Grid -->
+        <div class="positions-container">
+            {% for position in positions_data %}
+            <div class="position-group">
+                <h3 class="position-title">{{ position.name }}</h3>
+                <div class="candidates-grid">
+                    {% for candidate in position.candidates %}
+                    <div class="candidate-card {% if forloop.first and not election.is_active %}winner{% endif %}">
+                        <div class="candidate-header">
+                            <!-- Use a default image if no photo -->
+                            <img src="{% if candidate.photo_url %}{{ candidate.photo_url }}{% else %}{% static 'core/img/default-avatar.png' %}{% endif %}"
+                                alt="{{ candidate.name }}">
+                            <h3>{{ candidate.name }}</h3>
+                            <div class="position">{{ candidate.partylist }}</div>
+                        </div>
+                        <div class="candidate-body">
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: {{ candidate.percentage }}%"></div>
+                                </div>
+                                <div class="progress-text">
+                                    <span>{{ candidate.votes }} votes</span>
+                                    <span>{{ candidate.percentage }}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
         </div>
+        {% endif %}
 
-        <!-- Candidates Grid -->
-        <div class="candidates-grid" id="candidatesGrid"></div>
-
-        <div class="results-note" id="resultsNote" style="display:none;">
-            <p id="resultsNoteyeongText">Results update every 10 seconds</p>
+        <div class="results-note">
+            <p>Results generated on {% now "F j, Y H:i" %}</p>
         </div>
     </div>
 </section>
 {% endblock %}
 
 {% block extra_scripts %}
-<script src="{% static 'core/js/home.js' %}"></script>
+<!-- JS removed to prevent conflict with server-side rendering -->
 {% endblock %}

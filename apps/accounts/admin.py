@@ -14,13 +14,11 @@ class StudentProfileAdmin(admin.ModelAdmin):
         'course', 
         'section',
         'is_eligible_to_vote',
-        'has_voted',
     )
     
     # Fields that can be edited directly from the list view
     list_editable = (
         'is_eligible_to_vote',
-        'has_voted',
     )
 
     # Filters available in the right sidebar
@@ -29,7 +27,6 @@ class StudentProfileAdmin(admin.ModelAdmin):
         'course',
         'section',
         'is_eligible_to_vote',
-        'has_voted',
         'date_enrolled',
     )
 
@@ -47,13 +44,13 @@ class StudentProfileAdmin(admin.ModelAdmin):
     # Organize the detail page layout using fieldsets
     fieldsets = (
         ('User Information', {
-            'fields': ('user', 'student_id', 'date_enrolled')
+            'fields': ('user', 'student_id', 'middle_name', 'date_enrolled')
         }),
         ('Academic Details', {
             'fields': ('year_level', 'course', 'section'),
         }),
         ('Voting Status', {
-            'fields': ('is_eligible_to_vote', 'has_voted'),
+            'fields': ('is_eligible_to_vote',),
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),

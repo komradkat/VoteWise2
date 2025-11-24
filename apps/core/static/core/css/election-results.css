@@ -82,6 +82,27 @@
   border-color: rgba(239, 68, 68, 0.2);
 }
 
+/* Positions Layout */
+.positions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.position-group {
+  /* No specific styles needed yet, but good for grouping */
+}
+
+.position-title {
+  font-size: 1.5rem;
+  color: var(--color-white);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 .candidates-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

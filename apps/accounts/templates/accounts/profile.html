@@ -55,7 +55,7 @@
                     </div>
                     <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px;">
                         <h3 style="color: #166534; margin-bottom: 0.5rem;">Votes Cast</h3>
-                        <p style="font-size: 2rem; font-weight: 700; color: #15803d;">{{ votes.count }}</p>
+                        <p style="font-size: 2rem; font-weight: 700; color: #15803d;">{{ receipts.count }}</p>
                     </div>
                 </div>
 
@@ -140,29 +140,38 @@
                 <div class="card-header">
                     <h2 class="card-title">Voting History (Receipts)</h2>
                 </div>
-                {% if votes %}
+                {% if receipts %}
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
                                 <th>Election</th>
-                                <th>Position</th>
-                                <th>Candidate</th>
+                                <th>Ballot ID</th>
                                 <th>Date Voted</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for vote in votes %}
+                            {% for receipt in receipts %}
                             <tr>
-                                <td>{{ vote.election.title }}</td>
-                                <td>{{ vote.position.title }}</td>
-                                <td>{{ vote.candidate.user.get_full_name }}</td>
-                                <td>{{ vote.timestamp|date:"M j, Y H:i" }}</td>
+                                <td>{{ receipt.election.name }}</td>
+                                <td><code
+                                        style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.85em;">{{ receipt.ballot_id }}</code>
+                                </td>
+                                <td>{{ receipt.timestamp|date:"M j, Y H:i" }}</td>
+                                <td>
+                                    <span
+                                        style="color: #166534; background: #dcfce7; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Verified</span>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+                <p style="margin-top: 1rem; font-size: 0.9rem; color: #64748b;">
+                    <i class="fas fa-lock"></i> Your individual choices are encrypted for privacy. You can verify your
+                    participation using the Ballot ID above.
+                </p>
                 {% else %}
                 <p style="text-align: center; color: #64748b; padding: 2rem;">You haven't cast any votes yet.</p>
                 {% endif %}

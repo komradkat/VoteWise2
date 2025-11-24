@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.db import transaction
-from .models import Election, Position, Candidate, Vote
+from .models import Election, Position, Candidate, Vote, VoterReceipt
 
 def elections_list(request):
     """
@@ -65,7 +65,7 @@ def vote_view(request, election_id):
     ).distinct().prefetch_related('candidates__student_profile__user', 'candidates__partylist')
     
     # Check if user has already voted in this election
-    existing_votes = Vote.objects.filter(
+    existing_votes = VoterReceipt.objects.filter(
         voter=student_profile,
         election=election
     )
@@ -104,11 +104,23 @@ def vote_view(request, election_id):
                             is_approved=True
                         )
                         
-                        vote = Vote.objects.create(
+                        # Generate a unique ballot ID for this voting session
+                        import uuid
+                        ballot_id = uuid.uuid4()
+                        receipt = VoterReceipt.objects.create(
                             voter=student_profile,
+                            election=election,
+                            ballot_id=ballot_id,
+                            encrypted_choices='{}',
+                            voter_ip_address=get_client_ip(request)
+                        )
+                        # Create vote record linked to the receipt via ballot_id
+                        # Create vote records linked to the receipt via ballot_id
+                        vote = Vote.objects.create(
                             election=election,
                             candidate=candidate,
                             position=position,
+                            ballot_id=ballot_id,
                             voter_ip_address=get_client_ip(request)
                         )
                         votes_cast.append(vote)

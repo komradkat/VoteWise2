@@ -4,7 +4,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserUpdateForm, StudentProfileForm
-from apps.elections.models import Vote
+from apps.elections.models import VoterReceipt
 
 # Create your views here.
 def login(request):
@@ -52,15 +52,17 @@ def profile_view(request):
         user_form = UserUpdateForm(instance=user)
         profile_form = StudentProfileForm(instance=student_profile) if student_profile else None
 
-    # Fetch voting history
+    # Fetch voting history via Receipts
     if student_profile:
-        votes = Vote.objects.filter(voter=student_profile).select_related('election', 'position', 'candidate')
+        # We can't show individual votes anymore because they are encrypted/anonymous
+        # But we can show WHICH elections they participated in
+        receipts = VoterReceipt.objects.filter(voter=student_profile).select_related('election').order_by('-timestamp')
     else:
-        votes = []
+        receipts = []
 
     context = {
         'user_form': user_form,
         'profile_form': profile_form,
-        'votes': votes,
+        'receipts': receipts, # Renamed from 'votes' to 'receipts'
     }
     return render(request, 'accounts/profile.html', context)

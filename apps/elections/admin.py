@@ -67,3 +67,42 @@ class CandidateAdmin(admin.ModelAdmin):
         return obj.partylist.name if obj.partylist else "Independent"
     partylist_name.admin_order_field = 'partylist__name'
 
+
+# ----------------------------------------------------------------------
+# 4. Election Admin Configuration
+# ----------------------------------------------------------------------
+from .models import Election, Vote, VoterReceipt
+
+@admin.register(Election)
+class ElectionAdmin(admin.ModelAdmin):
+    list_display = ('name', 'start_time', 'end_time', 'is_active', 'status')
+    list_filter = ('is_active', 'start_time')
+    search_fields = ('name',)
+    readonly_fields = ('created_at', 'updated_at')
+
+@admin.register(Vote)
+class VoteAdmin(admin.ModelAdmin):
+    list_display = ('election', 'position', 'candidate', 'timestamp')
+    list_filter = ('election', 'position')
+    search_fields = ('candidate__student_profile__user__username',)
+    readonly_fields = ('election', 'position', 'candidate', 'ballot_id', 'timestamp')
+    
+    def has_add_permission(self, request):
+        return False
+        
+    def has_change_permission(self, request, obj=None):
+        return False
+
+@admin.register(VoterReceipt)
+class VoterReceiptAdmin(admin.ModelAdmin):
+    list_display = ('voter', 'election', 'timestamp', 'voter_ip_address')
+    list_filter = ('election', 'timestamp')
+    search_fields = ('voter__user__username', 'ballot_id')
+    readonly_fields = ('voter', 'election', 'ballot_id', 'encrypted_choices', 'timestamp', 'voter_ip_address')
+    
+    def has_add_permission(self, request):
+        return False
+        
+    def has_change_permission(self, request, obj=None):
+        return False
+

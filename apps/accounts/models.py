@@ -60,9 +60,10 @@ class StudentProfile(models.Model):
     )
 
     is_eligible_to_vote = models.BooleanField(default=True)
-    has_voted = models.BooleanField(default=False)
+    # has_voted removed - tracked via Vote/VoterReceipt models per election
 
     student_id = models.CharField(max_length=30, unique=True, blank=True, null=True)
+    middle_name = models.CharField(max_length=50, blank=True, null=True)
     date_enrolled = models.DateField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

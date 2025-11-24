@@ -150,20 +150,17 @@ class Election(models.Model):
 # ----------------------------------------------------------------------
 # 5. Vote Model (NEW CORE MODEL)
 # ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# 5. Vote Model (Anonymous Tally)
+# ----------------------------------------------------------------------
 class Vote(models.Model):
     """
-    Records a single, immutable vote and enforces the 'one-vote-per-person-per-election' rule.
+    Records a single, anonymous vote for tallying purposes.
+    NO link to the voter to ensure secret ballot.
     """
-    # Links to the voter's profile (Who voted)
-    # Using the string reference for StudentProfile
-    voter = models.ForeignKey(
-        'accounts.StudentProfile',
-        on_delete=models.PROTECT, 
-        related_name='votes',
-        help_text="The authenticated student who cast the ballot."
-    ) 
+    # Removed voter field for privacy
     
-    # Links to the election event (In which contest)
+    # Links to the election event
     election = models.ForeignKey(
         Election, 
         on_delete=models.PROTECT, 
@@ -171,14 +168,14 @@ class Vote(models.Model):
         help_text="The specific election event this vote belongs to."
     )
     
-    # Links to the chosen candidate (Who they voted for)
+    # Links to the chosen candidate
     candidate = models.ForeignKey(
         Candidate, 
         on_delete=models.PROTECT, 
         related_name='received_votes'
     )
     
-    # NEW FIELD: Links the vote to the specific position being voted for
+    # Links to the position
     position = models.ForeignKey(
         Position,
         on_delete=models.PROTECT,
@@ -187,13 +184,12 @@ class Vote(models.Model):
         null=True
     )
     
+    # Links to a specific ballot/receipt via UUID (optional, for auditing)
+    ballot_id = models.UUIDField(help_text="Random ID linking to the VoterReceipt (for auditing only).", null=True, blank=True)
+    
     timestamp = models.DateTimeField(auto_now_add=True)
     
-    # Optional Security: Track the IP address of the voter for logging
-    voter_ip_address = models.GenericIPAddressField(null=True, blank=True)
-
     def save(self, *args, **kwargs):
-        # Automatically set the position based on the selected candidate
         if self.candidate and not self.position_id:
             self.position = self.candidate.position
         super().save(*args, **kwargs)
@@ -201,9 +197,47 @@ class Vote(models.Model):
     class Meta:
         verbose_name = 'Vote Record'
         verbose_name_plural = 'Vote Records'
-        # CRUCIAL UNIQUE CONSTRAINT: Ensures one voter can vote only once per position in an election event.
-        unique_together = ('voter', 'election', 'position')
         ordering = ['-timestamp']
 
     def __str__(self):
-        return f"Vote for {self.candidate.student_profile.user.username} in {self.election.name}"
+        return f"Vote for {self.candidate} in {self.election.name}"
+
+
+# ----------------------------------------------------------------------
+# 6. Voter Receipt Model (Private History)
+# ----------------------------------------------------------------------
+class VoterReceipt(models.Model):
+    """
+    Records THAT a voter has voted in an election, and stores their choices
+    in an encrypted format that only they can decrypt.
+    """
+    voter = models.ForeignKey(
+        'accounts.StudentProfile',
+        on_delete=models.PROTECT,
+        related_name='receipts'
+    )
+    
+    election = models.ForeignKey(
+        Election,
+        on_delete=models.PROTECT,
+        related_name='receipts'
+    )
+    
+    # The same UUID stored in the anonymous Vote records
+    ballot_id = models.UUIDField(unique=True, editable=False)
+    
+    # Encrypted JSON blob containing the list of candidates voted for
+    # Format: {"president": "Candidate A", "senator": ["Candidate B", "Candidate C"]}
+    encrypted_choices = models.TextField(help_text="Encrypted record of choices.")
+    
+    timestamp = models.DateTimeField(auto_now_add=True)
+    voter_ip_address = models.GenericIPAddressField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Voter Receipt'
+        verbose_name_plural = 'Voter Receipts'
+        unique_together = ('voter', 'election') # Prevents double voting
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"Receipt for {self.voter} in {self.election.name}"

@@ -58,16 +58,16 @@ class VotingLogicTests(TestCase):
         """
         Test that a voter can vote for different positions in the same election.
         """
+        # In the new system, we create anonymous Votes and a VoterReceipt
+        
         # Vote for President
         vote1 = Vote.objects.create(
-            voter=self.student,
             election=self.election,
             candidate=self.cand_pres
         )
         
         # Vote for Vice President
         vote2 = Vote.objects.create(
-            voter=self.student,
             election=self.election,
             candidate=self.cand_vp
         )
@@ -76,21 +76,26 @@ class VotingLogicTests(TestCase):
         self.assertEqual(vote1.position, self.pos_president)
         self.assertEqual(vote2.position, self.pos_vp)
 
-    def test_cannot_vote_twice_for_same_position(self):
+    def test_cannot_vote_twice_in_same_election(self):
         """
-        Test that a voter cannot vote twice for the same position.
+        Test that a voter cannot vote twice in the same election (enforced by VoterReceipt).
         """
-        # Vote for President
-        Vote.objects.create(
+        from apps.elections.models import VoterReceipt
+        import uuid
+        
+        # First vote submission (creates receipt)
+        VoterReceipt.objects.create(
             voter=self.student,
             election=self.election,
-            candidate=self.cand_pres
+            ballot_id=uuid.uuid4(),
+            encrypted_choices="encrypted_data"
         )
         
-        # Attempt to vote for President again (different candidate)
+        # Attempt to create another receipt for the same election
         with self.assertRaises(IntegrityError):
-            Vote.objects.create(
+            VoterReceipt.objects.create(
                 voter=self.student,
                 election=self.election,
-                candidate=self.cand_pres_2
+                ballot_id=uuid.uuid4(),
+                encrypted_choices="other_data"
             )
