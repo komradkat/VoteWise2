@@ -10,9 +10,10 @@ header {
 /* Top Bar (White) */
 .top-bar {
     background: var(--color-slate-500);
-    height: 80px;
+    min-height: 100px;
     display: flex;
-    align-items: center; /* Restore vertical centering */
+    align-items: center;
+    padding: 1rem 0;
 }
 
 /* Ensure container takes full width inside flex parent */
@@ -42,63 +43,118 @@ header .container {
     display: flex;
     align-items: center;
     text-decoration: none;
-    gap: 0.75rem;
+    gap: 1rem;
 }
 
 .logo-img {
-    width: 50px;
-    height: 50px;
+    width: 80px;
+    height: 80px;
     border-radius: 8px;
+    margin-right: 1rem;
     object-fit: contain;
+    flex-shrink: 0;
+}
+
+.logo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.logo-info i {
+    margin-right: 0.25rem;
 }
 
 .logo-text {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
     color: var(--color-navy);
-    letter-spacing: -0.02em;
-    text-transform: uppercase; /* Match Classy style */
+    letter-spacing: var(--letter-spacing-tight);
+    line-height: 1.2;
 }
 
 .logo-text span {
-    color: var(--color-navy); /* Keep it solid black/dark like Classy */
+    color: var(--color-navy);
+}
+
+.logo-text .version {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-slate-400);
+    text-transform: lowercase;
+    margin-left: 0.25rem;
+}
+
+.school-address {
+    font-size: var(--font-size-xs);
+    color: var(--color-slate-400);
+    margin: 0;
+    line-height: 1.4;
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.2s ease;
+}
+
+.school-address:hover {
+    color: var(--color-red);
+}
+
+.school-address i {
+    font-size: var(--font-size-xs);
+}
+
+.system-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-navy);
+    margin: 0;
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
 }
 
 /* Auth Buttons (Top Right) */
 .auth-buttons {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .cta-button.primary {
-    background-color: var(--color-red); /* Red accent like example */
+    background-color: var(--color-navy);
     color: var(--color-white);
-    padding: 0.6rem 1.25rem;
-    border-radius: 4px; /* Square corners like example */
-    font-weight: 600;
-    font-size: 0.9rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
     text-decoration: none;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    border: 2px solid var(--color-navy);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
 }
 
 .cta-button.primary:hover {
-    filter: brightness(0.9);
+    background-color: var(--color-red);
+    border-color: var(--color-red);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .btn-secondary {
     background: transparent;
-    color: var(--color-white);
-    padding: 0.6rem 1.25rem;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 0.9rem;
+    color: var(--color-navy);
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
     text-decoration: none;
     transition: all 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid var(--color-navy);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -106,12 +162,15 @@ header .container {
     font-family: inherit;
     cursor: pointer;
     line-height: 1.5;
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
 }
 
 .btn-secondary:hover {
-    color: var(--color-navy);
-    background-color: var(--color-white);
-    border-color: var(--color-white);
+    background-color: var(--color-navy);
+    color: var(--color-white);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .logout-btn {
@@ -148,16 +207,15 @@ header .container {
 .nav-links a {
     text-decoration: none;
     color: #e0e0e0;
-    font-weight: 500;
-    font-size: 0.95rem;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
     padding: 0 1.5rem;
     height: 100%;
     display: flex;
     align-items: center;
     transition: all 0.2s ease;
     text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
+    letter-spacing: var(--letter-spacing-wider);
 }
 
 .nav-links a:hover {
@@ -167,13 +225,13 @@ header .container {
 
 /* Active Link (Red Background) */
 .nav-links a.active-link {
-    background-color: var(--color-red); /* Red active state */
+    background-color: var(--color-red);
     color: var(--color-white);
 }
 
-/* Add padding to body to account for fixed header (80px + 50px = 130px) */
+/* Add padding to body to account for fixed header (100px + 50px = 150px) */
 body {
-    padding-top: 130px;
+    padding-top: 150px;
 }
 
 /* Mobile Menu Toggle */
@@ -190,13 +248,17 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     body {
-        padding-top: 80px; /* Only top bar is fixed initially on mobile */
+        padding-top: 100px; /* Only top bar is fixed initially on mobile */
+    }
+
+    .top-bar {
+        min-height: 100px;
     }
 
     .main-nav {
         display: none; /* Hide nav bar by default on mobile */
         position: fixed;
-        top: 80px;
+        top: 100px;
         left: 0;
         width: 100%;
         height: auto;
@@ -232,9 +294,22 @@ body {
         display: block;
     }
     
-    /* Adjust top bar for mobile */
-    .top-bar {
-        padding: 0 1rem;
+    /* Adjust logo for mobile */
+    .logo-img {
+        width: 45px;
+        height: 45px;
+    }
+
+    .logo-text {
+        font-size: 1.25rem;
+    }
+
+    .school-address {
+        font-size: 0.65rem;
+    }
+
+    .system-subtitle {
+        font-size: 0.7rem;
     }
     
     .auth-buttons {

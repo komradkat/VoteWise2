@@ -21,6 +21,28 @@
     --color-slate-200: #e2e8f0;
     --color-slate-500: #64748b;
     --color-slate-800: #1e293b;
+
+    /* Typography - Font Sizes */
+    --font-size-xs: 0.75rem;      /* 12px - Small labels, version badges */
+    --font-size-sm: 0.875rem;     /* 14px - Secondary text, footer links */
+    --font-size-base: 1rem;       /* 16px - Body text, standard buttons */
+    --font-size-lg: 1.125rem;     /* 18px - Large body text */
+    --font-size-xl: 1.25rem;      /* 20px - Small headings */
+    --font-size-2xl: 1.5rem;      /* 24px - Section headings */
+    --font-size-3xl: 1.75rem;     /* 28px - Large headings */
+    --font-size-4xl: 2rem;        /* 32px - Hero headings */
+
+    /* Typography - Font Weights */
+    --font-weight-normal: 400;    /* Regular body text */
+    --font-weight-medium: 500;    /* Emphasized text */
+    --font-weight-semibold: 600;  /* Buttons, labels, subtitles */
+    --font-weight-bold: 700;      /* Headings, logo */
+
+    /* Typography - Letter Spacing */
+    --letter-spacing-tight: -0.02em;   /* Large headings */
+    --letter-spacing-normal: 0;        /* Body text */
+    --letter-spacing-wide: 0.025em;    /* Buttons */
+    --letter-spacing-wider: 0.05em;    /* Uppercase labels */
 }
 
 body {

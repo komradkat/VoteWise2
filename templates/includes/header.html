@@ -1,4 +1,9 @@
 {% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/includes/header.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
 <header>
     <!-- Top Bar: Logo and Auth -->
     <div class="top-bar">
@@ -7,22 +12,26 @@
                 <div class="logo-container">
                     <a href="{% url 'home' %}" class="logo">
                         <img src="{% static 'img/logo.png' %}" alt="VoteWise Logo" class="logo-img">
-                        <span class="logo-text">Vote<span>Wise</span> v0.1</span>
+                        <div class="logo-info">
+                            <span class="logo-text">ACLC College of Tacloban</span>
+                            <a href="https://www.google.com/maps?q=11.238286010439372,125.0042121335158" target="_blank"
+                                rel="noopener noreferrer" class="school-address" title="View on Google Maps">
+                                <i class="fas fa-map-marker-alt"></i>352 Real St. Tacloban City 6500 Tacloban City,
+                                Philippines
+                            </a>
+                            <p class="system-subtitle">VoteWise - Automated Election System</p>
+                        </div>
                     </a>
                 </div>
                 <div class="vote-button-container">
                     <div class="auth-buttons">
                         {% if user.is_authenticated %}
-                        <a href="{% url 'accounts:profile' %}" class="btn-secondary">
-                            <i class="fas fa-user"></i> Profile
-                        </a>
                         <button onclick="openLogoutModal()" class="btn-secondary logout-btn">
-                            <i class="fas fa-sign-out-alt"></i> Log Out
+                            <i class="fas fa-sign-out-alt"></i>Log Out
                         </button>
                         {% else %}
                         <a href="{% url 'accounts:login' %}" class="cta-button primary">
-                            <i class="fas fa-vote-yea"></i> Cast Your Vote
-                        </a>
+                            <i class="fas fa-vote-yea"></i>Log In</a>
                         {% endif %}
                     </div>
                 </div>
@@ -37,10 +46,26 @@
     <div class="main-nav">
         <div class="container">
             <ul class="nav-links" id="navLinks">
-                <li><a href="{% url 'home' %}" class="active-link">Home</a></li>
-                <li><a href="{% url 'results' %}">Results</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#timeline">Timeline</a></li>
+                {% if user.is_authenticated %}
+                <!-- Authenticated User Navigation -->
+                <li><a href="{% url 'accounts:profile' %}"
+                        class="{% if request.path == '/' %}active-link{% endif %}">Dashboard</a>
+                </li>
+                <li><a href="#elections"
+                        class="{% if 'elections' in request.path %}active-link{% endif %}">Elections</a></li>
+                <li><a href="#my-votes" class="{% if 'votes' in request.path %}active-link{% endif %}">My Votes</a></li>
+                <li><a href="{% url 'results' %}"
+                        class="{% if 'results' in request.path %}active-link{% endif %}">Results</a></li>
+                {% else %}
+                <!-- Unauthenticated User Navigation -->
+                <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active-link{% endif %}">Home</a></li>
+                <li><a href="{% url 'results' %}"
+                        class="{% if 'results' in request.path %}active-link{% endif %}">Results</a></li>
+                <li><a href="#features" class="{% if 'features' in request.path %}active-link{% endif %}">Features</a>
+                </li>
+                <li><a href="#timeline" class="{% if 'timeline' in request.path %}active-link{% endif %}">Timeline</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </div>
