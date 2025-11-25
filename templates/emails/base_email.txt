@@ -1,0 +1,15 @@
+{% block content %}
+VoteWise - {{ site_name }}
+{{ site_url }}
+
+{% endblock %}
+
+---
+
+© {{ current_year|default:"2025" }} VoteWise. All rights reserved.
+
+Visit VoteWise: {{ site_url }}
+Privacy Policy: {{ site_url }}/privacy
+Terms of Service: {{ site_url }}/terms
+
+You received this email because you are registered with VoteWise.
