@@ -1,5 +1,5 @@
 /* ==========================================================================
-   VoteWise – Minimalist Home CSS
+   VoteWise – Home Page CSS with Animations
    Updated: November 2025
    ========================================================================== */
 
@@ -18,38 +18,91 @@ body {
 }
 
 .container {
-  /*max-width: 1100px; /* Slightly narrower for readability */
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
 /* Hero Section */
 .hero {
-  padding: 160px 0 100px;
+  padding: 180px 0 240px;
   text-align: center;
-  background: var(--color-white);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(23, 37, 84, 0.9) 100%),
+              url('/static/core/img/voting-background.png') center/cover no-repeat;
   position: relative;
+  color: var(--color-white);
+  overflow: hidden;
+}
+
+/* Animated background overlay */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(37, 99, 235, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.1) 0%, transparent 50%);
+  animation: pulse 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.hero .container {
+  position: relative;
+  z-index: 1;
 }
 
 .hero h1 {
   font-size: clamp(3rem, 6vw, 4.5rem);
   margin-bottom: 1.5rem;
-  color: var(--color-navy);
+  color: var(--color-white);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.1;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+  animation: fadeInUp 0.8s ease-out;
 }
 
 .hero p {
   font-size: clamp(1.1rem, 3vw, 1.25rem);
   max-width: 600px;
   margin: 0 auto 2.5rem;
-  color: var(--color-slate-500);
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 400;
   line-height: 1.6;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .hero .buttons {
@@ -57,61 +110,75 @@ body {
   gap: 1rem;
   justify-content: center;
   margin-top: 2rem;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
 /* Primary CTA Button */
 .cta-button.primary {
-  background-color: var(--color-blue); /* Royal Blue for primary actions on home */
+  background-color: var(--color-blue);
   color: var(--color-white);
   border: none;
-  padding: 0.8rem 2rem;
+  padding: 1rem 2.5rem;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
 }
 
 .cta-button.primary:hover {
-  background-color: #1e40af; /* Darker blue */
-  transform: translateY(-1px);
+  background-color: #1e40af;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.4);
+}
+
+.cta-button.primary i {
+  transition: transform 0.3s ease;
+}
+
+.cta-button.primary:hover i {
+  transform: translateX(4px);
 }
 
 /* Secondary Button */
 .btn-secondary {
-  background: var(--color-white);
-  color: var(--color-navy);
-  border: 1px solid var(--color-slate-200);
-  padding: 0.8rem 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 1rem 2.5rem;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  backdrop-filter: blur(10px);
 }
 
 .btn-secondary:hover {
-  background: var(--color-slate-50);
-  border-color: var(--color-slate-500);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
 }
 
 /* Urgency Banner */
 .urgency-banner {
-  background: #fffbeb; /* Keep specific banner colors or define new vars if needed */
+  background: #fffbeb;
   color: var(--color-gold);
   padding: 0.75rem;
   text-align: center;
   font-weight: 500;
   font-size: 0.9rem;
   border-bottom: 1px solid var(--color-gold);
+  animation: fadeInUp 0.5s ease-out;
 }
 
 .urgency-banner.closed {
@@ -127,8 +194,9 @@ body {
 
 /* Features Section */
 .features {
-  padding: 100px 0;
-  background: var(--color-slate-50);
+  padding: 180px 0 240px;
+  background: var(--color-slate-500);
+  position: relative;
 }
 
 .section-title {
@@ -138,16 +206,32 @@ body {
   color: var(--color-navy);
   font-weight: 700;
   letter-spacing: -0.02em;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.section-title.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .section-subtitle {
   text-align: center;
-  color: var(--color-slate-500);
+  color: var(--color-slate-50);
   font-size: 1.1rem;
   margin-bottom: 4rem;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+}
+
+.section-subtitle.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .features-grid {
@@ -160,27 +244,51 @@ body {
   background: var(--color-white);
   padding: 2.5rem;
   border-radius: 12px;
-  border: 1px solid var(--color-slate-50);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid var(--color-slate-200);
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.feature-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.feature-card:nth-child(1).visible {
+  transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
+}
+
+.feature-card:nth-child(2).visible {
+  transition: opacity 0.6s ease 0.4s, transform 0.6s ease 0.4s;
+}
+
+.feature-card:nth-child(3).visible {
+  transition: opacity 0.6s ease 0.5s, transform 0.6s ease 0.5s;
 }
 
 .feature-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
-  border-color: var(--color-slate-200);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-blue);
 }
 
 .feature-icon {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   margin-bottom: 1.5rem;
-  background: #eff6ff;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
   color: var(--color-blue);
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .feature-card h3 {
@@ -196,10 +304,44 @@ body {
   line-height: 1.6;
 }
 
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .hero::before {
+    animation: none;
+  }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
-  .hero { padding: 120px 0 60px; }
-  .features, .live-results { padding: 60px 0; }
-  .hero h1 { font-size: 2.5rem; }
-  .results-summary { flex-direction: column; text-align: center; gap: 1rem; }
+  .hero { 
+    padding: 140px 0 80px;
+  }
+  
+  .features { 
+    padding: 60px 0;
+  }
+  
+  .hero h1 { 
+    font-size: 2.5rem;
+  }
+  
+  .hero .buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .cta-button.primary,
+  .btn-secondary {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
 }

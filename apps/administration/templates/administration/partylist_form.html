@@ -1,38 +1,38 @@
 {% extends 'administration/base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'administration/css/admin_forms.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="admin-header">
-    <h1 class="admin-title">{{ title }}</h1>
-    <div class="admin-actions">
-        <a href="{% url 'administration:partylists' %}" style="color: #64748b; text-decoration: none; font-weight: 500;">
-            <i class="fas fa-arrow-left"></i> Back to List
-        </a>
-    </div>
-</div>
-
-<div
-    style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); max-width: 800px;">
+<div class="form-container">
+    <h2 class="admin-title">{{ title }}</h2>
     <form method="post">
         {% csrf_token %}
         {% for field in form %}
-        <div style="margin-bottom: 1.5rem;">
-            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #475569;">{{ field.label }}</label>
+        <div class="form-field">
+            {{ field.label_tag }}
             {{ field }}
             {% if field.errors %}
-            <div style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">{{ field.errors.0 }}</div>
+            <div class="errorlist">{{ field.errors.0 }}</div>
             {% endif %}
             {% if field.help_text %}
-            <div style="color: #94a3b8; font-size: 0.875rem; margin-top: 0.25rem;">{{ field.help_text }}</div>
+            <div class="helptext">{{ field.help_text }}</div>
             {% endif %}
         </div>
         {% endfor %}
-
-        <div style="margin-top: 2rem;">
-            <button type="submit" class="btn-primary"
-                style="background: var(--admin-accent); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600;">
-                Save Partylist
-            </button>
-        </div>
+        <button type="submit" class="btn-primary">
+            <i class="fas fa-save"></i> Save Partylist
+        </button>
+        <a href="{% url 'administration:partylists' %}" class="btn-primary"
+            style="background:#6b7280;margin-left:0.5rem;">
+            <i class="fas fa-times"></i> Cancel
+        </a>
     </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- No additional JS needed -->
 {% endblock %}

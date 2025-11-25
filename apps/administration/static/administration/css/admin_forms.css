@@ -1,0 +1,83 @@
+/* Admin Forms Styling */
+
+/* Container for the form */
+.form-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Form field wrapper */
+.form-field {
+    margin-bottom: 1.5rem;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    background: #f9fafb;
+    color: #0f172a;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    outline: none;
+    border-color: var(--admin-accent, #3b82f6);
+    background: #fff;
+}
+
+/* Checkbox styling */
+.form-field input[type="checkbox"] {
+    width: auto;
+    margin-right: 0.5rem;
+}
+
+/* Submit button */
+.btn-primary {
+    background: var(--admin-accent, #3b82f6);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+/* Error messages */
+.errorlist {
+    color: #dc2626;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+}
+
+/* Help text */
+.helptext {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}

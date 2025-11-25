@@ -30,4 +30,6 @@ urlpatterns = [
     
     # Voters Management
     path('voters/', views.voter_list, name='voters'),
+    path('voters/create/', views.voter_create, name='voter_create'),
+    path('voters/<int:pk>/edit/', views.voter_edit, name='voter_edit'),
 ]

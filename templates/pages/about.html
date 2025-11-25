@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - VoteWise{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 120px 1.5rem 60px;">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <h1 style="color: var(--color-navy); margin-bottom: 2rem;">About VoteWise</h1>
+
+        <div
+            style="background: white; padding: 2.5rem; border-radius: 12px; border: 1px solid var(--color-slate-200); margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <i class="fas fa-vote-yea" style="font-size: 2.5rem; color: var(--color-blue);"></i>
+                <h2 style="color: var(--color-navy); margin: 0;">Empowering Student Democracy</h2>
+            </div>
+            <p style="color: var(--color-slate-500); line-height: 1.8; font-size: 1.1rem; margin-bottom: 1.5rem;">
+                VoteWise is a modern, secure, and accessible digital voting platform designed specifically for student
+                government elections. Our mission is to increase student participation in the democratic process by
+                making voting easy, transparent, and trustworthy.
+            </p>
+            <p style="color: var(--color-slate-500); line-height: 1.8; font-size: 1.1rem; margin-bottom: 0;">
+                Built with the latest web technologies, VoteWise ensures that every eligible student can cast their
+                ballot from anywhere, at any time, using any device.
+            </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+            <div style="background: #eff6ff; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: var(--color-blue); margin-bottom: 0.5rem;"><i class="fas fa-shield-alt"></i> Secure
+                </h3>
+                <p style="color: var(--color-slate-500); line-height: 1.5;">End-to-end encryption and rigorous identity
+                    verification protect the integrity of every vote.</p>
+            </div>
+            <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #166534; margin-bottom: 0.5rem;"><i class="fas fa-eye"></i> Transparent</h3>
+                <p style="color: var(--color-slate-500); line-height: 1.5;">Real-time results dashboard and verifiable
+                    audit trails ensure trust in the outcome.</p>
+            </div>
+            <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #92400e; margin-bottom: 0.5rem;"><i class="fas fa-universal-access"></i> Accessible
+                </h3>
+                <p style="color: var(--color-slate-500); line-height: 1.5;">Designed for all students, with support for
+                    screen readers and mobile devices.</p>
+            </div>
+        </div>
+
+        <!-- Developer Credits -->
+        <div
+            style="margin-top: 3rem; background: white; padding: 2.5rem; border-radius: 12px; border: 1px solid var(--color-slate-200);">
+            <h3
+                style="color: var(--color-navy); margin-bottom: 1.5rem; border-bottom: 2px solid var(--color-slate-100); padding-bottom: 0.5rem;">
+                Meet the Developer</h3>
+            <div style="display: flex; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 250px;">
+                    <h4 style="color: var(--color-blue); margin-bottom: 0.5rem; font-size: 1.2rem;">KomradKat</h4>
+                    <p style="color: var(--color-slate-500); margin-bottom: 1rem; font-style: italic;">Lead Developer &
+                        Architect</p>
+                    <p style="color: var(--color-slate-500); line-height: 1.6;">
+                        Passionate about building secure and user-friendly web applications. Dedicated to modernizing
+                        student democracy through technology.
+                    </p>
+                </div>
+                <div style="flex: 1; min-width: 250px;">
+                    <h4 style="color: var(--color-navy); margin-bottom: 1rem; font-size: 1.1rem;">Contact Information
+                    </h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: var(--color-slate-500);">
+                        <li style="margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.8rem;">
+                            <i class="fas fa-envelope" style="color: var(--color-blue); width: 20px;"></i>
+                            <span>developer@votewise.edu</span>
+                        </li>
+                        <li style="margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.8rem;">
+                            <i class="fab fa-github" style="color: var(--color-blue); width: 20px;"></i>
+                            <a href="#"
+                                style="color: inherit; text-decoration: none; transition: color 0.2s;">github.com/komradkat</a>
+                        </li>
+                        <li style="margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.8rem;">
+                            <i class="fas fa-globe" style="color: var(--color-blue); width: 20px;"></i>
+                            <a href="#"
+                                style="color: inherit; text-decoration: none; transition: color 0.2s;">komradkat.dev</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- General Contact -->
+        <div style="margin-top: 2rem; text-align: center; color: var(--color-slate-500);">
+            <p>For general inquiries about the election process, please contact the <a href="mailto:election@school.edu"
+                    style="color: var(--color-blue); text-decoration: none;">Student Union Office</a>.</p>
+        </div>
+        {% endblock %}

@@ -8,7 +8,7 @@
 {% block content %}
 <div class="form-container">
     <h2 class="admin-title">{{ title }}</h2>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% for field in form %}
         <div class="form-field">
@@ -23,10 +23,9 @@
         </div>
         {% endfor %}
         <button type="submit" class="btn-primary">
-            <i class="fas fa-save"></i> Save Position
+            <i class="fas fa-save"></i> Save Voter
         </button>
-        <a href="{% url 'administration:positions' %}" class="btn-primary"
-            style="background:#6b7280;margin-left:0.5rem;">
+        <a href="{% url 'administration:voters' %}" class="btn-primary" style="background:#6b7280;margin-left:0.5rem;">
             <i class="fas fa-times"></i> Cancel
         </a>
     </form>
@@ -34,5 +33,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- No additional JS needed -->
+<!-- No additional JS needed for this form -->
 {% endblock %}

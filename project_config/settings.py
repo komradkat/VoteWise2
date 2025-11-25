@@ -29,7 +29,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*', 'https://postxiphoid-procrastinatingly-tena.ngrok-free.dev']
+CSRF_TRUSTED_ORIGINS = ['https://postxiphoid-procrastinatingly-tena.ngrok-free.dev']
 
 
 # Application definition

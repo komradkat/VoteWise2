@@ -61,3 +61,12 @@ def results(request):
             })
             
     return render(request, 'core/election-results.html', context)
+
+def terms(request):
+    return render(request, 'pages/terms.html')
+
+def privacy(request):
+    return render(request, 'pages/privacy.html')
+
+def about(request):
+    return render(request, 'pages/about.html')

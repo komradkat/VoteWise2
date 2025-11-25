@@ -5,8 +5,9 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from apps.elections.models import Election, Position, Partylist, Candidate, Vote
+from django.core.paginator import Paginator
 from apps.accounts.models import StudentProfile
-from .forms import ElectionForm, PositionForm, PartylistForm, CandidateForm
+from .forms import ElectionForm, PositionForm, PartylistForm, CandidateForm, VoterForm
 
 from django.views.decorators.csrf import ensure_csrf_cookie
 
@@ -181,7 +182,13 @@ def candidate_edit(request, pk):
 # --- Voters ---
 @user_passes_test(is_admin, login_url='administration:login')
 def voter_list(request):
-    voters = StudentProfile.objects.select_related('user').prefetch_related('votes').all().order_by('student_id')
+    # Retrieve all voters ordered by student_id
+    voter_qs = StudentProfile.objects.select_related('user').prefetch_related('receipts').all().order_by('student_id')
+    
+    # Pagination (25 per page)
+    paginator = Paginator(voter_qs, 25)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     # Get unique courses for filter dropdown
     courses = StudentProfile.objects.values_list('course', flat=True).distinct().order_by('course')
@@ -190,8 +197,34 @@ def voter_list(request):
     eligible_count = StudentProfile.objects.filter(is_eligible_to_vote=True).count()
     
     context = {
-        'voters': voters,
+        'page_obj': page_obj,
+        'voters': page_obj.object_list,
         'courses': courses,
         'eligible_count': eligible_count,
     }
     return render(request, 'administration/voter_list.html', context)
+
+@user_passes_test(is_admin, login_url='administration:login')
+def voter_create(request):
+    if request.method == 'POST':
+        form = VoterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Voter registered successfully.')
+            return redirect('administration:voters')
+    else:
+        form = VoterForm()
+    return render(request, 'administration/voter_form.html', {'form': form, 'title': 'Register Voter'})
+
+@user_passes_test(is_admin, login_url='administration:login')
+def voter_edit(request, pk):
+    voter = get_object_or_404(StudentProfile, pk=pk)
+    if request.method == 'POST':
+        form = VoterForm(request.POST, instance=voter)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Voter profile updated successfully.')
+            return redirect('administration:voters')
+    else:
+        form = VoterForm(instance=voter)
+    return render(request, 'administration/voter_form.html', {'form': form, 'title': 'Edit Voter'})

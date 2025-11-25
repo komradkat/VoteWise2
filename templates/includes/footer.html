@@ -5,31 +5,80 @@
 <footer>
     <div class="container">
         <div class="footer-content">
-            <div class="footer-section">
-                <h3>VoteNow</h3>
-                <p>Empowering democratic participation through secure, accessible digital voting for student government elections.</p>
+            <!-- About Section -->
+            <div class="footer-section footer-about">
+                <div class="footer-logo">
+                    <i class="fas fa-vote-yea"></i>
+                    <h3><a href="{% url 'about' %}" style="color: inherit; text-decoration: none;">VoteWise</a></h3>
+                </div>
+                <p>Empowering democratic participation through secure, accessible digital voting for student government
+                    elections.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                </div>
             </div>
+
+            <!-- Quick Links -->
             <div class="footer-section">
-                <h3>Quick Links</h3>
+                <h4>Quick Links</h4>
                 <ul>
-                    <li><a href="#">Candidate Portal</a></li>
-                    <li><a href="#">Voter Guide</a></li>
-                    <li><a href="#">Election Rules</a></li>
-                    <li><a href="#">FAQ</a></li>
+                    <li><a href="{% url 'elections:list' %}"><i class="fas fa-chevron-right"></i> Elections</a></li>
+                    <li><a href="{% url 'results' %}"><i class="fas fa-chevron-right"></i> Results</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Voter Guide</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> FAQ</a></li>
                 </ul>
             </div>
+
+            <!-- Resources -->
             <div class="footer-section">
-                <h3>Support</h3>
+                <h4>Resources</h4>
                 <ul>
-                    <li><a href="#">election@school.edu</a></li>
-                    <li><a href="#">Student Union Office</a></li>
-                    <li><a href="#">Room 204, Admin Building</a></li>
-                    <li><a href="#">Technical Support</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Candidate Portal</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Election Rules</a></li>
+                    <li><a href="{% url 'privacy' %}"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                    <li><a href="{% url 'terms' %}"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <ul class="footer-contact">
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:election@school.edu">election@school.edu</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-building"></i>
+                        <span>Student Union Office</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Room 204, Admin Building</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <a href="tel:+1234567890">+1 (234) 567-890</a>
+                    </li>
                 </ul>
             </div>
         </div>
+
+        <!-- Footer Bottom -->
         <div class="footer-bottom">
-            <p>&copy; 2025 Student Government Election Platform. All rights reserved.</p>
+            <div class="footer-bottom-content">
+                <p>&copy; 2025 VoteWise - Student Government Election Platform. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="{% url 'privacy' %}">Privacy</a>
+                    <span>•</span>
+                    <a href="{% url 'terms' %}">Terms</a>
+                    <span>•</span>
+                    <a href="#">Accessibility</a>
+                </div>
+            </div>
         </div>
     </div>
 </footer>
