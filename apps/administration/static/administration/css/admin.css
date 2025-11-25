@@ -14,7 +14,6 @@ body {
 
 .admin-container {
     display: flex;
-    min-height: 100vh;
 }
 
 /* Sidebar */
@@ -25,7 +24,9 @@ body {
     display: flex;
     flex-direction: column;
     position: fixed;
-    height: 100vh;
+    top: 110.38px;
+    left: 0;
+    bottom: 0;
     overflow-y: auto;
 }
 

@@ -1,0 +1,123 @@
+/* Administration Header Styles */
+
+.admin-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--color-white);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-top-bar {
+    background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-deep-blue) 100%);
+    padding: 1rem 0;
+    width: 100%;
+}
+
+.admin-header-container {
+    max-width: 1400px;
+    padding: 0 2rem;
+}
+
+.admin-top-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.admin-logo-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-logo-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.admin-logo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.admin-logo-text {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-white);
+}
+
+.admin-address {
+    font-size: var(--font-size-xs);
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.admin-address:hover {
+    color: var(--color-white);
+}
+
+.admin-system-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-red);
+    font-weight: var(--font-weight-semibold);
+    margin: 0;
+}
+
+.admin-user-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--color-white);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.admin-user-info i {
+    font-size: var(--font-size-base);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 0 1rem;
+    }
+
+    .admin-top-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .admin-logo-img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .admin-logo-text {
+        font-size: var(--font-size-base);
+    }
+
+    .admin-address {
+        font-size: 0.7rem;
+    }
+}
