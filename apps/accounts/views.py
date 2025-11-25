@@ -3,10 +3,35 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import UserUpdateForm, StudentProfileForm
+from .forms import UserUpdateForm, StudentProfileForm, PublicRegistrationForm
 from apps.elections.models import VoterReceipt
 
 # Create your views here.
+def register(request):
+    """Public registration view for voters to create their own accounts"""
+    # Redirect to profile if user is already logged in
+    if request.user.is_authenticated:
+        return redirect('accounts:profile')
+    
+    if request.method == 'POST':
+        form = PublicRegistrationForm(request.POST)
+        if form.is_valid():
+            user, profile = form.save()
+            messages.success(
+                request,
+                'Registration successful! Your account is pending verification. '
+                'Please visit a registration booth to complete the verification process.'
+            )
+            return redirect('accounts:registration_pending')
+    else:
+        form = PublicRegistrationForm()
+    
+    return render(request, 'accounts/register.html', {'form': form})
+
+def registration_pending(request):
+    """Show pending verification message after successful registration"""
+    return render(request, 'accounts/registration_pending.html')
+
 def login(request):
     # Redirect to profile if user is already logged in
     if request.user.is_authenticated:

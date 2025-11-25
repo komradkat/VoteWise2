@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - VoteWise{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'accounts/css/register.css' %}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="register-wrapper">
+    <div class="register-container">
+        <!-- Header -->
+        <div class="register-header">
+            <h1>Create Your Account</h1>
+            <p>Join VoteWise and participate in student elections</p>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="progress-indicator">
+            <div class="progress-step active" data-step="1">
+                <div class="step-circle">1</div>
+                <span class="step-label">Account</span>
+            </div>
+            <div class="progress-step" data-step="2">
+                <div class="step-circle">2</div>
+                <span class="step-label">Personal</span>
+            </div>
+            <div class="progress-step" data-step="3">
+                <div class="step-circle">3</div>
+                <span class="step-label">Academic</span>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form method="post" id="registrationForm">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ form.non_field_errors.0 }}
+            </div>
+            {% endif %}
+
+            <div class="form-steps">
+                <!-- Step 1: Account Information -->
+                <div class="form-step active" data-step="1">
+                    <div class="fields-grid">
+                        <!-- Username -->
+                        <div class="form-group field-full">
+                            <label for="id_username">{{ form.username.label }}</label>
+                            <div class="input-wrapper">
+                                {{ form.username }}
+                                <i class="fas fa-user input-icon"></i>
+                            </div>
+                            {% if form.username.errors %}
+                            <span class="error">{{ form.username.errors.0 }}</span>
+                            {% endif %}
+                            {% if form.username.help_text %}
+                            <span class="help-text">{{ form.username.help_text }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group field-full">
+                            <label for="id_email">{{ form.email.label }}</label>
+                            <div class="input-wrapper">
+                                {{ form.email }}
+                                <i class="fas fa-envelope input-icon"></i>
+                            </div>
+                            {% if form.email.errors %}
+                            <span class="error">{{ form.email.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label for="id_password">{{ form.password.label }}</label>
+                            <div class="input-wrapper">
+                                {{ form.password }}
+                                <i class="fas fa-lock input-icon"></i>
+                            </div>
+                            {% if form.password.errors %}
+                            <span class="error">{{ form.password.errors.0 }}</span>
+                            {% endif %}
+                            {% if form.password.help_text %}
+                            <span class="help-text">{{ form.password.help_text }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="form-group">
+                            <label for="id_password_confirm">{{ form.password_confirm.label }}</label>
+                            <div class="input-wrapper">
+                                {{ form.password_confirm }}
+                                <i class="fas fa-lock input-icon"></i>
+                            </div>
+                            {% if form.password_confirm.errors %}
+                            <span class="error">{{ form.password_confirm.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn-nav btn-next" onclick="nextStep()">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Personal Information -->
+                <div class="form-step" data-step="2">
+                    <div class="fields-grid">
+                        <!-- First Name -->
+                        <div class="form-group">
+                            <label for="id_first_name">{{ form.first_name.label }}</label>
+                            <div class="input-wrapper">
+                                {{ form.first_name }}
+                                <i class="fas fa-user input-icon"></i>
+                            </div>
+                            {% if form.first_name.errors %}
+                            <span class="error">{{ form.first_name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="form-group">
+                            <label for="id_last_name">{{ form.last_name.label }}</label>
+                            <div class="input-wrapper">
+                                {{ form.last_name }}
+                                <i class="fas fa-user input-icon"></i>
+                            </div>
+                            {% if form.last_name.errors %}
+                            <span class="error">{{ form.last_name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Student ID -->
+                        <div class="form-group field-full">
+                            <label for="id_student_id">{{ form.student_id.label }}</label>
+                            <div class="input-wrapper">
+                                {{ form.student_id }}
+                                <i class="fas fa-id-card input-icon"></i>
+                            </div>
+                            {% if form.student_id.errors %}
+                            <span class="error">{{ form.student_id.errors.0 }}</span>
+                            {% endif %}
+                            {% if form.student_id.help_text %}
+                            <span class="help-text">{{ form.student_id.help_text }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn-nav btn-prev" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button type="button" class="btn-nav btn-next" onclick="nextStep()">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Academic Information -->
+                <div class="form-step" data-step="3">
+                    <div class="fields-grid">
+                        <!-- Course -->
+                        <div class="form-group">
+                            <label for="id_course">{{ form.course.label }}</label>
+                            <div class="input-wrapper">
+                                {{ form.course }}
+                                <i class="fas fa-book input-icon"></i>
+                            </div>
+                            {% if form.course.errors %}
+                            <span class="error">{{ form.course.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Year Level -->
+                        <div class="form-group">
+                            <label for="id_year_level">{{ form.year_level.label }}</label>
+                            <div class="input-wrapper">
+                                {{ form.year_level }}
+                                <i class="fas fa-layer-group input-icon"></i>
+                            </div>
+                            {% if form.year_level.errors %}
+                            <span class="error">{{ form.year_level.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Section -->
+                        <div class="form-group field-full">
+                            <label for="id_section">{{ form.section.label }} (Optional)</label>
+                            <div class="input-wrapper">
+                                {{ form.section }}
+                                <i class="fas fa-users input-icon"></i>
+                            </div>
+                            {% if form.section.errors %}
+                            <span class="error">{{ form.section.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-navigation">
+                        <button type="button" class="btn-nav btn-prev" onclick="prevStep()">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button type="submit" class="btn-nav btn-submit">
+                            <i class="fas fa-check"></i> Create Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Footer -->
+        <div class="register-footer">
+            <p>Already have an account? <a href="{% url 'accounts:login' %}">Log In</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    const totalSteps = 3;
+
+    function updateProgress() {
+        // Update progress steps
+        document.querySelectorAll('.progress-step').forEach(step => {
+            const stepNum = parseInt(step.dataset.step);
+            step.classList.remove('active', 'completed');
+
+            if (stepNum === currentStep) {
+                step.classList.add('active');
+            } else if (stepNum < currentStep) {
+                step.classList.add('completed');
+                step.querySelector('.step-circle').innerHTML = '<i class="fas fa-check"></i>';
+            } else {
+                step.querySelector('.step-circle').textContent = stepNum;
+            }
+        });
+
+        // Update form steps
+        document.querySelectorAll('.form-step').forEach(step => {
+            step.classList.remove('active');
+            if (parseInt(step.dataset.step) === currentStep) {
+                step.classList.add('active');
+            }
+        });
+    }
+
+    function nextStep() {
+        if (currentStep < totalSteps) {
+            currentStep++;
+            updateProgress();
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 1) {
+            currentStep--;
+            updateProgress();
+        }
+    }
+
+    // Initialize
+    updateProgress();
+</script>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registration Pending - VoteWise{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'accounts/css/login.css' %}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'accounts/css/registration_pending.css' %}" />
+{% endblock %}
+
+{% block content %}
+<section class="auth-hero">
+    <div class="pending-container">
+        <div class="pending-card">
+            <div class="pending-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+
+            <h1>Registration Successful!</h1>
+            <p>Your account has been created and is pending verification by an administrator.</p>
+
+            <div class="next-steps">
+                <h3><i class="fas fa-list-check"></i> Next Steps</h3>
+                <ol>
+                    <li><strong>Visit a registration booth</strong> on campus during registration hours</li>
+                    <li><strong>Bring your valid student ID</strong> for identity verification</li>
+                    <li><strong>An administrator will verify</strong> your information in the system</li>
+                    <li><strong>Once verified</strong>, you'll receive confirmation and be eligible to vote</li>
+                </ol>
+            </div>
+
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <p>
+                    You can log in to your account now, but you won't be able to participate in elections
+                    until an administrator verifies your registration.
+                </p>
+            </div>
+
+            <div class="action-buttons">
+                <a href="{% url 'accounts:login' %}" class="cta-button">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Go to Login
+                </a>
+                <a href="{% url 'home' %}" class="cta-button btn-secondary">
+                    <i class="fas fa-home"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

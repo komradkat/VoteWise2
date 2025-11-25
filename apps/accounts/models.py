@@ -62,6 +62,28 @@ class StudentProfile(models.Model):
     is_eligible_to_vote = models.BooleanField(default=True)
     # has_voted removed - tracked via Vote/VoterReceipt models per election
 
+    # Verification tracking
+    class VerificationStatus(TextChoices):
+        PENDING = 'PENDING', 'Pending Verification'
+        VERIFIED = 'VERIFIED', 'Verified'
+        REJECTED = 'REJECTED', 'Rejected'
+    
+    verification_status = models.CharField(
+        max_length=10,
+        choices=VerificationStatus.choices,
+        default=VerificationStatus.VERIFIED,
+        help_text='Verification status for self-registered users'
+    )
+    verified_at = models.DateTimeField(null=True, blank=True, help_text='When the profile was verified')
+    verified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='verified_students',
+        help_text='Admin who verified this student'
+    )
+
     student_id = models.CharField(max_length=30, unique=True, blank=True, null=True)
     middle_name = models.CharField(max_length=50, blank=True, null=True)
     date_enrolled = models.DateField(null=True, blank=True)

@@ -32,4 +32,7 @@ urlpatterns = [
     path('voters/', views.voter_list, name='voters'),
     path('voters/create/', views.voter_create, name='voter_create'),
     path('voters/<int:pk>/edit/', views.voter_edit, name='voter_edit'),
+    path('voters/<int:pk>/verify/', views.voter_verify, name='voter_verify'),
+    path('voters/<int:pk>/reject/', views.voter_reject, name='voter_reject'),
+    path('voters/bulk-verify/', views.voter_bulk_verify, name='voter_bulk_verify'),
 ]

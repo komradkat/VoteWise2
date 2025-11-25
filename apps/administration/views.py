@@ -185,6 +185,11 @@ def voter_list(request):
     # Retrieve all voters ordered by student_id
     voter_qs = StudentProfile.objects.select_related('user').prefetch_related('receipts').all().order_by('student_id')
     
+    # Filter by verification status if provided
+    status_filter = request.GET.get('status')
+    if status_filter:
+        voter_qs = voter_qs.filter(verification_status=status_filter)
+    
     # Pagination (25 per page)
     paginator = Paginator(voter_qs, 25)
     page_number = request.GET.get('page')
@@ -193,14 +198,19 @@ def voter_list(request):
     # Get unique courses for filter dropdown
     courses = StudentProfile.objects.values_list('course', flat=True).distinct().order_by('course')
     
-    # Count eligible voters
+    # Count eligible voters and pending verifications
     eligible_count = StudentProfile.objects.filter(is_eligible_to_vote=True).count()
+    pending_count = StudentProfile.objects.filter(
+        verification_status=StudentProfile.VerificationStatus.PENDING
+    ).count()
     
     context = {
         'page_obj': page_obj,
         'voters': page_obj.object_list,
         'courses': courses,
         'eligible_count': eligible_count,
+        'pending_count': pending_count,
+        'current_status_filter': status_filter,
     }
     return render(request, 'administration/voter_list.html', context)
 
@@ -228,3 +238,59 @@ def voter_edit(request, pk):
     else:
         form = VoterForm(instance=voter)
     return render(request, 'administration/voter_form.html', {'form': form, 'title': 'Edit Voter'})
+
+# --- Voter Verification ---
+@user_passes_test(is_admin, login_url='administration:login')
+def voter_verify(request, pk):
+    """Verify a pending voter registration"""
+    voter = get_object_or_404(StudentProfile, pk=pk)
+    
+    if request.method == 'POST':
+        from django.utils import timezone
+        voter.verification_status = StudentProfile.VerificationStatus.VERIFIED
+        voter.is_eligible_to_vote = True
+        voter.verified_at = timezone.now()
+        voter.verified_by = request.user
+        voter.save()
+        
+        messages.success(request, f'Voter {voter.user.get_full_name()} has been verified and is now eligible to vote.')
+        return redirect('administration:voters')
+    
+    return redirect('administration:voters')
+
+@user_passes_test(is_admin, login_url='administration:login')
+def voter_reject(request, pk):
+    """Reject a pending voter registration"""
+    voter = get_object_or_404(StudentProfile, pk=pk)
+    
+    if request.method == 'POST':
+        from django.utils import timezone
+        voter.verification_status = StudentProfile.VerificationStatus.REJECTED
+        voter.is_eligible_to_vote = False
+        voter.verified_at = timezone.now()
+        voter.verified_by = request.user
+        voter.save()
+        
+        messages.warning(request, f'Voter {voter.user.get_full_name()} has been rejected.')
+        return redirect('administration:voters')
+    
+    return redirect('administration:voters')
+
+@user_passes_test(is_admin, login_url='administration:login')
+def voter_bulk_verify(request):
+    """Bulk verify multiple voters"""
+    if request.method == 'POST':
+        voter_ids = request.POST.getlist('voter_ids')
+        if voter_ids:
+            from django.utils import timezone
+            count = StudentProfile.objects.filter(pk__in=voter_ids).update(
+                verification_status=StudentProfile.VerificationStatus.VERIFIED,
+                is_eligible_to_vote=True,
+                verified_at=timezone.now(),
+                verified_by=request.user
+            )
+            messages.success(request, f'Successfully verified {count} voter(s).')
+        else:
+            messages.error(request, 'No voters selected for verification.')
+    
+    return redirect('administration:voters')
