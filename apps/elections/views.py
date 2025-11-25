@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.db import transaction
+from django.db.models import Prefetch
 from .models import Election, Position, Candidate, Vote, VoterReceipt
 
 def elections_list(request):
@@ -58,11 +59,19 @@ def vote_view(request, election_id):
         messages.warning(request, 'This election has ended.')
         return redirect('home')
     
-    # Get all positions for this election
+    # Get all positions for this election with properly filtered candidates
     positions = Position.objects.filter(
         is_active=True,
         candidates__election=election
-    ).distinct().prefetch_related('candidates__student_profile__user', 'candidates__partylist')
+    ).distinct().prefetch_related(
+        Prefetch(
+            'candidates',
+            queryset=Candidate.objects.filter(
+                election=election,
+                is_approved=True
+            ).select_related('student_profile__user', 'partylist')
+        )
+    )
     
     # Check if user has already voted in this election
     existing_votes = VoterReceipt.objects.filter(
@@ -77,6 +86,10 @@ def vote_view(request, election_id):
     if request.method == 'POST':
         try:
             with transaction.atomic():
+                # Generate a unique ballot ID for this voting session
+                import uuid
+                ballot_id = uuid.uuid4()
+                
                 # Process votes for each position
                 votes_cast = []
                 
@@ -94,7 +107,7 @@ def vote_view(request, election_id):
                         messages.error(request, f'You can only select {position.number_of_winners} candidate(s) for {position.name}.')
                         return redirect('elections:vote', election_id=election_id)
                     
-                    # Create vote records
+                    # Create vote records for each selected candidate
                     for candidate_id in selected_candidates:
                         candidate = get_object_or_404(
                             Candidate,
@@ -104,26 +117,23 @@ def vote_view(request, election_id):
                             is_approved=True
                         )
                         
-                        # Generate a unique ballot ID for this voting session
-                        import uuid
-                        ballot_id = uuid.uuid4()
-                        receipt = VoterReceipt.objects.create(
-                            voter=student_profile,
-                            election=election,
-                            ballot_id=ballot_id,
-                            encrypted_choices='{}',
-                            voter_ip_address=get_client_ip(request)
-                        )
-                        # Create vote record linked to the receipt via ballot_id
-                        # Create vote records linked to the receipt via ballot_id
+                        # Create anonymous vote record
                         vote = Vote.objects.create(
                             election=election,
                             candidate=candidate,
                             position=position,
-                            ballot_id=ballot_id,
-                            voter_ip_address=get_client_ip(request)
+                            ballot_id=ballot_id
                         )
                         votes_cast.append(vote)
+                
+                # Create ONE receipt for the entire voting session
+                receipt = VoterReceipt.objects.create(
+                    voter=student_profile,
+                    election=election,
+                    ballot_id=ballot_id,
+                    encrypted_choices='{}',  # TODO: Implement encryption
+                    voter_ip_address=get_client_ip(request)
+                )
                 
                 messages.success(request, f'Your vote has been successfully recorded! You voted for {len(votes_cast)} candidate(s).')
                 return redirect('accounts:profile')

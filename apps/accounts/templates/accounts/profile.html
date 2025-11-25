@@ -12,92 +12,74 @@
 <div class="dashboard-container">
     <!-- Sidebar Navigation -->
     <aside class="dashboard-sidebar">
-        <div class="dashboard-nav-item active" onclick="switchTab('overview', this)">
-            <i class="fas fa-home"></i> Overview
-        </div>
-        <div class="dashboard-nav-item" onclick="switchTab('profile', this)">
-            <i class="fas fa-user-edit"></i> My Profile
+        <div class="dashboard-nav-item active" onclick="switchTab('profile', this)">
+            <i class="fas fa-user-circle"></i> My Profile
         </div>
         <div class="dashboard-nav-item" onclick="switchTab('votes', this)">
-            <i class="fas fa-vote-yea"></i> My Votes
+            <i class="fas fa-vote-yea"></i> Voting History
+        </div>
+        <div class="dashboard-nav-item" onclick="switchTab('notifications', this)">
+            <i class="fas fa-bell"></i> Notifications
         </div>
         <div class="dashboard-nav-item" onclick="switchTab('settings', this)">
-            <i class="fas fa-cog"></i> Settings
+            <i class="fas fa-cog"></i> Account Settings
+        </div>
+        <div class="dashboard-nav-item" onclick="switchTab('security', this)">
+            <i class="fas fa-shield-alt"></i> Security
+        </div>
+        <div class="dashboard-nav-item" onclick="switchTab('help', this)">
+            <i class="fas fa-question-circle"></i> Help & Support
         </div>
     </aside>
 
     <!-- Main Content -->
     <main class="dashboard-content">
         {% if messages %}
-        {% for message in messages %}
-        <div style="padding: 1rem; margin-bottom: 1rem; border-radius: 6px; background-color: #dcfce7; color: #166534;">
+        {% for message in messages %}\n <div
+            style="padding: 1rem; margin-bottom: 1rem; border-radius: 6px; background-color: #dcfce7; color: #166534;">
             {{ message }}
         </div>
         {% endfor %}
         {% endif %}
 
-        <!-- Tab 1: Overview -->
-        <div id="overview" class="tab-pane active">
+        <!-- Tab 1: My Profile -->
+        <div id="profile" class="tab-pane active">
             <div class="dashboard-card">
                 <div class="card-header">
-                    <h2 class="card-title">Welcome back, {{ user.first_name|default:user.username }}!</h2>
+                    <h2 class="card-title">My Profile</h2>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+
+                <!-- User Info Summary -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
                     <div style="background: #eff6ff; padding: 1.5rem; border-radius: 8px;">
-                        <h3 style="color: #1e40af; margin-bottom: 0.5rem;">Status</h3>
-                        <p style="font-size: 1.1rem; font-weight: 600;">
-                            {% if user.student_profile.is_eligible_to_vote %}
-                            <span style="color: #166534;">Eligible to Vote</span>
-                            {% else %}
-                            <span style="color: #991b1b;">Not Eligible</span>
-                            {% endif %}
+                        <h3 style="color: #1e40af; margin-bottom: 0.5rem; font-size: 0.9rem;">Full Name</h3>
+                        <p style="font-size: 1.1rem; font-weight: 600; color: #0f172a;">
+                            {{ user.get_full_name|default:user.username }}
                         </p>
                     </div>
                     <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px;">
-                        <h3 style="color: #166534; margin-bottom: 0.5rem;">Votes Cast</h3>
-                        <p style="font-size: 2rem; font-weight: 700; color: #15803d;">{{ receipts.count }}</p>
+                        <h3 style="color: #166534; margin-bottom: 0.5rem; font-size: 0.9rem;">Email</h3>
+                        <p style="font-size: 1.1rem; font-weight: 600; color: #0f172a;">{{ user.email }}</p>
+                    </div>
+                    <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px;">
+                        <h3 style="color: #92400e; margin-bottom: 0.5rem; font-size: 0.9rem;">Voting Status</h3>
+                        <p style="font-size: 1.1rem; font-weight: 600;">
+                            {% if user.student_profile.is_eligible_to_vote %}
+                            <span style="color: #166534;">✓ Eligible to Vote</span>
+                            {% else %}
+                            <span style="color: #991b1b;">✗ Not Eligible</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div style="background: #fce7f3; padding: 1.5rem; border-radius: 8px;">
+                        <h3 style="color: #831843; margin-bottom: 0.5rem; font-size: 0.9rem;">Elections Participated
+                        </h3>
+                        <p style="font-size: 2rem; font-weight: 700; color: #831843;">{{ receipts.count }}</p>
                     </div>
                 </div>
 
-                <!-- Vote Now CTA -->
-                <div
-                    style="margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); border-radius: 16px; position: relative; overflow: hidden;">
-                    <!-- Decorative elements -->
-                    <div
-                        style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; filter: blur(40px);">
-                    </div>
-                    <div
-                        style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; filter: blur(30px);">
-                    </div>
-
-                    <div style="position: relative; z-index: 1; text-align: center;">
-                        <div
-                            style="display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; margin-bottom: 1rem;">
-                            <i class="fas fa-vote-yea" style="font-size: 1.8rem; color: white;"></i>
-                        </div>
-                        <h3 style="color: white; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Ready to
-                            Vote?</h3>
-                        <p style="color: rgba(255, 255, 255, 0.9); margin-bottom: 1.5rem; font-size: 1rem;">Participate
-                            in active elections and make your voice heard!</p>
-                        <a href="{% url 'elections:list' %}"
-                            style="display: inline-flex; align-items: center; gap: 0.75rem; background: white; color: #2563eb; padding: 1rem 2.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); transition: all 0.3s ease;"
-                            onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 28px rgba(0, 0, 0, 0.2)';"
-                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(0, 0, 0, 0.15)';">
-                            <i class="fas fa-bolt"></i>
-                            <span>Vote Now</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab 2: My Profile -->
-        <div id="profile" class="tab-pane">
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <h2 class="card-title">Edit Profile</h2>
-                </div>
+                <!-- Edit Profile Form -->
                 <form method="post">
                     {% csrf_token %}
 
@@ -134,7 +116,7 @@
             </div>
         </div>
 
-        <!-- Tab 3: My Votes -->
+        <!-- Tab 2: Voting History -->
         <div id="votes" class="tab-pane">
             <div class="dashboard-card">
                 <div class="card-header">
@@ -178,14 +160,107 @@
             </div>
         </div>
 
-        <!-- Tab 4: Settings -->
+        <!-- Tab 3: Notifications -->
+        <div id="notifications" class="tab-pane">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Notifications</h2>
+                </div>
+                <p style="text-align: center; color: #64748b; padding: 2rem;">
+                    <i class="fas fa-bell" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                    No new notifications at this time.
+                </p>
+            </div>
+        </div>
+
+        <!-- Tab 4: Account Settings -->
         <div id="settings" class="tab-pane">
             <div class="dashboard-card">
                 <div class="card-header">
                     <h2 class="card-title">Account Settings</h2>
                 </div>
-                <p>Additional settings and preferences will be available here.</p>
-                <!-- Placeholder for future settings -->
+                <div style="padding: 1rem;">
+                    <h3 style="color: #64748b; margin-bottom: 1rem;">Preferences</h3>
+                    <div class="form-group">
+                        <label class="form-label">Email Notifications</label>
+                        <p style="color: #64748b; font-size: 0.9rem;">Receive email updates about new elections and
+                            results</p>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" checked>
+                            <span>Enable email notifications</span>
+                        </label>
+                    </div>
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label class="form-label">Language</label>
+                        <select class="form-control" style="max-width: 300px;">
+                            <option>English</option>
+                            <option>Filipino</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: Security -->
+        <div id="security" class="tab-pane">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Security</h2>
+                </div>
+                <div style="padding: 1rem;">
+                    <h3 style="color: #64748b; margin-bottom: 1rem;">Change Password</h3>
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-control" placeholder="Enter current password">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-control" placeholder="Enter new password">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" placeholder="Confirm new password">
+                        </div>
+                        <button type="submit" class="btn-primary">Update Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 6: Help & Support -->
+        <div id="help" class="tab-pane">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Help & Support</h2>
+                </div>
+                <div style="padding: 1rem;">
+                    <h3 style="color: #64748b; margin-bottom: 1rem;">Frequently Asked Questions</h3>
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="color: #0f172a; margin-bottom: 0.5rem;">How do I vote?</h4>
+                        <p style="color: #64748b;">Navigate to the Elections page from the header menu, select an active
+                            election, and follow the voting instructions.</p>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="color: #0f172a; margin-bottom: 0.5rem;">Can I change my vote?</h4>
+                        <p style="color: #64748b;">No, once submitted, votes are final and cannot be changed to ensure
+                            election integrity.</p>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <h4 style="color: #0f172a; margin-bottom: 0.5rem;">How do I verify my vote?</h4>
+                        <p style="color: #64748b;">Check your Voting History tab for your ballot ID, which serves as
+                            proof of participation.</p>
+                    </div>
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: #eff6ff; border-radius: 8px;">
+                        <h4 style="color: #1e40af; margin-bottom: 0.5rem;">Need more help?</h4>
+                        <p style="color: #64748b; margin-bottom: 1rem;">Contact the election administrator for
+                            additional support.</p>
+                        <a href="mailto:support@votewise.edu" class="btn-primary"
+                            style="display: inline-block; text-decoration: none;">
+                            <i class="fas fa-envelope"></i> Contact Support
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

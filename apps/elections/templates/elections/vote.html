@@ -38,7 +38,6 @@
 
         <div class="candidates-grid">
             {% for candidate in position.candidates.all %}
-            {% if candidate.is_approved %}
             <div class="candidate-card" data-candidate-id="{{ candidate.id }}" data-position-id="{{ position.id }}">
                 <div class="selection-checkbox">
                     <i class="fas fa-check"></i>
@@ -64,7 +63,6 @@
                     {% endif %}
                 </div>
             </div>
-            {% endif %}
             {% endfor %}
         </div>
     </div>
@@ -107,6 +105,6 @@
 </div>
 {% endblock %}
 
-{% block js %}
+{% block extra_scripts %}
 <script src="{% static 'elections/js/voting.js' %}"></script>
 {% endblock %}

@@ -13,12 +13,16 @@ header {
     min-height: 100px;
     display: flex;
     align-items: center;
+    justify-content: center;
     padding: 1rem 0;
 }
 
-/* Ensure container takes full width inside flex parent */
+/* Ensure container takes full width inside flex parent but respects max-width */
 header .container {
     width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: center;
 }
 
 .top-bar-content {
@@ -26,6 +30,7 @@ header .container {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    gap: 2rem;
 }
 
 .logo-container {
@@ -389,4 +394,123 @@ body {
 
 .btn-cancel:hover {
     background-color: #cbd5e1;
+}
+
+/* Profile Dropdown Menu */
+.profile-dropdown {
+    position: relative;
+}
+
+.profile-trigger {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile-trigger i.fa-chevron-down {
+    font-size: 0.75rem;
+    transition: transform 0.3s ease;
+}
+
+.profile-dropdown:hover .profile-trigger i.fa-chevron-down,
+.profile-dropdown.active .profile-trigger i.fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    min-width: 220px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 2000;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0;
+    list-style: none;
+}
+
+.profile-dropdown:hover .dropdown-menu,
+.profile-dropdown.active .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-menu li {
+    list-style: none;
+}
+
+.dropdown-link {
+    display: flex !important;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem !important;
+    color: #334155 !important;
+    text-decoration: none;
+    transition: background 0.2s;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    font-weight: 500 !important;
+    height: auto !important;
+}
+
+.dropdown-link:hover {
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+}
+
+.dropdown-link i {
+    width: 1.25rem;
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 0.5rem 0;
+    border: none;
+}
+
+/* Mobile dropdown adjustments */
+@media (max-width: 768px) {
+    .profile-dropdown {
+        width: 100%;
+    }
+    
+    .dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        background: #2a2a2a;
+        margin-top: 0;
+        display: none;
+    }
+    
+    .profile-dropdown.active .dropdown-menu {
+        display: block;
+    }
+    
+    .dropdown-link {
+        color: #e0e0e0 !important;
+        padding: 1rem 2rem !important;
+    }
+    
+    .dropdown-link:hover {
+        background: #333 !important;
+        color: #ffffff !important;
+    }
+    
+    .dropdown-divider {
+        background: #444;
+    }
 }

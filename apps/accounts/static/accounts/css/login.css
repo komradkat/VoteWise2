@@ -65,6 +65,7 @@ body {
 .auth-branding {
     position: relative;
     z-index: 1;
+    align-items: center;
 }
 
 .auth-logo {
@@ -102,7 +103,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    align-items: flex-start;
+    align-items: center;
     width: 100%;
     max-width: 300px;
 }
@@ -167,9 +168,7 @@ body {
 }
 
 /* Form Styling */
-.auth-form {
-    margin-bottom: 1.5rem;
-}
+
 
 .form-group {
     margin-bottom: 1.25rem;
@@ -336,7 +335,6 @@ body {
 /* Auth Footer */
 .auth-footer {
     text-align: center;
-    padding-top: 1.5rem;
     border-top: 1px solid var(--color-slate-200);
 }
 

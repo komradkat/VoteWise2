@@ -1,10 +1,16 @@
 // Voting Interface JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Voting JS: DOMContentLoaded fired');
+    
     const candidateCards = document.querySelectorAll('.candidate-card');
     const submitButton = document.querySelector('.submit-button');
     const modalOverlay = document.querySelector('.modal-overlay');
     const confirmButton = document.querySelector('.modal-button.confirm');
     const cancelButton = document.querySelector('.modal-button.cancel');
+    
+    console.log('Voting JS: Found', candidateCards.length, 'candidate cards');
+    console.log('Voting JS: Submit button:', submitButton);
+    console.log('Voting JS: Modal overlay:', modalOverlay);
     
     // Track selections per position
     const selections = {};
