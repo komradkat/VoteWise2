@@ -1,0 +1,30 @@
+/* Election List Specific Styles */
+
+/* This file contains styles specific to the elections list view */
+/* Shared list styles are in admin_lists.css */
+
+/* Election status badges */
+.election-status {
+    font-weight: 600;
+}
+
+.badge.badge-upcoming {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.badge.badge-ongoing {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge.badge-completed {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+/* Date display formatting */
+.election-dates {
+    font-size: 0.875rem;
+    color: #64748b;
+}

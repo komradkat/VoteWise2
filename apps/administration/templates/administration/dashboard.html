@@ -1,8 +1,12 @@
 {% extends 'administration/base_admin.html' %}
 {% load static %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static 'administration/css/dashboard.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="admin-header">
+<div class="admin-header-2">
     <h1 class="admin-title">Dashboard Overview</h1>
     <div class="admin-actions">
         <button class="btn-primary"

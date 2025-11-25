@@ -1,26 +1,33 @@
+```
 {% extends 'administration/base_admin.html' %}
 {% load static %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'administration/css/admin_lists.css' %}">
+<link rel="stylesheet" href="{% static 'administration/css/lists/election_list.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="admin-header">
-    <h1 class="admin-title">Positions</h1>
+<div class="admin-header-2">
+    <h1 class="admin-title">Elections</h1>
     <div class="admin-actions">
-        <a href="{% url 'administration:position_create' %}" class="btn-primary">
-            <i class="fas fa-plus"></i> New Position
+        <a href="{% url 'administration:election_create' %}" class="btn-primary">
+            <i class="fas fa-plus"></i> New Election
         </a>
     </div>
 </div>
 
-<!-- Search Bar -->
+<!-- Search and Filter Bar -->
 <div class="filter-bar">
     <div class="search-container">
         <i class="fas fa-search search-icon"></i>
-        <input type="text" id="searchInput" class="search-input" placeholder="Search positions...">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search elections...">
     </div>
+    <select id="filterStatus" class="filter-select" data-filter="status">
+        <option value="">All Statuses</option>
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+    </select>
 </div>
 
 <div class="table-container">
@@ -29,38 +36,38 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Order</th>
-                    <th>Winners</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
                     <th>Status</th>
                     <th class="text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody id="positionsTable">
-                {% for position in positions %}
-                <tr class="data-row">
+            <tbody id="electionsTable">
+                {% for election in elections %}
+                <tr class="data-row" data-status="{% if election.is_active %}Active{% else %}Inactive{% endif %}">
                     <td>
                         <div class="cell-flex">
                             <div class="cell-icon">
-                                <i class="fas fa-chair"></i>
+                                <i class="fas fa-calendar-alt"></i>
                             </div>
-                            <span class="cell-text-primary">{{ position.name }}</span>
+                            <span class="cell-text-primary">{{ election.name }}</span>
                         </div>
                     </td>
-                    <td>{{ position.order_on_ballot }}</td>
-                    <td>{{ position.number_of_winners }}</td>
+                    <td>{{ election.start_time|date:"M j, Y H:i" }}</td>
+                    <td>{{ election.end_time|date:"M j, Y H:i" }}</td>
                     <td>
-                        {% if position.is_active %}
+                        {% if election.is_active %}
                         <span class="badge badge-green">
-                            <i class="fas fa-check-circle"></i> Active
+                            <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Active
                         </span>
                         {% else %}
                         <span class="badge badge-gray">
-                            <i class="fas fa-times-circle"></i> Inactive
+                            <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Inactive
                         </span>
                         {% endif %}
                     </td>
                     <td class="text-right">
-                        <a href="{% url 'administration:position_edit' position.pk %}" class="action-btn">
+                        <a href="{% url 'administration:election_edit' election.pk %}" class="action-btn">
                             <i class="fas fa-edit"></i>
                         </a>
                     </td>
@@ -70,13 +77,13 @@
                     <td colspan="5" class="empty-state-container">
                         <div class="empty-state-content">
                             <div class="empty-state-icon">
-                                <i class="fas fa-chair"></i>
+                                <i class="fas fa-calendar-plus"></i>
                             </div>
                             <div>
-                                <h3 class="empty-state-title">No positions found</h3>
-                                <p class="empty-state-description">Create positions for candidates to run for.</p>
-                                <a href="{% url 'administration:position_create' %}" class="btn-primary">
-                                    <i class="fas fa-plus"></i> New Position
+                                <h3 class="empty-state-title">No elections found</h3>
+                                <p class="empty-state-description">Create your first election to get started.</p>
+                                <a href="{% url 'administration:election_create' %}" class="btn-primary">
+                                    <i class="fas fa-plus"></i> New Election
                                 </a>
                             </div>
                         </div>
@@ -87,7 +94,7 @@
                 <tr id="noResults" style="display: none;">
                     <td colspan="5" class="no-results-container">
                         <i class="fas fa-search no-results-icon"></i>
-                        No positions match your search.
+                        No elections match your search filters.
                     </td>
                 </tr>
             </tbody>
@@ -100,3 +107,4 @@
 {% block extra_js %}
 <script src="{% static 'administration/js/admin_lists.js' %}"></script>
 {% endblock %}
+```

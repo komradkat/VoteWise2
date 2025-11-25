@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'administration/css/admin_forms.css' %}">
+<link rel="stylesheet" href="{% static 'administration/css/forms/position_form.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -23,9 +24,9 @@
         </div>
         {% endfor %}
         <button type="submit" class="btn-primary">
-            <i class="fas fa-save"></i> Save Election
+            <i class="fas fa-save"></i> Save Position
         </button>
-        <a href="{% url 'administration:elections' %}" class="btn-primary"
+        <a href="{% url 'administration:positions' %}" class="btn-primary"
             style="background:#6b7280;margin-left:0.5rem;">
             <i class="fas fa-times"></i> Cancel
         </a>

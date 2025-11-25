@@ -7,6 +7,7 @@ urlpatterns = [
     # Dashboard
     path('', views.dashboard, name='dashboard'),
     path('login/', views.admin_login, name='login'),
+    path('logout/', views.admin_logout, name='logout'),
     
     # Elections Management
     path('elections/', views.election_list, name='elections'),
@@ -35,4 +36,13 @@ urlpatterns = [
     path('voters/<int:pk>/verify/', views.voter_verify, name='voter_verify'),
     path('voters/<int:pk>/reject/', views.voter_reject, name='voter_reject'),
     path('voters/bulk-verify/', views.voter_bulk_verify, name='voter_bulk_verify'),
+    
+    # Profile Settings
+    path('profile/', views.admin_profile, name='profile'),
+    
+    # Administrator Management
+    path('administrators/', views.administrator_list, name='administrators'),
+    path('administrators/create/', views.administrator_create, name='administrator_create'),
+    path('administrators/<int:pk>/edit/', views.administrator_edit, name='administrator_edit'),
+    path('administrators/<int:pk>/toggle-status/', views.administrator_toggle_status, name='administrator_toggle_status'),
 ]

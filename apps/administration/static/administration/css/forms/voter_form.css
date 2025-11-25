@@ -1,0 +1,39 @@
+/* Voter Form Specific Styles */
+
+/* This file contains styles specific to the voter registration/edit form */
+/* Shared form styles are in admin_forms.css */
+
+/* Student ID field styling */
+.form-field input[name="student_id"] {
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Year level select */
+.form-field select[name="year_level"] {
+    max-width: 200px;
+}
+
+/* Verification status display */
+.verification-status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.verification-status-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.verification-status-badge.verified {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.verification-status-badge.rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}

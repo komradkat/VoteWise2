@@ -24,10 +24,12 @@ body {
     display: flex;
     flex-direction: column;
     position: fixed;
-    top: 110.38px;
+    top: 0;
     left: 0;
     bottom: 0;
     overflow-y: auto;
+    z-index: 900;
+    padding-top: 120px; /* Space for fixed header */
 }
 
 .admin-brand {
@@ -35,10 +37,12 @@ body {
     font-size: 1.25rem;
     font-weight: 700;
     border-bottom: 1px solid var(--admin-secondary);
-    display: flex;
+    display: none; /* Hide brand in sidebar since it's in header now? Or keep it? */
     align-items: center;
     gap: 10px;
 }
+
+/* ... existing nav styles ... */
 
 .admin-nav {
     padding: 1rem 0;
@@ -71,9 +75,17 @@ body {
     margin-left: 260px;
     flex: 1;
     padding: 2rem;
+    padding-top: 140px; /* Account for fixed header height (~120px) + padding */
 }
 
-.admin-header {
+.admin-header-2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.admin-page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;

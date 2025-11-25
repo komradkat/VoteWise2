@@ -1,0 +1,16 @@
+/* Partylist Form Specific Styles */
+
+/* This file contains styles specific to the partylist creation/edit form */
+/* Shared form styles are in admin_forms.css */
+
+/* Short code field - uppercase display */
+.form-field input[name="short_code"] {
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/* Description textarea */
+.form-field textarea {
+    min-height: 100px;
+    resize: vertical;
+}

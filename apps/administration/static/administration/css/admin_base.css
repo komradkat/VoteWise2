@@ -1,0 +1,42 @@
+/* Admin Base Styles & Variables */
+:root {
+    /* Primary Brand Colors */
+    --admin-primary-dark: #0d1b2a;          /* Navy */
+    --admin-primary-light: #1e3a8a;         /* Deep Blue */
+    --admin-primary-gradient: linear-gradient(135deg, var(--admin-primary-dark), var(--admin-primary-light));
+    
+    /* Accents */
+    --admin-accent: #ff6b6b;                /* Soft Red */
+    --admin-accent-hover: #fa5252;
+    
+    /* Backgrounds */
+    --admin-bg-header: var(--admin-primary-dark);
+    --admin-bg-footer: #f8fafc;             /* Slate 50 */
+    --admin-bg-main: #f1f5f9;               /* Slate 100 */
+    --admin-bg-card: #ffffff;
+    
+    /* Text Colors */
+    --admin-text-light: #ffffff;
+    --admin-text-dark: #1e293b;             /* Slate 800 */
+    --admin-text-muted: #64748b;            /* Slate 500 */
+    
+    /* Spacing & Layout */
+    --admin-max-width: 1400px;
+    --admin-gutter: 2rem;
+    --admin-header-height: 80px;
+}
+
+/* Shared Layout Utility */
+.admin-wrapper {
+    max-width: var(--admin-max-width);
+    margin: 0 auto;
+    padding: 0 var(--admin-gutter);
+    width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    :root {
+        --admin-gutter: 1rem;
+    }
+}

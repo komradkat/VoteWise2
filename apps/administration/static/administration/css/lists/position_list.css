@@ -1,0 +1,26 @@
+/* Position List Specific Styles */
+
+/* This file contains styles specific to the positions list view */
+/* Shared list styles are in admin_lists.css */
+
+/* Position order number display */
+.position-order {
+    font-weight: 700;
+    color: var(--admin-accent, #3b82f6);
+    font-size: 1.25rem;
+}
+
+/* Max winners display */
+.max-winners-info {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+/* Election association badge */
+.election-badge {
+    background: #eff6ff;
+    color: #1e40af;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}

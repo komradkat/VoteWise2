@@ -1,7 +1,7 @@
 /* Administration Header Styles */
 
 .admin-header {
-    position: sticky;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -17,7 +17,7 @@
 }
 
 .admin-header-container {
-    max-width: 1400px;
+    width: 100%;
     padding: 0 2rem;
 }
 
@@ -26,6 +26,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 2rem;
+    width: 100%;
 }
 
 .admin-logo-section {
@@ -78,6 +79,11 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    position: relative;
+}
+
+.admin-user-dropdown {
+    position: relative;
 }
 
 .admin-user-info {
@@ -90,10 +96,86 @@
     color: var(--color-white);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-user-info:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .admin-user-info i {
     font-size: var(--font-size-base);
+}
+
+.dropdown-icon {
+    font-size: 0.75rem;
+    transition: transform 0.3s ease;
+}
+
+.admin-user-info:hover .dropdown-icon {
+    transform: rotate(180deg);
+}
+
+.admin-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+.admin-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.admin-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--admin-text);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: var(--font-size-sm);
+}
+
+.admin-dropdown-item:hover {
+    background: var(--admin-bg);
+}
+
+.admin-dropdown-item i {
+    width: 20px;
+    text-align: center;
+    color: var(--admin-accent);
+}
+
+.admin-dropdown-item.logout {
+    color: #dc2626;
+}
+
+.admin-dropdown-item.logout i {
+    color: #dc2626;
+}
+
+.admin-dropdown-item.logout:hover {
+    background: #fee2e2;
+}
+
+.admin-dropdown-divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 0.25rem 0;
 }
 
 /* Responsive */

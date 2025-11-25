@@ -17,7 +17,19 @@ class PositionAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'number_of_winners')
     search_fields = ('name', 'description')
     # Allows editing these fields directly from the list view
-    list_editable = ('order_on_ballot', 'is_active') 
+    list_editable = ('order_on_ballot', 'is_active')
+    
+    fieldsets = (
+        ('Position Details', {
+            'fields': ('name', 'description'),
+        }),
+        ('Ballot Configuration', {
+            'fields': ('order_on_ballot', 'number_of_winners'),
+        }),
+        ('Status', {
+            'fields': ('is_active',),
+        }),
+    )
 
 
 # ----------------------------------------------------------------------
@@ -31,8 +43,23 @@ class PartylistAdmin(admin.ModelAdmin):
         'is_active', 
         'created_at'
     )
-    list_filter = ('is_active',)
+    list_filter = ('is_active', 'created_at')
     search_fields = ('name', 'short_code', 'platform')
+    readonly_fields = ('created_at',)
+    
+    fieldsets = (
+        ('Partylist Information', {
+            'fields': ('name', 'short_code', 'platform'),
+        }),
+        ('Status', {
+            'fields': ('is_active',),
+        }),
+        ('Timestamps', {
+            'fields': ('created_at',),
+            'classes': ('collapse',),
+        }),
+    )
+
 
 
 # ----------------------------------------------------------------------
@@ -42,11 +69,12 @@ class PartylistAdmin(admin.ModelAdmin):
 class CandidateAdmin(admin.ModelAdmin):
     list_display = (
         'full_name', 
+        'election',
         'position', 
         'partylist_name', 
         'is_approved'
     )
-    list_filter = ('is_approved', 'position', 'partylist')
+    list_filter = ('is_approved', 'election', 'position', 'partylist')
     search_fields = (
         'student_profile__user__first_name', 
         'student_profile__user__last_name', 
@@ -57,15 +85,34 @@ class CandidateAdmin(admin.ModelAdmin):
     list_editable = ('is_approved',)
     
     # REMOVED 'position' from this list to enable the dropdown menu:
-    raw_id_fields = ('student_profile', 'partylist') 
+    raw_id_fields = ('student_profile', 'partylist')
+    readonly_fields = ('created_at',)
+    
+    fieldsets = (
+        ('Candidate Information', {
+            'fields': ('student_profile', 'election', 'position', 'partylist'),
+        }),
+        ('Campaign Details', {
+            'fields': ('biography', 'photo'),
+        }),
+        ('Approval Status', {
+            'fields': ('is_approved',),
+        }),
+        ('Timestamps', {
+            'fields': ('created_at',),
+            'classes': ('collapse',),
+        }),
+    )
 
     def full_name(self, obj):
         return obj.student_profile.user.get_full_name()
-    full_name.admin_order_field = 'student_profile__user__last_name' 
+    full_name.admin_order_field = 'student_profile__user__last_name'
+    full_name.short_description = 'Full Name'
 
     def partylist_name(self, obj):
         return obj.partylist.name if obj.partylist else "Independent"
     partylist_name.admin_order_field = 'partylist__name'
+    partylist_name.short_description = 'Partylist'
 
 
 # ----------------------------------------------------------------------
@@ -75,10 +122,26 @@ from .models import Election, Vote, VoterReceipt
 
 @admin.register(Election)
 class ElectionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'start_time', 'end_time', 'is_active', 'status')
-    list_filter = ('is_active', 'start_time')
-    search_fields = ('name',)
+    list_display = ('name', 'start_time', 'end_time', 'is_active', 'status', 'created_at')
+    list_filter = ('is_active', 'start_time', 'end_time')
+    search_fields = ('name', 'description')
     readonly_fields = ('created_at', 'updated_at')
+    
+    fieldsets = (
+        ('Election Details', {
+            'fields': ('name', 'description'),
+        }),
+        ('Schedule', {
+            'fields': ('start_time', 'end_time'),
+        }),
+        ('Status', {
+            'fields': ('is_active',),
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',),
+        }),
+    )
 
 @admin.register(Vote)
 class VoteAdmin(admin.ModelAdmin):

@@ -1,0 +1,127 @@
+{% extends 'administration/base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'administration/css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-header-2">
+    <h1 class="admin-title">Profile Settings</h1>
+</div>
+
+<div class="profile-container">
+    <!-- Profile Information Card -->
+    <div class="profile-card">
+        <div class="card-header">
+            <h2><i class="fas fa-user-circle"></i> Personal Information</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" class="profile-form">
+                {% csrf_token %}
+                
+                {% if profile_form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ profile_form.non_field_errors }}
+                </div>
+                {% endif %}
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ profile_form.first_name.id_for_label }}">First Name</label>
+                        {{ profile_form.first_name }}
+                        {% if profile_form.first_name.errors %}
+                        <div class="error-message">{{ profile_form.first_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ profile_form.last_name.id_for_label }}">Last Name</label>
+                        {{ profile_form.last_name }}
+                        {% if profile_form.last_name.errors %}
+                        <div class="error-message">{{ profile_form.last_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ profile_form.email.id_for_label }}">Email Address</label>
+                    {{ profile_form.email }}
+                    {% if profile_form.email.errors %}
+                    <div class="error-message">{{ profile_form.email.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ profile_form.employee_id.id_for_label }}">Employee ID</label>
+                    {{ profile_form.employee_id }}
+                    {% if profile_form.employee_id.errors %}
+                    <div class="error-message">{{ profile_form.employee_id.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group readonly-info">
+                    <label>Username</label>
+                    <input type="text" class="form-control" value="{{ user.username }}" readonly>
+                </div>
+                
+                <div class="form-group readonly-info">
+                    <label>Administrator Type</label>
+                    <input type="text" class="form-control" value="{{ admin_profile.get_admin_type_display }}" readonly>
+                </div>
+                
+                <button type="submit" name="update_profile" class="btn-primary">
+                    <i class="fas fa-save"></i> Update Profile
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Password Change Card -->
+    <div class="profile-card">
+        <div class="card-header">
+            <h2><i class="fas fa-lock"></i> Change Password</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" class="profile-form">
+                {% csrf_token %}
+                
+                {% if password_form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ password_form.non_field_errors }}
+                </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label for="{{ password_form.current_password.id_for_label }}">Current Password</label>
+                    {{ password_form.current_password }}
+                    {% if password_form.current_password.errors %}
+                    <div class="error-message">{{ password_form.current_password.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ password_form.new_password.id_for_label }}">New Password</label>
+                    {{ password_form.new_password }}
+                    {% if password_form.new_password.errors %}
+                    <div class="error-message">{{ password_form.new_password.errors }}</div>
+                    {% endif %}
+                    <small class="form-text">Minimum 8 characters</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ password_form.confirm_password.id_for_label }}">Confirm New Password</label>
+                    {{ password_form.confirm_password }}
+                    {% if password_form.confirm_password.errors %}
+                    <div class="error-message">{{ password_form.confirm_password.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <button type="submit" name="change_password" class="btn-primary">
+                    <i class="fas fa-key"></i> Change Password
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

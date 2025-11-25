@@ -3,10 +3,11 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'administration/css/admin_lists.css' %}">
+<link rel="stylesheet" href="{% static 'administration/css/lists/candidate_list.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="admin-header">
+<div class="admin-header-2">
     <h1 class="admin-title">Candidates</h1>
     <div class="admin-actions">
         <a href="{% url 'administration:candidate_create' %}" class="btn-primary">

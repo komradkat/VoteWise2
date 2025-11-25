@@ -1,0 +1,17 @@
+/* Candidate Form Specific Styles */
+
+/* This file contains styles specific to the candidate registration/edit form */
+/* Shared form styles are in admin_forms.css */
+
+/* Candidate-specific form enhancements */
+
+/* Candidate photo upload preview */
+.form-field input[type="file"] {
+    padding: 0.5rem;
+}
+
+/* Platform/Bio textarea styling */
+.form-field textarea {
+    min-height: 150px;
+    resize: vertical;
+}

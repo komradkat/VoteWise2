@@ -3,11 +3,11 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'administration/css/admin_lists.css' %}">
-<link rel="stylesheet" href="{% static 'administration/css/voter_list.css' %}">
+<link rel="stylesheet" href="{% static 'administration/css/lists/voter_list.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="admin-header">
+<div class="admin-header-2">
     <h1 class="admin-title">Voters Management</h1>
     <div class="admin-actions">
         <a href="{% url 'administration:voter_create' %}" class="btn-primary">
@@ -15,6 +15,22 @@
         </a>
     </div>
 </div>
+
+<!-- Pending Verification Alert -->
+{% if pending_count > 0 %}
+<div class="pending-alert">
+    <div class="pending-alert-content">
+        <i class="fas fa-exclamation-triangle pending-alert-icon"></i>
+        <div>
+            <strong class="pending-alert-title">{{ pending_count }} voter(s) pending verification</strong>
+            <p class="pending-alert-text">Review and verify new registrations to allow them to vote.</p>
+        </div>
+        <a href="?status=PENDING" class="btn-primary pending-alert-button">
+            <i class="fas fa-eye"></i> View Pending
+        </a>
+    </div>
+</div>
+{% endif %}
 
 <!-- Search and Filter Bar -->
 <div class="filter-bar">
@@ -37,28 +53,12 @@
     </select>
     <select class="filter-select" onchange="window.location.href='?status=' + this.value">
         <option value="">All Statuses</option>
-        <option value="PENDING" {% if current_status_filter=='PENDING' %}selected{% endif %}>Pending Verification
+        <option value="PENDING" {% if current_status_filter == 'PENDING' %}selected{% endif %}>Pending Verification
         </option>
-        <option value="VERIFIED" {% if current_status_filter=='VERIFIED' %}selected{% endif %}>Verified</option>
-        <option value="REJECTED" {% if current_status_filter=='REJECTED' %}selected{% endif %}>Rejected</option>
+        <option value="VERIFIED" {% if current_status_filter == 'VERIFIED' %}selected{% endif %}>Verified</option>
+        <option value="REJECTED" {% if current_status_filter == 'REJECTED' %}selected{% endif %}>Rejected</option>
     </select>
 </div>
-
-<!-- Pending Verification Alert -->
-{% if pending_count > 0 %}
-<div class="pending-alert">
-    <div class="pending-alert-content">
-        <i class="fas fa-exclamation-triangle pending-alert-icon"></i>
-        <div>
-            <strong class="pending-alert-title">{{ pending_count }} voter(s) pending verification</strong>
-            <p class="pending-alert-text">Review and verify new registrations to allow them to vote.</p>
-        </div>
-        <a href="?status=PENDING" class="btn-primary pending-alert-button">
-            <i class="fas fa-eye"></i> View Pending
-        </a>
-    </div>
-</div>
-{% endif %}
 
 <!-- Stats Cards -->
 <div class="stats-card">
