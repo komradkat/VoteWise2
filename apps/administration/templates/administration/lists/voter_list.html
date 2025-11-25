@@ -80,6 +80,7 @@
     </div>
 </div>
 
+<div class="list-container">
 <form method="post" action="{% url 'administration:voter_bulk_verify' %}" id="bulkVerifyForm">
     {% csrf_token %}
     <div class="table-container">
@@ -199,6 +200,9 @@
         </div>
     </div>
 </form>
+</div>
+
+
 
 <!-- Pagination Controls -->
 <div class="pagination-container" style="margin-top: 1rem; text-align: center;">

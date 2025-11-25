@@ -3,20 +3,23 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'administration/css/admin_forms.css' %}">
-<link rel="stylesheet" href="{% static 'administration/css/forms/election_form.css' %}">
+<link rel="stylesheet" href="{% static 'administration/css/forms/timeline_form.css' %}?v=3">
 {% endblock %}
 
 {% block content %}
 <div class="form-container">
     <h2 class="admin-title">{{ title }}</h2>
+    
     <form method="post">
+        {% csrf_token %}
+        
         <div class="form-section">
-            <h3 class="section-title">Election Details</h3>
-            {% csrf_token %}
-            
             {% for field in form %}
             <div class="form-group">
-                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="required">*</span>{% endif %}
+                </label>
                 {{ field }}
                 {% if field.help_text %}
                 <small class="form-text text-muted">{{ field.help_text }}</small>
@@ -32,17 +35,12 @@
 
         <div class="form-actions">
             <button type="submit" class="btn-primary">
-                <i class="fas fa-save"></i> Save Election
+                <i class="fas fa-save"></i> Save Timeline Event
             </button>
-            <a href="{% url 'administration:elections' %}" class="btn-primary"
-                style="background:#6b7280;margin-left:0.5rem;">
+            <a href="{% url 'administration:timeline_list' %}" class="btn-secondary">
                 <i class="fas fa-times"></i> Cancel
             </a>
         </div>
     </form>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<!-- No additional JS needed -->
 {% endblock %}

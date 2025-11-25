@@ -114,3 +114,12 @@ media/
 # **/migrations/**
 # !**/migrations
 # !**/migrations/__init__.py
+
+# Production-specific
+.env.production
+.env.local
+staticfiles/
+logs/*.log
+backups/
+*.pid
+gunicorn.sock

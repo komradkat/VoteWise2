@@ -1,4 +1,25 @@
-asgiref==3.10.0
+# Core Django
 Django==5.2.8
-python-dotenv==1.2.1
+asgiref==3.10.0
 sqlparse==0.5.3
+
+# Environment & Configuration
+python-dotenv==1.2.1
+python-decouple==3.8
+
+# Database
+psycopg2-binary==2.9.9
+
+# WSGI Server
+gunicorn==21.2.0
+
+# Static Files
+whitenoise==6.6.0
+
+# Security & Monitoring (Optional but Recommended)
+django-cors-headers==4.3.1
+sentry-sdk==1.39.1
+
+# Development Dependencies (install separately with pip install -r requirements-dev.txt)
+# django-debug-toolbar==4.2.0
+# coverage==7.3.2

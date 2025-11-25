@@ -148,6 +148,34 @@ class Election(models.Model):
 
 
 # ----------------------------------------------------------------------
+# 5. Election Timeline Model (NEW)
+# ----------------------------------------------------------------------
+class ElectionTimeline(models.Model):
+    """
+    Represents specific events within an election's lifecycle, 
+    e.g., 'Filing of Candidacy', 'Campaign Period', 'Voting Period'.
+    """
+    election = models.ForeignKey(
+        Election,
+        on_delete=models.CASCADE,
+        related_name='timeline_events'
+    )
+    title = models.CharField(max_length=100, help_text="Event title, e.g., 'Campaign Period'")
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    description = models.TextField(blank=True, help_text="Optional details about this event.")
+    order = models.PositiveIntegerField(default=0, help_text="Ordering of events.")
+
+    class Meta:
+        verbose_name = 'Timeline Event'
+        verbose_name_plural = 'Timeline Events'
+        ordering = ['order', 'start_time']
+
+    def __str__(self):
+        return f"{self.title} ({self.election.name})"
+
+
+# ----------------------------------------------------------------------
 # 5. Vote Model (NEW CORE MODEL)
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------

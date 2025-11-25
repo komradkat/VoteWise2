@@ -44,5 +44,11 @@ urlpatterns = [
     path('administrators/', views.administrator_list, name='administrators'),
     path('administrators/create/', views.administrator_create, name='administrator_create'),
     path('administrators/<int:pk>/edit/', views.administrator_edit, name='administrator_edit'),
-    path('administrators/<int:pk>/toggle-status/', views.administrator_toggle_status, name='administrator_toggle_status'),
+    path('administrators/<int:pk>/toggle/', views.administrator_toggle_status, name='administrator_toggle_status'),
+    
+    # Timeline Management
+    path('timeline/', views.timeline_list, name='timeline_list'),
+    path('timeline/create/', views.timeline_create, name='timeline_create'),
+    path('timeline/<int:pk>/edit/', views.timeline_edit, name='timeline_edit'),
+    path('timeline/<int:pk>/delete/', views.timeline_delete, name='timeline_delete'),
 ]

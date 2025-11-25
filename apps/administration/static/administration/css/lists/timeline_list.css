@@ -1,0 +1,18 @@
+/* Timeline List Specific Styles */
+
+/* This file contains styles specific to the timeline events list view */
+/* Shared list styles are in admin_lists.css */
+
+/* Timeline-specific order badge (uses gradient instead of flat color) */
+.badge-order {
+    background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+    color: white;
+    padding: 0.375rem 0.875rem;
+    border-radius: 16px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}

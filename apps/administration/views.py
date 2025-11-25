@@ -7,7 +7,12 @@ from django.contrib import messages
 from apps.elections.models import Election, Position, Partylist, Candidate, Vote
 from django.core.paginator import Paginator
 from apps.accounts.models import StudentProfile
-from .forms import ElectionForm, PositionForm, PartylistForm, CandidateForm, VoterForm
+from .forms import (
+    ElectionForm, PositionForm, PartylistForm, CandidateForm, 
+    VoterForm, AdminProfileForm, AdminPasswordChangeForm, 
+    ElectionAdminForm, ElectionTimelineForm
+)
+from apps.administration.models import AuditLog
 
 from django.views.decorators.csrf import ensure_csrf_cookie
 
@@ -67,30 +72,59 @@ def election_list(request):
     elections = Election.objects.all()
     return render(request, 'administration/lists/election_list.html', {'elections': elections})
 
+@login_required
 @user_passes_test(is_admin, login_url='administration:login')
 def election_create(request):
     if request.method == 'POST':
         form = ElectionForm(request.POST)
+        
         if form.is_valid():
-            form.save()
+            election = form.save()
+            
+            # Log action
+            AuditLog.objects.create(
+                user=request.user,
+                action="ELECTION_CREATED",
+                details=f"Created election: {election.name}",
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
             messages.success(request, 'Election created successfully.')
             return redirect('administration:elections')
     else:
         form = ElectionForm()
-    return render(request, 'administration/forms/election_form.html', {'form': form, 'title': 'Create Election'})
+    
+    return render(request, 'administration/forms/election_form.html', {
+        'form': form,
+        'title': 'Create Election'
+    })
 
+@login_required
 @user_passes_test(is_admin, login_url='administration:login')
 def election_edit(request, pk):
     election = get_object_or_404(Election, pk=pk)
     if request.method == 'POST':
         form = ElectionForm(request.POST, instance=election)
+        
         if form.is_valid():
             form.save()
+            
+            # Log action
+            AuditLog.objects.create(
+                user=request.user,
+                action="ELECTION_UPDATED",
+                details=f"Updated election: {election.name}",
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
             messages.success(request, 'Election updated successfully.')
             return redirect('administration:elections')
     else:
         form = ElectionForm(instance=election)
-    return render(request, 'administration/forms/election_form.html', {'form': form, 'title': 'Edit Election'})
+    
+    return render(request, 'administration/forms/election_form.html', {
+        'form': form,
+        'title': 'Edit Election',
+        'election': election
+    })
 
 # --- Positions ---
 @user_passes_test(is_admin, login_url='administration:login')
@@ -534,3 +568,133 @@ def administrator_toggle_status(request, pk):
     messages.success(request, f'Administrator {admin.user.get_full_name()} has been {status}.')
     
     return redirect('administration:administrators')
+
+
+# ----------------------------------------------------------------------
+# Timeline Management Views
+# ----------------------------------------------------------------------
+
+@login_required
+@user_passes_test(is_admin, login_url='administration:login')
+def timeline_list(request):
+    """List all timeline events"""
+    from apps.elections.models import ElectionTimeline
+    
+    events = ElectionTimeline.objects.select_related('election').all().order_by('election', 'order')
+    
+    # Filter by election if provided
+    election_id = request.GET.get('election')
+    if election_id:
+        events = events.filter(election_id=election_id)
+    
+    elections = Election.objects.all()
+    
+    context = {
+        'events': events,
+        'elections': elections,
+        'selected_election': int(election_id) if election_id else None
+    }
+    
+    return render(request, 'administration/lists/timeline_list.html', context)
+
+
+@login_required
+@user_passes_test(is_admin, login_url='administration:login')
+def timeline_create(request):
+    """Create a new timeline event"""
+    from apps.elections.models import ElectionTimeline
+    
+    if request.method == 'POST':
+        form = ElectionTimelineForm(request.POST)
+        if form.is_valid():
+            event = form.save()
+            
+            # Log action
+            AuditLog.objects.create(
+                user=request.user,
+                action="TIMELINE_CREATED",
+                details=f"Created timeline event: {event.title} for {event.election.name}",
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
+            messages.success(request, 'Timeline event created successfully.')
+            return redirect('administration:timeline_list')
+    else:
+        # Pre-select election if provided in query params
+        initial = {}
+        election_id = request.GET.get('election')
+        if election_id:
+            initial['election'] = election_id
+        form = ElectionTimelineForm(initial=initial)
+    
+    context = {
+        'form': form,
+        'title': 'Create Timeline Event'
+    }
+    
+    return render(request, 'administration/forms/timeline_form.html', context)
+
+
+@login_required
+@user_passes_test(is_admin, login_url='administration:login')
+def timeline_edit(request, pk):
+    """Edit an existing timeline event"""
+    from apps.elections.models import ElectionTimeline
+    
+    event = get_object_or_404(ElectionTimeline, pk=pk)
+    
+    if request.method == 'POST':
+        form = ElectionTimelineForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            
+            # Log action
+            AuditLog.objects.create(
+                user=request.user,
+                action="TIMELINE_UPDATED",
+                details=f"Updated timeline event: {event.title}",
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
+            messages.success(request, 'Timeline event updated successfully.')
+            return redirect('administration:timeline_list')
+    else:
+        form = ElectionTimelineForm(instance=event)
+    
+    context = {
+        'form': form,
+        'title': 'Edit Timeline Event',
+        'event': event
+    }
+    
+    return render(request, 'administration/forms/timeline_form.html', context)
+
+
+@login_required
+@user_passes_test(is_admin, login_url='administration:login')
+def timeline_delete(request, pk):
+    """Delete a timeline event"""
+    from apps.elections.models import ElectionTimeline
+    
+    event = get_object_or_404(ElectionTimeline, pk=pk)
+    
+    if request.method == 'POST':
+        title = event.title
+        election_name = event.election.name
+        event.delete()
+        
+        # Log action
+        AuditLog.objects.create(
+            user=request.user,
+            action="TIMELINE_DELETED",
+            details=f"Deleted timeline event: {title} from {election_name}",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+        messages.success(request, 'Timeline event deleted successfully.')
+        return redirect('administration:timeline_list')
+    
+    context = {
+        'object': event,
+        'title': 'Delete Timeline Event',
+        'cancel_url': 'administration:timeline_list'
+    }
+    
+    return render(request, 'administration/confirm_delete.html', context)

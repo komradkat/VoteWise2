@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Admin Dashboard - VoteWise{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'administration/css/admin_base.css' %}">
     <link rel="stylesheet" href="{% static 'administration/css/admin.css' %}">
     <link rel="stylesheet" href="{% static 'administration/css/includes/admin_header.css' %}">
     <link rel="stylesheet" href="{% static 'administration/css/includes/admin_footer.css' %}">
@@ -32,6 +33,10 @@
                 <a href="{% url 'administration:elections' %}"
                     class="admin-nav-item {% if 'elections' in request.path %}active{% endif %}">
                     <i class="fas fa-calendar-alt"></i> Elections
+                </a>
+                <a href="{% url 'administration:timeline_list' %}"
+                    class="admin-nav-item {% if 'timeline' in request.path %}active{% endif %}">
+                    <i class="fa-solid fa-timeline"></i> Timeline
                 </a>
                 <a href="{% url 'administration:positions' %}"
                     class="admin-nav-item {% if 'positions' in request.path %}active{% endif %}">
@@ -59,7 +64,6 @@
         <!-- Main Content -->
         <main class="admin-main">
             {% block content %}{% endblock %}
-            {% include 'administration/includes/admin_footer.html' %}
         </main>
     </div>
 

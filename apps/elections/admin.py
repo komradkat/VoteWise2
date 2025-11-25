@@ -118,7 +118,13 @@ class CandidateAdmin(admin.ModelAdmin):
 # ----------------------------------------------------------------------
 # 4. Election Admin Configuration
 # ----------------------------------------------------------------------
-from .models import Election, Vote, VoterReceipt
+from .models import Election, Vote, VoterReceipt, ElectionTimeline
+
+class ElectionTimelineInline(admin.TabularInline):
+    model = ElectionTimeline
+    extra = 1
+    fields = ('title', 'start_time', 'end_time', 'order')
+    ordering = ('order', 'start_time')
 
 @admin.register(Election)
 class ElectionAdmin(admin.ModelAdmin):
@@ -126,6 +132,7 @@ class ElectionAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'start_time', 'end_time')
     search_fields = ('name', 'description')
     readonly_fields = ('created_at', 'updated_at')
+    inlines = [ElectionTimelineInline]
     
     fieldsets = (
         ('Election Details', {

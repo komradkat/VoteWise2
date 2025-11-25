@@ -1,18 +1,41 @@
 from django import forms
-from apps.elections.models import Election, Position, Partylist, Candidate
-from apps.accounts.models import StudentProfile, ElectionAdmin, AdminType
 from django.contrib.auth.models import User
+from apps.accounts.models import StudentProfile, ElectionAdmin, AdminType
+from apps.elections.models import Election, Position, Partylist, Candidate, ElectionTimeline
 
 class ElectionForm(forms.ModelForm):
     class Meta:
         model = Election
         fields = ['name', 'start_time', 'end_time', 'is_active']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'start_time': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
-            'end_time': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            if 'class' not in self.fields[field].widget.attrs:
+                self.fields[field].widget.attrs['class'] = 'form-control'
+
+
+class ElectionTimelineForm(forms.ModelForm):
+    class Meta:
+        model = ElectionTimeline
+        fields = ['election', 'title', 'start_time', 'end_time', 'description', 'order']
+        widgets = {
+            'election': forms.Select(attrs={'class': 'form-control'}),
+            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'order': forms.NumberInput(attrs={'class': 'form-control', 'min': 0}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            if 'class' not in self.fields[field].widget.attrs:
+                self.fields[field].widget.attrs['class'] = 'form-control'
 
 class PositionForm(forms.ModelForm):
     class Meta:

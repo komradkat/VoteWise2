@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db import transaction
 from apps.accounts.models import StudentProfile, ElectionAdmin, YearLevel, Course, Section, AdminType
-from apps.elections.models import Election, Position, Partylist, Candidate, Vote, VoterReceipt
+from apps.elections.models import Election, Position, Partylist, Candidate, Vote, VoterReceipt, ElectionTimeline
 from apps.administration.models import AuditLog
 
 class Command(BaseCommand):
@@ -102,6 +102,41 @@ class Command(BaseCommand):
                 is_active=True
             )
             
+            # Create Timeline Events for Active Election
+            timeline_events = [
+                {
+                    'title': 'Filing of Candidacy',
+                    'start_time': active_election.start_time - timedelta(days=14),
+                    'end_time': active_election.start_time - timedelta(days=7),
+                    'description': 'Period for students to file their certificates of candidacy.',
+                    'order': 1
+                },
+                {
+                    'title': 'Campaign Period',
+                    'start_time': active_election.start_time - timedelta(days=6),
+                    'end_time': active_election.start_time - timedelta(days=1),
+                    'description': 'Official campaign period for approved candidates.',
+                    'order': 2
+                },
+                {
+                    'title': 'Voting Period',
+                    'start_time': active_election.start_time,
+                    'end_time': active_election.end_time,
+                    'description': 'Election day voting.',
+                    'order': 3
+                }
+            ]
+            
+            for event in timeline_events:
+                ElectionTimeline.objects.create(
+                    election=active_election,
+                    title=event['title'],
+                    start_time=event['start_time'],
+                    end_time=event['end_time'],
+                    description=event['description'],
+                    order=event['order']
+                )
+            
             # Past Election
             Election.objects.create(
                 name=f"Student Council Election {timezone.now().year - 1}",
@@ -109,7 +144,7 @@ class Command(BaseCommand):
                 end_time=timezone.now() - timedelta(days=364),
                 is_active=False
             )
-            self.stdout.write('Created 2 elections (1 Active, 1 Past).')
+            self.stdout.write('Created 2 elections (1 Active with Timeline, 1 Past).')
 
             # 4. Create Users & Students
             first_names = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Charles', 'Mary', 'Patricia', 'Jennifer', 'Linda', 'Elizabeth', 'Barbara', 'Susan', 'Jessica', 'Sarah', 'Karen']

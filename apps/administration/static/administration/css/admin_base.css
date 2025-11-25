@@ -1,42 +1,40 @@
-/* Admin Base Styles & Variables */
+/* Admin Base Styles - CSS Variables for Administration App */
+
 :root {
-    /* Primary Brand Colors */
-    --admin-primary-dark: #0d1b2a;          /* Navy */
-    --admin-primary-light: #1e3a8a;         /* Deep Blue */
-    --admin-primary-gradient: linear-gradient(135deg, var(--admin-primary-dark), var(--admin-primary-light));
+    /* Admin Primary Colors */
+    --admin-primary: #2563eb;
+    --admin-primary-dark: #1e40af;
+    --admin-secondary: #334155;
+    --admin-accent: #3b82f6;
+    --admin-bg: #f1f5f9;
+    --admin-text: #0f172a;
     
-    /* Accents */
-    --admin-accent: #ff6b6b;                /* Soft Red */
-    --admin-accent-hover: #fa5252;
+    /* Admin Slate Colors */
+    --admin-slate-50: #f8fafc;
+    --admin-slate-100: #f1f5f9;
+    --admin-slate-200: #e2e8f0;
+    --admin-slate-300: #cbd5e1;
+    --admin-slate-400: #94a3b8;
+    --admin-slate-500: #64748b;
+    --admin-slate-600: #475569;
+    --admin-slate-700: #334155;
+    --admin-slate-800: #1e293b;
+    --admin-slate-900: #0f172a;
     
-    /* Backgrounds */
-    --admin-bg-header: var(--admin-primary-dark);
-    --admin-bg-footer: #f8fafc;             /* Slate 50 */
-    --admin-bg-main: #f1f5f9;               /* Slate 100 */
-    --admin-bg-card: #ffffff;
+    /* Admin Status Colors */
+    --admin-red: #ef4444;
+    --admin-green: #10b981;
+    --admin-yellow: #f59e0b;
+    --admin-blue: #3b82f6;
     
-    /* Text Colors */
-    --admin-text-light: #ffffff;
-    --admin-text-dark: #1e293b;             /* Slate 800 */
-    --admin-text-muted: #64748b;            /* Slate 500 */
-    
-    /* Spacing & Layout */
-    --admin-max-width: 1400px;
-    --admin-gutter: 2rem;
-    --admin-header-height: 80px;
+    /* Admin Text Colors */
+    --admin-text-primary: #0f172a;
+    --admin-text-secondary: #475569;
+    --admin-text-muted: #94a3b8;
 }
 
-/* Shared Layout Utility */
-.admin-wrapper {
-    max-width: var(--admin-max-width);
-    margin: 0 auto;
-    padding: 0 var(--admin-gutter);
-    width: 100%;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    :root {
-        --admin-gutter: 1rem;
-    }
+/* Base Admin Styles */
+body {
+    background-color: var(--admin-bg);
+    font-family: 'Inter', sans-serif;
 }

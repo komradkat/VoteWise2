@@ -1,0 +1,34 @@
+[Unit]
+Description=VoteWise2 Gunicorn Application Server
+After=network.target
+
+[Service]
+Type=notify
+# User and group to run as (change to your user)
+User=www-data
+Group=www-data
+
+# Working directory
+WorkingDirectory=/path/to/votewise
+
+# Environment
+Environment="PATH=/path/to/venv/bin"
+Environment="DJANGO_SETTINGS_MODULE=project_config.settings.production"
+EnvironmentFile=/path/to/votewise/.env
+
+# Start command
+ExecStart=/path/to/venv/bin/gunicorn \
+    --config gunicorn.conf.py \
+    project_config.wsgi:application
+
+# Restart policy
+Restart=on-failure
+RestartSec=5s
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=votewise
+
+[Install]
+WantedBy=multi-user.target

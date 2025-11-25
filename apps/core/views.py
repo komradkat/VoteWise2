@@ -70,3 +70,27 @@ def privacy(request):
 
 def about(request):
     return render(request, 'pages/about.html')
+
+def health_check(request):
+    """
+    Health check endpoint for monitoring and load balancers.
+    Returns JSON response with application status.
+    """
+    from django.http import JsonResponse
+    from django.db import connection
+    
+    try:
+        # Check database connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        
+        return JsonResponse({
+            'status': 'healthy',
+            'database': 'connected',
+            'application': 'running'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'unhealthy',
+            'error': str(e)
+        }, status=500)
