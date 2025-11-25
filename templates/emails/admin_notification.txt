@@ -1,0 +1,18 @@
+{% extends 'emails/base_email.txt' %}
+
+{% block content %}
+VoteWise Administrator
+
+You are receiving this notification as a system administrator.
+
+{{ subject }}
+{{ "=" * subject|length }}
+
+{{ message }}
+
+Go to Admin Panel: {{ site_url }}/administration/
+
+This is an automated notification from VoteWise. You are receiving this because you are registered as a system administrator.
+
+VoteWise System
+{% endblock %}

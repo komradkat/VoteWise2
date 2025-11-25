@@ -1,0 +1,7 @@
+{% extends 'emails/base_email.txt' %}
+
+{% block content %}
+{{ message }}
+
+The VoteWise Team
+{% endblock %}

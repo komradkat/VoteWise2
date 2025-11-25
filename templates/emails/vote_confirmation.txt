@@ -1,0 +1,24 @@
+{% extends 'emails/base_email.txt' %}
+
+{% block content %}
+Hello {{ voter_name }}!
+
+Your vote has been successfully recorded for {{ election.name }}.
+
+VOTE CONFIRMATION
+-----------------
+Election: {{ election.name }}
+Voted At: {{ timestamp|date:"F d, Y H:i" }}
+Status: Successfully Recorded
+
+IMPORTANT INFORMATION:
+• Your vote is anonymous and cannot be traced back to you
+• You cannot change your vote once submitted
+• Results will be available after the election closes
+
+View Live Results: {{ site_url }}/results/
+
+Thank you for participating in this election!
+
+The VoteWise Team
+{% endblock %}

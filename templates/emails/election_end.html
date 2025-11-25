@@ -1,0 +1,47 @@
+{% extends 'emails/base_email.html' %}
+
+{% block title %}Election Ended{% endblock %}
+
+{% block content %}
+<p class="email-greeting">Hello {{ voter_name }}!</p>
+
+<p class="email-text">
+    The election <strong>{{ election.name }}</strong> has officially closed.
+</p>
+
+<div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="margin: 0 0 15px 0; color: #92400e; font-size: 18px;">⏰ Election Closed</h3>
+    <table style="width: 100%; color: #92400e;">
+        <tr>
+            <td style="padding: 5px 0; font-weight: 600;">Election:</td>
+            <td style="padding: 5px 0;">{{ election.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px 0; font-weight: 600;">Ended:</td>
+            <td style="padding: 5px 0;">{{ election.end_time|date:"F d, Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px 0; font-weight: 600;">Status:</td>
+            <td style="padding: 5px 0;">Voting Closed</td>
+        </tr>
+    </table>
+</div>
+
+<p class="email-text">
+    Thank you to everyone who participated! The results are being tabulated and will be 
+    announced shortly.
+</p>
+
+<p class="email-text">
+    You will receive another email once the official results are available.
+</p>
+
+<a href="{{ site_url }}/results/" class="email-button">
+    Check Results Status
+</a>
+
+<p class="email-text" style="margin-top: 30px;">
+    <strong>Thank you for your participation!</strong><br>
+    The VoteWise Team
+</p>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'emails/base_email.txt' %}
+
+{% block content %}
+Hello {{ voter_name }}!
+
+The election {{ election.name }} has officially closed.
+
+ELECTION STATUS
+---------------
+Election: {{ election.name }}
+Ended: {{ election.end_time|date:"F d, Y H:i" }}
+Status: Voting Closed
+
+Thank you to everyone who participated! The results are being tabulated and will be announced shortly.
+
+You will receive another email once the official results are available.
+
+Check Results Status: {{ site_url }}/results/
+
+Thank you for your participation!
+The VoteWise Team
+{% endblock %}

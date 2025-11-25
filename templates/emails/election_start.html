@@ -1,0 +1,45 @@
+{% extends 'emails/base_email.html' %}
+
+{% block title %}Election Started{% endblock %}
+
+{% block content %}
+<p class="email-greeting">Hello {{ voter_name }}! 🗳️</p>
+
+<p class="email-text">
+    Great news! The election <strong>{{ election.name }}</strong> is now open for voting.
+</p>
+
+<div style="background-color: #dbeafe; border-left: 4px solid #2563eb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="margin: 0 0 15px 0; color: #1e40af; font-size: 18px;">📅 Election Details</h3>
+    <table style="width: 100%; color: #1e40af;">
+        <tr>
+            <td style="padding: 5px 0; font-weight: 600;">Election:</td>
+            <td style="padding: 5px 0;">{{ election.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px 0; font-weight: 600;">Started:</td>
+            <td style="padding: 5px 0;">{{ election.start_time|date:"F d, Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px 0; font-weight: 600;">Ends:</td>
+            <td style="padding: 5px 0;">{{ election.end_time|date:"F d, Y H:i" }}</td>
+        </tr>
+    </table>
+</div>
+
+<p class="email-text">
+    <strong>Don't miss your chance to vote!</strong> Make your voice heard and participate in shaping the future.
+</p>
+
+<a href="{{ site_url }}/elections/{{ election.id }}/vote/" class="email-button">
+    Cast Your Vote Now
+</a>
+
+<p class="email-text" style="margin-top: 30px; font-size: 14px; color: #64748b;">
+    <em>Remember: You can only vote once. Make sure to review all candidates before submitting your ballot.</em>
+</p>
+
+<p class="email-text">
+    <strong>The VoteWise Team</strong>
+</p>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'emails/base_email.html' %}
+
+{% block title %}Admin Notification{% endblock %}
+
+{% block content %}
+<p class="email-greeting">VoteWise Administrator</p>
+
+<p class="email-text">
+    You are receiving this notification as a system administrator.
+</p>
+
+<div style="background-color: #dbeafe; border-left: 4px solid #2563eb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="margin: 0 0 15px 0; color: #1e40af; font-size: 18px;">{{ subject }}</h3>
+    <div style="color: #1e40af; white-space: pre-wrap;">{{ message }}</div>
+</div>
+
+<a href="{{ site_url }}/administration/" class="email-button">
+    Go to Admin Panel
+</a>
+
+<p class="email-text" style="margin-top: 30px; font-size: 14px; color: #64748b;">
+    <em>This is an automated notification from VoteWise. You are receiving this because 
+    you are registered as a system administrator.</em>
+</p>
+
+<p class="email-text">
+    <strong>VoteWise System</strong>
+</p>
+{% endblock %}

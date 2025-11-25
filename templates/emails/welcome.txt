@@ -1,0 +1,22 @@
+{% extends 'emails/base_email.txt' %}
+
+{% block content %}
+Hello {{ username }}!
+
+Welcome to VoteWise – your secure platform for democratic participation!
+
+Your account has been successfully created. You can now participate in elections, cast your votes, and view real-time results.
+
+GETTING STARTED:
+• Check for active elections on the dashboard
+• Review candidates and their platforms
+• Cast your vote securely
+• View live election results
+
+View Active Elections: {{ site_url }}/elections/
+
+If you have any questions or need assistance, please don't hesitate to contact our support team.
+
+Happy voting!
+The VoteWise Team
+{% endblock %}

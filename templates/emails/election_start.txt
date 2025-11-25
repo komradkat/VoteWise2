@@ -1,0 +1,21 @@
+{% extends 'emails/base_email.txt' %}
+
+{% block content %}
+Hello {{ voter_name }}!
+
+Great news! The election {{ election.name }} is now open for voting.
+
+ELECTION DETAILS
+----------------
+Election: {{ election.name }}
+Started: {{ election.start_time|date:"F d, Y H:i" }}
+Ends: {{ election.end_time|date:"F d, Y H:i" }}
+
+Don't miss your chance to vote! Make your voice heard and participate in shaping the future.
+
+Cast Your Vote Now: {{ site_url }}/elections/{{ election.id }}/vote/
+
+Remember: You can only vote once. Make sure to review all candidates before submitting your ballot.
+
+The VoteWise Team
+{% endblock %}

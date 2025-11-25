@@ -1,0 +1,50 @@
+{% extends 'emails/base_email.html' %}
+
+{% block title %}Vote Confirmation{% endblock %}
+
+{% block content %}
+<p class="email-greeting">Hello {{ voter_name }}! ✓</p>
+
+<p class="email-text">
+    Your vote has been successfully recorded for <strong>{{ election.name }}</strong>.
+</p>
+
+<div style="background-color: #dcfce7; border-left: 4px solid #10b981; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="margin: 0 0 15px 0; color: #166534; font-size: 18px;">✓ Vote Confirmed</h3>
+    <table style="width: 100%; color: #166534;">
+        <tr>
+            <td style="padding: 5px 0; font-weight: 600;">Election:</td>
+            <td style="padding: 5px 0;">{{ election.name }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px 0; font-weight: 600;">Voted At:</td>
+            <td style="padding: 5px 0;">{{ timestamp|date:"F d, Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 5px 0; font-weight: 600;">Status:</td>
+            <td style="padding: 5px 0;">Successfully Recorded</td>
+        </tr>
+    </table>
+</div>
+
+<p class="email-text">
+    <strong>Important Information:</strong>
+</p>
+<ul style="color: #475569; line-height: 1.8;">
+    <li>Your vote is anonymous and cannot be traced back to you</li>
+    <li>You cannot change your vote once submitted</li>
+    <li>Results will be available after the election closes</li>
+</ul>
+
+<a href="{{ site_url }}/results/" class="email-button">
+    View Live Results
+</a>
+
+<p class="email-text" style="margin-top: 30px;">
+    Thank you for participating in this election!
+</p>
+
+<p class="email-text">
+    <strong>The VoteWise Team</strong>
+</p>
+{% endblock %}

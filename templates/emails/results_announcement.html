@@ -1,0 +1,36 @@
+{% extends 'emails/base_email.html' %}
+
+{% block title %}Election Results Available{% endblock %}
+
+{% block content %}
+<p class="email-greeting">Hello {{ voter_name }}! 🎉</p>
+
+<p class="email-text">
+    The official results for <strong>{{ election.name }}</strong> are now available!
+</p>
+
+<div style="background-color: #dcfce7; border-left: 4px solid #10b981; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h3 style="margin: 0 0 15px 0; color: #166534; font-size: 18px;">📊 Results Published</h3>
+    <p style="margin: 0; color: #166534;">
+        The votes have been counted and verified. View the complete results including 
+        vote counts, percentages, and winners for all positions.
+    </p>
+</div>
+
+<p class="email-text">
+    Thank you for being part of this democratic process. Your participation helps ensure 
+    fair and transparent elections.
+</p>
+
+<a href="{{ site_url }}/results/?election={{ election.id }}" class="email-button">
+    View Full Results
+</a>
+
+<p class="email-text" style="margin-top: 30px; font-size: 14px; color: #64748b;">
+    <em>Results are final and have been verified by the election administrators.</em>
+</p>
+
+<p class="email-text">
+    <strong>The VoteWise Team</strong>
+</p>
+{% endblock %}

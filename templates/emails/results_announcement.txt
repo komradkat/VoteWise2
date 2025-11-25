@@ -1,0 +1,19 @@
+{% extends 'emails/base_email.txt' %}
+
+{% block content %}
+Hello {{ voter_name }}!
+
+The official results for {{ election.name }} are now available!
+
+RESULTS PUBLISHED
+-----------------
+The votes have been counted and verified. View the complete results including vote counts, percentages, and winners for all positions.
+
+Thank you for being part of this democratic process. Your participation helps ensure fair and transparent elections.
+
+View Full Results: {{ site_url }}/results/?election={{ election.id }}
+
+Results are final and have been verified by the election administrators.
+
+The VoteWise Team
+{% endblock %}
