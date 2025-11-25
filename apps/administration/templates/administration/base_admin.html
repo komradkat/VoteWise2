@@ -59,10 +59,10 @@
         <!-- Main Content -->
         <main class="admin-main">
             {% block content %}{% endblock %}
+            {% include 'administration/includes/admin_footer.html' %}
         </main>
     </div>
 
-    {% include 'administration/includes/admin_footer.html' %}
     {% block extra_js %}{% endblock %}
 </body>
 

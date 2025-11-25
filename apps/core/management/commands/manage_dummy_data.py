@@ -137,9 +137,30 @@ class Command(BaseCommand):
             self.stdout.write(f'Created {len(students)} student users.')
 
             # 5. Create Admins
-            admin_user = User.objects.create_user(username='admin_staff', password='password123', first_name='Admin', last_name='Staff', email='admin@example.com', is_staff=True)
-            ElectionAdmin.objects.create(user=admin_user, admin_type=AdminType.EMPLOYEE, employee_id='EMP-001')
-            self.stdout.write('Created 1 Election Admin (username: admin_staff, password: password123).')
+            admin_users_data = [
+                {'username': 'admin_staff', 'first': 'Admin', 'last': 'Staff', 'type': AdminType.EMPLOYEE, 'emp_id': 'EMP-001'},
+                {'username': 'admin_instructor', 'first': 'Prof', 'last': 'Garcia', 'type': AdminType.INSTRUCTOR, 'emp_id': 'INS-001'},
+                {'username': 'admin_student', 'first': 'Student', 'last': 'Leader', 'type': AdminType.STUDENT, 'emp_id': None},
+            ]
+            
+            for admin_data in admin_users_data:
+                admin_user = User.objects.create_user(
+                    username=admin_data['username'],
+                    password='password123',
+                    first_name=admin_data['first'],
+                    last_name=admin_data['last'],
+                    email=f"{admin_data['username']}@example.com",
+                    is_staff=True
+                )
+                ElectionAdmin.objects.create(
+                    user=admin_user,
+                    admin_type=admin_data['type'],
+                    employee_id=admin_data['emp_id'],
+                    is_active=True
+                )
+            
+            self.stdout.write(f'Created {len(admin_users_data)} Election Admins (all with password: password123).')
+
 
             # 6. Create Candidates for Active Election
             # Pick 2 candidates per position (except Senator, pick 10)
@@ -174,6 +195,45 @@ class Command(BaseCommand):
                     )
                     cand_idx += 1
             
+            # Secretary
+            for pl in partylists:
+                if cand_idx < len(candidates_pool):
+                    Candidate.objects.create(
+                        student_profile=candidates_pool[cand_idx],
+                        position=positions['Secretary'],
+                        election=active_election,
+                        partylist=pl,
+                        is_approved=True,
+                        biography="Organized and reliable."
+                    )
+                    cand_idx += 1
+            
+            # Treasurer
+            for pl in partylists:
+                if cand_idx < len(candidates_pool):
+                    Candidate.objects.create(
+                        student_profile=candidates_pool[cand_idx],
+                        position=positions['Treasurer'],
+                        election=active_election,
+                        partylist=pl,
+                        is_approved=True,
+                        biography="Responsible with finances."
+                    )
+                    cand_idx += 1
+            
+            # Auditor
+            for pl in partylists:
+                if cand_idx < len(candidates_pool):
+                    Candidate.objects.create(
+                        student_profile=candidates_pool[cand_idx],
+                        position=positions['Auditor'],
+                        election=active_election,
+                        partylist=pl,
+                        is_approved=True,
+                        biography="Ensuring transparency."
+                    )
+                    cand_idx += 1
+            
             # Senators (Random mix)
             for _ in range(8):
                 if cand_idx < len(candidates_pool):
@@ -194,7 +254,7 @@ class Command(BaseCommand):
             all_candidates = list(Candidate.objects.filter(election=active_election))
             
             for voter in remaining_students[:20]:
-                # Pick 1 President, 1 VP, 3 Senators
+                # Pick 1 for each position: President, VP, Secretary, Treasurer, Auditor, and 3 Senators
                 choices = []
                 
                 # President
@@ -206,6 +266,21 @@ class Command(BaseCommand):
                 vp_cands = [c for c in all_candidates if c.position.name == 'Vice President']
                 if vp_cands:
                     choices.append(random.choice(vp_cands))
+                
+                # Secretary
+                sec_cands = [c for c in all_candidates if c.position.name == 'Secretary']
+                if sec_cands:
+                    choices.append(random.choice(sec_cands))
+                
+                # Treasurer
+                treas_cands = [c for c in all_candidates if c.position.name == 'Treasurer']
+                if treas_cands:
+                    choices.append(random.choice(treas_cands))
+                
+                # Auditor
+                aud_cands = [c for c in all_candidates if c.position.name == 'Auditor']
+                if aud_cands:
+                    choices.append(random.choice(aud_cands))
                 
                 # Senators
                 sen_cands = [c for c in all_candidates if c.position.name == 'Senator']
@@ -230,5 +305,25 @@ class Command(BaseCommand):
                 )
                 
             self.stdout.write('Simulated voting for 20 students.')
+            
+            # 8. Create Audit Logs
+            admin_user = User.objects.get(username='admin_staff')
+            audit_actions = [
+                {'action': 'ELECTION_CREATED', 'details': f'Created election: {active_election.name}'},
+                {'action': 'CANDIDATE_APPROVED', 'details': 'Approved multiple candidates for election'},
+                {'action': 'VOTER_VERIFIED', 'details': 'Verified student voter registrations'},
+                {'action': 'SYSTEM_LOGIN', 'details': 'Admin logged into system'},
+                {'action': 'SETTINGS_UPDATED', 'details': 'Updated system settings'},
+            ]
+            
+            for i, audit_data in enumerate(audit_actions):
+                AuditLog.objects.create(
+                    user=admin_user if i % 2 == 0 else None,  # Some system actions
+                    action=audit_data['action'],
+                    details=audit_data['details'],
+                    ip_address='127.0.0.1' if i % 2 == 0 else None
+                )
+            
+            self.stdout.write(f'Created {len(audit_actions)} audit log entries.')
             
         self.stdout.write(self.style.SUCCESS('Dummy data population complete!'))
