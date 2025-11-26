@@ -7,95 +7,90 @@
 {% endblock %}
 
 {% block content %}
-<div class="admin-header-2">
-    <h1 class="admin-title">Partylists</h1>
-    <div class="admin-actions">
-        <a href="{% url 'administration:partylist_create' %}" class="btn-primary">
-            <i class="fas fa-plus"></i> New Partylist
-        </a>
+<div class="list-container">  
+    <div class="admin-header-2">
+        <h1 class="admin-title">Partylists</h1>
+        <div class="admin-actions">
+            <a href="{% url 'administration:partylist_create' %}" class="btn-primary">
+                <i class="fas fa-plus"></i> New Partylist
+            </a>
+        </div>
     </div>
-</div>
 
-<!-- Search Bar -->
-<div class="filter-bar">
-    <div class="search-container">
-        <i class="fas fa-search search-icon"></i>
-        <input type="text" id="searchInput" class="search-input" placeholder="Search partylists...">
+    <!-- Search Bar -->
+    <div class="filter-bar">
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Search partylists...">
+        </div>
     </div>
-</div>
 
-<div class="list-container">    
-<div class="table-container">
-    <div class="table-scroll">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Short Code</th>
-                    <th>Status</th>
-                    <th class="text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="partylistsTable">
-                {% for partylist in partylists %}
-                <tr class="data-row">
-                    <td>
-                        <div class="cell-flex">
-                            <div class="cell-icon">
-                                <i class="fas fa-users"></i>
+    
+    <div class="table-container">
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Short Code</th>
+                        <th>Status</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="partylistsTable">
+                    {% for partylist in partylists %}
+                    <tr class="data-row">
+                        <td>
+                            <div class="cell-flex">
+                                <div class="cell-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span class="cell-text-primary">{{ partylist.name }}</span>
                             </div>
-                            <span class="cell-text-primary">{{ partylist.name }}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="badge badge-blue">{{ partylist.short_code }}</span>
-                    </td>
-                    <td>
-                        {% if partylist.is_active %}
-                        <span class="badge badge-green">
-                            <i class="fas fa-check-circle"></i> Active
-                        </span>
-                        {% else %}
-                        <span class="badge badge-gray">
-                            <i class="fas fa-times-circle"></i> Inactive
-                        </span>
-                        {% endif %}
-                    </td>
-                    <td class="text-right">
-                        <a href="{% url 'administration:partylist_edit' partylist.pk %}" class="action-btn">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr id="emptyState">
-                    <td colspan="4" class="empty-state-container">
-                        <div class="empty-state-content">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-users"></i>
+                        </td>
+                        <td>
+                            <span class="badge badge-blue">{{ partylist.short_code }}</span>
+                        </td>
+                        <td>
+                            {% if partylist.is_active %}
+                            <span class="badge badge-green">
+                                <i class="fas fa-check-circle"></i> Active
+                            </span>
+                            {% else %}
+                            <span class="badge badge-gray">
+                                <i class="fas fa-times-circle"></i> Inactive
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-right">
+                            <a href="{% url 'administration:partylist_edit' partylist.pk %}" class="action-btn">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr id="emptyState">
+                        <td colspan="5" class="empty-state-container">
+                            <div class="empty-state-content">
+                                <div>
+                                    <h3 class="empty-state-title">No Partylists found</h3>
+                                    <p class="empty-state-description">Create partylists for candidates to run for.</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="empty-state-title">No partylists found</h3>
-                                <p class="empty-state-description">Create partylists for candidates to join.</p>
-                                <a href="{% url 'administration:partylist_create' %}" class="btn-primary">
-                                    <i class="fas fa-plus"></i> New Partylist
-                                </a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-                <!-- Hidden empty state for search results -->
-                <tr id="noResults" style="display: none;">
-                    <td colspan="4" class="no-results-container">
-                        <i class="fas fa-search no-results-icon"></i>
-                        No partylists match your search.
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <!-- Hidden empty state for search results -->
+                    <tr id="noResults" style="display: none;">
+                        <td colspan="4" class="no-results-container">
+                            <i class="fas fa-search no-results-icon"></i>
+                            No partylists match your search.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 </div>
 
 {% endblock %}

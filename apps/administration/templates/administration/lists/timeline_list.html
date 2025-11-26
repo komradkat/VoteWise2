@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-
+<div class="list-container">
     <div class="list-header">
         <h2 class="admin-title">Timeline Events</h2>
         <a href="{% url 'administration:timeline_create' %}" class="btn-primary">
@@ -31,7 +31,7 @@
             </div>
         </form>
     </div>
-<div class="list-container">
+
     <!-- Timeline Events Table -->
     <div class="table-responsive">
         <table class="data-table">
@@ -66,11 +66,16 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr>
-                    <td colspan="6" class="no-data">
-                        No timeline events found. <a href="{% url 'administration:timeline_create' %}">Create one</a>
-                    </td>
-                </tr>
+                <tr id="emptyState">
+                        <td colspan="5" class="empty-state-container">
+                            <div class="empty-state-content">
+                                <div>
+                                    <h3 class="empty-state-title">No timeline events found</h3>
+                                    <p class="empty-state-description">Create timeline events for candidates to run for.</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>

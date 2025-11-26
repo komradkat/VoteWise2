@@ -2,7 +2,9 @@
 .dashboard-container {
     display: flex;
     min-height: calc(100vh - 80px); /* Adjust based on header height */
-    background-color: #f8fafc;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(23, 37, 84, 0.9) 100%),
+              url('/static/core/img/voting-background.png') center/cover no-repeat;
+  position: relative;
 }
 
 /* Sidebar Navigation */

@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="list-container">
 <div class="admin-header-2">
     <h1 class="admin-title">Voters Management</h1>
     <div class="admin-actions">
@@ -80,7 +81,7 @@
     </div>
 </div>
 
-<div class="list-container">
+
     <form method="post" action="{% url 'administration:voter_bulk_verify' %}" id="bulkVerifyForm">
         {% csrf_token %}
         <div class="bulk-verify-controls">
@@ -172,13 +173,13 @@
                     </tr>
                     {% empty %}
                     <tr id="emptyState">
-                        <td colspan="10" class="no-results-container">
-                            <i class="fas fa-users no-results-icon"></i>
-                            No voters registered yet.
-                            <a href="{% url 'administration:voter_create' %}" class="btn-primary"
-                                style="margin-left: 1rem;">
-                                <i class="fas fa-plus"></i> Add Voter
-                            </a>
+                        <td colspan="5" class="empty-state-container">
+                            <div class="empty-state-content">
+                                <div>
+                                    <h3 class="empty-state-title">No elections found</h3>
+                                    <p class="empty-state-description">Create elections for candidates to run for.</p>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
@@ -193,7 +194,7 @@
             </table>
         </div>
     </div>
-</div>
+
 
 
 
@@ -208,7 +209,7 @@
     <a href="?page={{ page_obj.next_page_number }}" class="btn-primary" style="margin-left: 0.5rem;">Next &raquo;</a>
     {% endif %}
 </div>
-
+</div>
 {% endblock %}
 
 {% block extra_js %}

@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="list-container">
 <div class="admin-header-2">
     <h1 class="admin-title">Candidates</h1>
     <div class="admin-actions">
@@ -34,7 +35,7 @@
         <option value="Pending">Pending</option>
     </select>
 </div>
-<div class="list-container">
+
 <div class="table-container">
     <div class="table-scroll">
         <table class="data-table">
@@ -90,19 +91,11 @@
                 </tr>
                 {% empty %}
                 <tr id="emptyState">
-                    <td colspan="6" class="empty-state-container">
+                    <td colspan="5" class="empty-state-container">
                         <div class="empty-state-content">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-user-tie"></i>
-                            </div>
                             <div>
-                                <h3 class="empty-state-title">
-                                    No candidates found</h3>
-                                <p class="empty-state-description">Get started by registering a new
-                                    candidate for an election.</p>
-                                <a href="{% url 'administration:candidate_create' %}" class="btn-primary">
-                                    <i class="fas fa-plus"></i> Register Candidate
-                                </a>
+                                <h3 class="empty-state-title">No candidates found</h3>
+                                <p class="empty-state-description">Create candidates for elections.</p>
                             </div>
                         </div>
                     </td>

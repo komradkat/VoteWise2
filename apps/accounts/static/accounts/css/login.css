@@ -12,7 +12,9 @@ body {
     align-items: center;
     justify-content: center;
     padding-top: 162.78px;
-    background: linear-gradient(135deg, var(--color-slate-50) 0%, var(--color-slate-200) 100%);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(23, 37, 84, 0.9) 100%),
+              url('/static/core/img/voting-background.png') center/cover no-repeat;
+    position: relative;
 }
 
 .auth-container {
