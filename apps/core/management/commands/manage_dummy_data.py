@@ -8,6 +8,7 @@ from django.db import transaction
 from apps.accounts.models import StudentProfile, ElectionAdmin, YearLevel, Course, Section, AdminType
 from apps.elections.models import Election, Position, Partylist, Candidate, Vote, VoterReceipt, ElectionTimeline
 from apps.administration.models import AuditLog
+from apps.core.models import SystemSettings
 
 class Command(BaseCommand):
     help = 'Populate or clear dummy data for testing'
@@ -47,6 +48,7 @@ class Command(BaseCommand):
             Election.objects.all().delete()
             
             AuditLog.objects.all().delete()
+            SystemSettings.objects.all().delete()
             
             # Delete profiles
             StudentProfile.objects.all().delete()
@@ -360,5 +362,15 @@ class Command(BaseCommand):
                 )
             
             self.stdout.write(f'Created {len(audit_actions)} audit log entries.')
+
+            # 9. Create System Settings
+            SystemSettings.objects.get_or_create(
+                school_name="ACLC College of Tacloban",
+                defaults={
+                    'allow_registration': True,
+                    'maintenance_mode': False
+                }
+            )
+            self.stdout.write('Initialized System Settings.')
             
         self.stdout.write(self.style.SUCCESS('Dummy data population complete!'))

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Candidate Portal - VoteWise{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 120px 1.5rem 60px;">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <h1 style="color: var(--color-navy); margin-bottom: 2rem;">Candidate Portal</h1>
+        <p style="color: var(--color-slate-500); margin-bottom: 2rem;">Resources for aspiring and current candidates.</p>
+
+        <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid var(--color-slate-200);">
+            <div style="text-align: center; padding: 3rem 0;">
+                <i class="fas fa-user-tie" style="font-size: 4rem; color: var(--color-primary); margin-bottom: 1.5rem;"></i>
+                <h3 style="color: var(--color-navy); margin-bottom: 1rem;">Candidate Registration is Currently Closed</h3>
+                <p style="color: var(--color-slate-500); margin-bottom: 2rem; line-height: 1.6;">
+                    The filing period for candidacy has not yet started or has already ended. Please check the election timeline for more details.
+                </p>
+                <a href="{% url 'elections:list' %}" class="btn btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--color-primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 500;">View Election Timeline</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

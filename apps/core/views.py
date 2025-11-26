@@ -71,6 +71,18 @@ def privacy(request):
 def about(request):
     return render(request, 'pages/about.html')
 
+def voter_guide(request):
+    return render(request, 'pages/voter_guide.html')
+
+def faq(request):
+    return render(request, 'pages/faq.html')
+
+def candidate_portal(request):
+    return render(request, 'pages/candidate_portal.html')
+
+def election_rules(request):
+    return render(request, 'pages/election_rules.html')
+
 def health_check(request):
     """
     Health check endpoint for monitoring and load balancers.

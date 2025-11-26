@@ -50,6 +50,11 @@ def vote_view(request, election_id):
         messages.error(request, 'You must have a student profile to vote.')
         return redirect('accounts:profile')
     
+    # Check if student is eligible to vote (Verified)
+    if not student_profile.is_eligible_to_vote:
+        messages.error(request, 'You are not eligible to vote. Please contact the administrator.')
+        return redirect('accounts:profile')
+    
     # Check if election is currently active (time-based)
     now = timezone.now()
     if now < election.start_time:

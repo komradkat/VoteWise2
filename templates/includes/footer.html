@@ -27,8 +27,8 @@
                 <ul>
                     <li><a href="{% url 'elections:list' %}"><i class="fas fa-chevron-right"></i> Elections</a></li>
                     <li><a href="{% url 'results' %}"><i class="fas fa-chevron-right"></i> Results</a></li>
-                    <li><a href="#"><i class="fas fa-chevron-right"></i> Voter Guide</a></li>
-                    <li><a href="#"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                    <li><a href="{% url 'voter_guide' %}"><i class="fas fa-chevron-right"></i> Voter Guide</a></li>
+                    <li><a href="{% url 'faq' %}"><i class="fas fa-chevron-right"></i> FAQ</a></li>
                 </ul>
             </div>
 
@@ -36,8 +36,8 @@
             <div class="footer-section">
                 <h4>Resources</h4>
                 <ul>
-                    <li><a href="#"><i class="fas fa-chevron-right"></i> Candidate Portal</a></li>
-                    <li><a href="#"><i class="fas fa-chevron-right"></i> Election Rules</a></li>
+                    <li><a href="{% url 'candidate_portal' %}"><i class="fas fa-chevron-right"></i> Candidate Portal</a></li>
+                    <li><a href="{% url 'election_rules' %}"><i class="fas fa-chevron-right"></i> Election Rules</a></li>
                     <li><a href="{% url 'privacy' %}"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
                     <li><a href="{% url 'terms' %}"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
                 </ul>

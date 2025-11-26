@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}FAQ - VoteWise{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 120px 1.5rem 60px;">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <h1 style="color: var(--color-navy); margin-bottom: 2rem;">Frequently Asked Questions</h1>
+        <p style="color: var(--color-slate-500); margin-bottom: 2rem;">Common questions about the student election process.</p>
+
+        <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid var(--color-slate-200);">
+            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">When is the election?</h3>
+            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
+                Election dates are announced via official school channels and listed on the <a href="{% url 'elections:list' %}" style="color: var(--color-primary);">Elections</a> page.
+            </p>
+
+            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">Can I change my vote?</h3>
+            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
+                No. Once your ballot is submitted, it is final and cannot be changed. Please review your choices carefully before submitting.
+            </p>
+
+            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">Is my vote anonymous?</h3>
+            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
+                Yes. The system separates your identity from your ballot choices. We know <em>that</em> you voted, but not <em>who</em> you voted for.
+            </p>
+
+            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">What if I can't log in?</h3>
+            <p style="color: var(--color-slate-500); margin-bottom: 0; line-height: 1.6;">
+                If you are having trouble logging in, please contact the IT support desk or visit the Student Affairs office for assistance.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
