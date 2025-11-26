@@ -10,12 +10,19 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-key-change-this-in-pro
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*.ngrok-free.app']
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    '*.ngrok-free.app', 
+    '*.ngrok-free.dev',
+    'postxiphoid-procrastinatingly-tena.ngrok-free.dev',  # Specific ngrok domain
+]
 
 # CSRF trusted origins for development (ngrok, etc.)
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
+    'https://postxiphoid-procrastinatingly-tena.ngrok-free.dev',  # Specific ngrok domain
 ]
 
 # Add ngrok domain if provided

@@ -28,11 +28,11 @@
     <h1>Your Vote Shapes Our Future</h1>
     <p>Secure, transparent, and accessible voting for every student. Cast your ballot from anywhere, anytime.</p>
     <div class="buttons">
-      <a href="#" class="cta-button primary">
+      <a href="{% url 'accounts:login' %}" class="cta-button primary">
         <span>Vote Now</span>
         <i class="fas fa-arrow-right"></i>
       </a>
-      <a href="#results" class="cta-button btn-secondary">View Live Results</a>
+      <a href="{% url 'results' %}" class="cta-button btn-secondary">View Live Results</a>
     </div>
   </div>
 </section>
