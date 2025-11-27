@@ -8,13 +8,29 @@ def home(request):
     return render(request, 'core/home.html')
 
 def results(request):
-    # Get active election or the most recent one
-    election = Election.objects.filter(is_active=True).first()
+    # Get all elections for dropdown
+    all_elections = Election.objects.all().order_by('-start_time')
+    
+    # Determine which election to show
+    election_id = request.GET.get('election_id')
+    election = None
+    
+    if election_id:
+        try:
+            election = Election.objects.get(id=election_id)
+        except Election.DoesNotExist:
+            pass
+            
     if not election:
-        election = Election.objects.order_by('-end_time').first()
+        # Default to active election or most recent one
+        election = Election.objects.filter(is_active=True).first()
+        if not election:
+            election = Election.objects.order_by('-end_time').first()
     
     context = {
         'election': election,
+        'all_elections': all_elections,
+        'selected_election_id': election.id if election else None,
         'total_ballots': 0,
         'positions_data': []
     }

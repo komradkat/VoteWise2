@@ -85,6 +85,7 @@ class Command(BaseCommand):
             partylists_data = [
                 {'name': 'Visionary Alliance', 'code': 'VISA', 'platform': 'Innovation and Progress'},
                 {'name': 'United Student Action', 'code': 'USA', 'platform': 'Unity and Service'},
+                {'name': 'Future Leaders', 'code': 'FUT', 'platform': 'Empowering Tomorrow'},
             ]
             partylists = []
             for pl in partylists_data:
@@ -95,35 +96,56 @@ class Command(BaseCommand):
                 partylists.append(p)
             self.stdout.write(f'Created {len(partylists)} partylists.')
 
-            # 3. Create Elections
-            # Active Election
-            active_election = Election.objects.create(
+            # 3. Create Elections (3 Active, 1 Past)
+            active_elections = []
+            
+            # Active 1: Main Student Council
+            e1 = Election.objects.create(
                 name=f"Student Council Election {timezone.now().year}",
                 start_time=timezone.now() - timedelta(days=1),
                 end_time=timezone.now() + timedelta(days=2),
                 is_active=True
             )
+            active_elections.append(e1)
             
-            # Create Timeline Events for Active Election
+            # Active 2: Special Election
+            e2 = Election.objects.create(
+                name=f"Special Election {timezone.now().year}",
+                start_time=timezone.now() - timedelta(hours=12),
+                end_time=timezone.now() + timedelta(days=5),
+                is_active=True
+            )
+            active_elections.append(e2)
+            
+            # Active 3: Club Officers
+            e3 = Election.objects.create(
+                name=f"Club Officers Election {timezone.now().year}",
+                start_time=timezone.now() - timedelta(days=2),
+                end_time=timezone.now() + timedelta(days=1),
+                is_active=True
+            )
+            active_elections.append(e3)
+
+            # Create Timeline Events for Main Election
             timeline_events = [
                 {
                     'title': 'Filing of Candidacy',
-                    'start_time': active_election.start_time - timedelta(days=14),
-                    'end_time': active_election.start_time - timedelta(days=7),
+                    'start_time': e1.start_time - timedelta(days=14),
+                    'end_time': e1.start_time - timedelta(days=7),
                     'description': 'Period for students to file their certificates of candidacy.',
                     'order': 1
                 },
                 {
                     'title': 'Campaign Period',
-                    'start_time': active_election.start_time - timedelta(days=6),
-                    'end_time': active_election.start_time - timedelta(days=1),
+                    'start_time': e1.start_time - timedelta(days=6),
+                    'end_time': e1.start_time - timedelta(days=1),
                     'description': 'Official campaign period for approved candidates.',
                     'order': 2
                 },
                 {
                     'title': 'Voting Period',
-                    'start_time': active_election.start_time,
-                    'end_time': active_election.end_time,
+                    'start_time': e1.start_time,
+                    'end_time': e1.end_time,
                     'description': 'Election day voting.',
                     'order': 3
                 }
@@ -131,7 +153,7 @@ class Command(BaseCommand):
             
             for event in timeline_events:
                 ElectionTimeline.objects.create(
-                    election=active_election,
+                    election=e1,
                     title=event['title'],
                     start_time=event['start_time'],
                     end_time=event['end_time'],
@@ -146,18 +168,22 @@ class Command(BaseCommand):
                 end_time=timezone.now() - timedelta(days=364),
                 is_active=False
             )
-            self.stdout.write('Created 2 elections (1 Active with Timeline, 1 Past).')
+            self.stdout.write('Created 4 elections (3 Active, 1 Past).')
 
-            # 4. Create Users & Students
-            first_names = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Charles', 'Mary', 'Patricia', 'Jennifer', 'Linda', 'Elizabeth', 'Barbara', 'Susan', 'Jessica', 'Sarah', 'Karen']
-            last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin']
+            # 4. Create Users & Students (100 voters)
+            first_names = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Charles', 'Mary', 'Patricia', 'Jennifer', 'Linda', 'Elizabeth', 'Barbara', 'Susan', 'Jessica', 'Sarah', 'Karen', 'Lisa', 'Nancy', 'Betty', 'Helen', 'Sandra', 'Donna', 'Carol', 'Ruth', 'Sharon', 'Michelle']
+            last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson']
             
             students = []
-            for i in range(50):
+            for i in range(100):
                 first = random.choice(first_names)
                 last = random.choice(last_names)
                 username = f"{first.lower()}{last.lower()}{i}"
                 student_id = f"2025-{1000+i}"
+                
+                # Ensure unique username
+                if User.objects.filter(username=username).exists():
+                    username = f"{username}_{i}"
                 
                 user = User.objects.create_user(username=username, password='password123', first_name=first, last_name=last, email=f"{username}@example.com")
                 
@@ -181,172 +207,136 @@ class Command(BaseCommand):
             ]
             
             for admin_data in admin_users_data:
-                admin_user = User.objects.create_user(
-                    username=admin_data['username'],
-                    password='password123',
-                    first_name=admin_data['first'],
-                    last_name=admin_data['last'],
-                    email=f"{admin_data['username']}@example.com",
-                    is_staff=True
-                )
-                ElectionAdmin.objects.create(
-                    user=admin_user,
-                    admin_type=admin_data['type'],
-                    employee_id=admin_data['emp_id'],
-                    is_active=True
-                )
+                if not User.objects.filter(username=admin_data['username']).exists():
+                    admin_user = User.objects.create_user(
+                        username=admin_data['username'],
+                        password='password123',
+                        first_name=admin_data['first'],
+                        last_name=admin_data['last'],
+                        email=f"{admin_data['username']}@example.com",
+                        is_staff=True
+                    )
+                    ElectionAdmin.objects.create(
+                        user=admin_user,
+                        admin_type=admin_data['type'],
+                        employee_id=admin_data['emp_id'],
+                        is_active=True
+                    )
             
-            self.stdout.write(f'Created {len(admin_users_data)} Election Admins (all with password: password123).')
+            self.stdout.write(f'Created Election Admins (all with password: password123).')
 
 
-            # 6. Create Candidates for Active Election
-            # Pick 2 candidates per position (except Senator, pick 10)
-            candidates_pool = students[:20] # First 20 students are candidates
-            remaining_students = students[20:] # Rest are voters
+            # 6. Create Candidates for Active Elections
+            # We need at least 20 candidates total. Let's distribute them.
+            # E1: 20 candidates (Full slate)
+            # E2: 10 candidates
+            # E3: 10 candidates
+            
+            candidates_pool = students[:50] # Use first 50 students as candidate pool
+            remaining_students = students[50:] # Rest are voters
             
             cand_idx = 0
             
-            # President
-            for pl in partylists:
-                if cand_idx < len(candidates_pool):
-                    Candidate.objects.create(
-                        student_profile=candidates_pool[cand_idx],
-                        position=positions['President'],
-                        election=active_election,
-                        partylist=pl,
-                        is_approved=True,
-                        biography="I will serve with integrity."
-                    )
-                    cand_idx += 1
+            for election in active_elections:
+                self.stdout.write(f'Registering candidates for {election.name}...')
+                
+                # For each position, register candidates
+                # President (2 candidates)
+                for _ in range(2):
+                    if cand_idx < len(candidates_pool):
+                        Candidate.objects.create(
+                            student_profile=candidates_pool[cand_idx],
+                            position=positions['President'],
+                            election=election,
+                            partylist=random.choice(partylists),
+                            is_approved=True,
+                            biography="I will serve with integrity."
+                        )
+                        cand_idx += 1
+                
+                # VP (2 candidates)
+                for _ in range(2):
+                    if cand_idx < len(candidates_pool):
+                        Candidate.objects.create(
+                            student_profile=candidates_pool[cand_idx],
+                            position=positions['Vice President'],
+                            election=election,
+                            partylist=random.choice(partylists),
+                            is_approved=True,
+                            biography="Vote for progress."
+                        )
+                        cand_idx += 1
+                
+                # Senators (6 candidates)
+                for _ in range(6):
+                    if cand_idx < len(candidates_pool):
+                        Candidate.objects.create(
+                            student_profile=candidates_pool[cand_idx],
+                            position=positions['Senator'],
+                            election=election,
+                            partylist=random.choice(partylists),
+                            is_approved=True,
+                            biography="Voice of the students."
+                        )
+                        cand_idx += 1
+                
+                # Reset index if we run out (allow students to run in multiple elections if needed, though typically not allowed, but for dummy data it's fine)
+                if cand_idx >= len(candidates_pool):
+                    cand_idx = 0
             
-            # VP
-            for pl in partylists:
-                if cand_idx < len(candidates_pool):
-                    Candidate.objects.create(
-                        student_profile=candidates_pool[cand_idx],
-                        position=positions['Vice President'],
-                        election=active_election,
-                        partylist=pl,
-                        is_approved=True,
-                        biography="Vote for progress."
-                    )
-                    cand_idx += 1
-            
-            # Secretary
-            for pl in partylists:
-                if cand_idx < len(candidates_pool):
-                    Candidate.objects.create(
-                        student_profile=candidates_pool[cand_idx],
-                        position=positions['Secretary'],
-                        election=active_election,
-                        partylist=pl,
-                        is_approved=True,
-                        biography="Organized and reliable."
-                    )
-                    cand_idx += 1
-            
-            # Treasurer
-            for pl in partylists:
-                if cand_idx < len(candidates_pool):
-                    Candidate.objects.create(
-                        student_profile=candidates_pool[cand_idx],
-                        position=positions['Treasurer'],
-                        election=active_election,
-                        partylist=pl,
-                        is_approved=True,
-                        biography="Responsible with finances."
-                    )
-                    cand_idx += 1
-            
-            # Auditor
-            for pl in partylists:
-                if cand_idx < len(candidates_pool):
-                    Candidate.objects.create(
-                        student_profile=candidates_pool[cand_idx],
-                        position=positions['Auditor'],
-                        election=active_election,
-                        partylist=pl,
-                        is_approved=True,
-                        biography="Ensuring transparency."
-                    )
-                    cand_idx += 1
-            
-            # Senators (Random mix)
-            for _ in range(8):
-                if cand_idx < len(candidates_pool):
-                    Candidate.objects.create(
-                        student_profile=candidates_pool[cand_idx],
-                        position=positions['Senator'],
-                        election=active_election,
-                        partylist=random.choice(partylists),
-                        is_approved=True,
-                        biography="Voice of the students."
-                    )
-                    cand_idx += 1
-            
-            self.stdout.write('Registered candidates for the active election.')
+            self.stdout.write('Registered candidates for all active elections.')
 
             # 7. Simulate Voting
-            # Have 20 students cast votes
-            all_candidates = list(Candidate.objects.filter(election=active_election))
+            # Have 40 students cast votes in each election
             
-            for voter in remaining_students[:20]:
-                # Pick 1 for each position: President, VP, Secretary, Treasurer, Auditor, and 3 Senators
-                choices = []
+            for election in active_elections:
+                self.stdout.write(f'Simulating voting for {election.name}...')
+                election_candidates = list(Candidate.objects.filter(election=election))
                 
-                # President
-                pres_cands = [c for c in all_candidates if c.position.name == 'President']
-                if pres_cands:
-                    choices.append(random.choice(pres_cands))
-                
-                # VP
-                vp_cands = [c for c in all_candidates if c.position.name == 'Vice President']
-                if vp_cands:
-                    choices.append(random.choice(vp_cands))
-                
-                # Secretary
-                sec_cands = [c for c in all_candidates if c.position.name == 'Secretary']
-                if sec_cands:
-                    choices.append(random.choice(sec_cands))
-                
-                # Treasurer
-                treas_cands = [c for c in all_candidates if c.position.name == 'Treasurer']
-                if treas_cands:
-                    choices.append(random.choice(treas_cands))
-                
-                # Auditor
-                aud_cands = [c for c in all_candidates if c.position.name == 'Auditor']
-                if aud_cands:
-                    choices.append(random.choice(aud_cands))
-                
-                # Senators
-                sen_cands = [c for c in all_candidates if c.position.name == 'Senator']
-                if len(sen_cands) >= 3:
-                    choices.extend(random.sample(sen_cands, 3))
-                
-                # Cast Votes
-                for choice in choices:
-                    Vote.objects.create(
-                        election=active_election,
-                        candidate=choice,
-                        position=choice.position,
-                        ballot_id=uuid.uuid4() # Just for linking if needed
+                for voter in remaining_students[:40]:
+                    choices = []
+                    
+                    # Pick 1 for President
+                    pres_cands = [c for c in election_candidates if c.position.name == 'President']
+                    if pres_cands:
+                        choices.append(random.choice(pres_cands))
+                    
+                    # Pick 1 for VP
+                    vp_cands = [c for c in election_candidates if c.position.name == 'Vice President']
+                    if vp_cands:
+                        choices.append(random.choice(vp_cands))
+                    
+                    # Pick 3 Senators
+                    sen_cands = [c for c in election_candidates if c.position.name == 'Senator']
+                    if len(sen_cands) >= 3:
+                        choices.extend(random.sample(sen_cands, 3))
+                    elif sen_cands:
+                        choices.extend(sen_cands)
+                    
+                    # Cast Votes
+                    ballot_id = uuid.uuid4()
+                    for choice in choices:
+                        Vote.objects.create(
+                            election=election,
+                            candidate=choice,
+                            position=choice.position,
+                            ballot_id=ballot_id
+                        )
+                    
+                    # Create Receipt
+                    VoterReceipt.objects.create(
+                        voter=voter,
+                        election=election,
+                        ballot_id=ballot_id,
+                        encrypted_choices=f"Encrypted data for {len(choices)} votes"
                     )
                 
-                # Create Receipt
-                VoterReceipt.objects.create(
-                    voter=voter,
-                    election=active_election,
-                    ballot_id=uuid.uuid4(),
-                    encrypted_choices=f"Encrypted data for {len(choices)} votes"
-                )
-                
-            self.stdout.write('Simulated voting for 20 students.')
+            self.stdout.write('Simulated voting for 40 students in each election.')
             
             # 8. Create Audit Logs
             admin_user = User.objects.get(username='admin_staff')
             audit_actions = [
-                {'action': 'ELECTION_CREATED', 'details': f'Created election: {active_election.name}'},
+                {'action': 'ELECTION_CREATED', 'details': f'Created election: {e1.name}'},
                 {'action': 'CANDIDATE_APPROVED', 'details': 'Approved multiple candidates for election'},
                 {'action': 'VOTER_VERIFIED', 'details': 'Verified student voter registrations'},
                 {'action': 'SYSTEM_LOGIN', 'details': 'Admin logged into system'},
