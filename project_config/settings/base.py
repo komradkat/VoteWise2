@@ -27,10 +27,12 @@ INSTALLED_APPS = [
     'apps.elections',
     'apps.administration',
     'apps.chatbot',
+    'apps.biometrics',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Enable static file caching
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -38,6 +40,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# WhiteNoise configuration for static file caching
+WHITENOISE_MAX_AGE = 31536000  # 1 year cache for static files
 
 ROOT_URLCONF = 'project_config.urls'
 

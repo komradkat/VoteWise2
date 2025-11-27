@@ -5,7 +5,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'accounts/css/register.css' %}" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block content %}
@@ -201,6 +201,26 @@
                             <span class="error">{{ form.section.errors.0 }}</span>
                             {% endif %}
                         </div>
+                        
+                        <!-- Face ID Enrollment -->
+                        <div class="form-group field-full" style="margin-top: 1rem; border-top: 1px solid #eee; padding-top: 1rem;">
+                            <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                <input type="checkbox" id="enrollFaceCheckbox" onchange="toggleCamera()">
+                                <span style="font-weight: 600;">Enable Face ID Login (Optional)</span>
+                            </label>
+                            
+                            <div id="cameraSection" style="display: none; margin-top: 1rem; text-align: center;">
+                                <div style="position: relative; width: 100%; max-width: 320px; margin: 0 auto;">
+                                    <video id="regVideo" width="100%" autoplay style="border-radius: 8px; background: #000;"></video>
+                                    <canvas id="regCanvas" style="display: none;"></canvas>
+                                </div>
+                                <button type="button" id="captureBtn" class="btn-nav" style="background: var(--color-blue); color: white; margin-top: 0.5rem;" onclick="captureFace()">
+                                    <i class="fas fa-camera"></i> Capture Face
+                                </button>
+                                <p id="captureStatus" style="font-size: 0.9rem; margin-top: 0.5rem; color: var(--color-slate-500);"></p>
+                                <input type="hidden" name="face_image" id="faceImageInput">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-navigation">
@@ -267,5 +287,55 @@
 
     // Initialize
     updateProgress();
+    
+    // Camera Handling
+    let regStream = null;
+    
+    async function toggleCamera() {
+        const checkbox = document.getElementById('enrollFaceCheckbox');
+        const cameraSection = document.getElementById('cameraSection');
+        const video = document.getElementById('regVideo');
+        
+        if (checkbox.checked) {
+            cameraSection.style.display = 'block';
+            try {
+                regStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = regStream;
+            } catch (err) {
+                console.error("Error:", err);
+                alert("Could not access camera. Face ID will be disabled.");
+                checkbox.checked = false;
+                cameraSection.style.display = 'none';
+            }
+        } else {
+            cameraSection.style.display = 'none';
+            if (regStream) {
+                regStream.getTracks().forEach(track => track.stop());
+                regStream = null;
+            }
+            document.getElementById('faceImageInput').value = '';
+            document.getElementById('captureStatus').textContent = '';
+        }
+    }
+    
+    function captureFace() {
+        const video = document.getElementById('regVideo');
+        const canvas = document.getElementById('regCanvas');
+        const input = document.getElementById('faceImageInput');
+        const status = document.getElementById('captureStatus');
+        
+        if (!regStream) return;
+        
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const imageData = canvas.toDataURL('image/jpeg');
+        input.value = imageData;
+        
+        status.textContent = "Face captured! You can proceed.";
+        status.style.color = "green";
+    }
 </script>
 {% endblock %}

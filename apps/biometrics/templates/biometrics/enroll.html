@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Setup Face ID - VoteWise{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 4rem auto; text-align: center;">
+    <h1>Setup Face ID</h1>
+    <p style="color: var(--color-slate-500); margin-bottom: 2rem;">
+        Enable facial recognition for faster and more secure login.
+        Your face data is stored securely and used only for authentication.
+    </p>
+    
+    <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+        <div id="cameraContainer">
+            <video id="video" width="100%" height="auto" autoplay style="border-radius: 8px; background: #000;"></video>
+            <canvas id="canvas" style="display: none;"></canvas>
+        </div>
+        
+        <div id="controls" style="margin-top: 1.5rem;">
+            <button id="startBtn" class="cta-button" style="background: var(--color-blue); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">
+                Start Camera
+            </button>
+            <button id="captureBtn" class="cta-button" style="display: none; background: var(--color-green); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer;">
+                Capture & Enroll
+            </button>
+        </div>
+        
+        <p id="status" style="margin-top: 1rem; font-weight: 500;"></p>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const startBtn = document.getElementById('startBtn');
+    const captureBtn = document.getElementById('captureBtn');
+    const status = document.getElementById('status');
+    let stream = null;
+
+    startBtn.addEventListener('click', async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            startBtn.style.display = 'none';
+            captureBtn.style.display = 'inline-block';
+            status.textContent = "Position your face clearly in the frame.";
+        } catch (err) {
+            console.error("Error:", err);
+            status.textContent = "Could not access camera. Please allow permissions.";
+            status.style.color = "red";
+        }
+    });
+
+    captureBtn.addEventListener('click', () => {
+        status.textContent = "Processing...";
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const imageData = canvas.toDataURL('image/jpeg');
+        
+        fetch('/biometrics/enroll/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ image: imageData })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                status.textContent = "Face enrolled successfully!";
+                status.style.color = "green";
+                captureBtn.disabled = true;
+                
+                // Stop camera
+                stream.getTracks().forEach(track => track.stop());
+                
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                status.textContent = "Error: " + data.error;
+                status.style.color = "red";
+            }
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            status.textContent = "Network error occurred.";
+            status.style.color = "red";
+        });
+    });
+</script>
+{% endblock %}

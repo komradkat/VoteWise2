@@ -27,7 +27,11 @@ urlpatterns = [
     path('administration/', include('apps.administration.urls')),
     
     # Chatbot URLs
+    # Chatbot URLs
     path('chatbot/', include('apps.chatbot.urls')),
+    
+    # Biometrics URLs
+    path('biometrics/', include('apps.biometrics.urls')),
 ]
 
 # Serve static and media files in development
