@@ -14,7 +14,8 @@ Login - VoteWise
 <section class="auth-hero">
   <div class="auth-container">
     <div class="auth-card">
-      <!-- Left Side: Branding & Welcome -->
+      
+      <!-- Left Side -->
       <div class="auth-left">
         <div class="auth-branding">
           <img src="{% static 'img/logo.png' %}" alt="VoteWise Logo" class="auth-logo">
@@ -39,7 +40,7 @@ Login - VoteWise
         </div>
       </div>
 
-      <!-- Right Side: Login Form -->
+      <!-- Right Side -->
       <div class="auth-right">
         <div class="auth-form-container">
           <div class="auth-header">
@@ -50,7 +51,7 @@ Login - VoteWise
           <form method="post" class="auth-form">
             {% csrf_token %}
 
-            {# Student ID or Email Input #}
+            <!-- Username -->
             <div class="form-group">
               <label for="id_username">Student ID or Email</label>
               <div class="input-wrapper">
@@ -58,22 +59,22 @@ Login - VoteWise
                 {{ form.username }}
               </div>
               {% if form.username.errors %}
-              <p class="error">{{ form.username.errors.0 }}</p>
+                <p class="error">{{ form.username.errors.0 }}</p>
               {% endif %}
             </div>
 
-            {# Password Input #}
+            <!-- Password -->
             <div class="form-group">
               <label for="id_password">Password</label>
               <div class="input-wrapper">
                 <i class="fas fa-lock input-icon"></i>
                 {{ form.password }}
                 <button type="button" class="toggle-password" aria-label="Toggle Password Visibility">
-                  <i class="fas fa-eye"></i>
+                  <i class="fas fa-eye" id="password-eye-icon"></i>
                 </button>
               </div>
               {% if form.password.errors %}
-              <p class="error">{{ form.password.errors.0 }}</p>
+                <p class="error">{{ form.password.errors.0 }}</p>
               {% endif %}
             </div>
 
@@ -101,12 +102,13 @@ Login - VoteWise
               <span>Election Admin Login</span>
               <i class="fas fa-arrow-right"></i>
             </a>
-            <div class="admin-login-divider">
-            </div>
-            <p>New to VoteWise? <a href="{% url 'accounts:register' %}" class="signup-link">Create Account</a></p>>
+            <div class="admin-login-divider"></div>
+            <p>New to VoteWise? <a href="{% url 'accounts:register' %}" class="signup-link">Create Account</a></p>
           </div>
+
         </div>
       </div>
+
     </div>
   </div>
 </section>

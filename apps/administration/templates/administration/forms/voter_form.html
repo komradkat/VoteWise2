@@ -8,27 +8,153 @@
 
 {% block content %}
 <div class="form-container">
-    <h2 class="admin-title">{{ title }}</h2>
+    <div class="admin-header-2">
+        <h2 class="admin-title" style="border-bottom: none; margin-bottom: 0;">{{ title }}</h2>
+    </div>
+
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% for field in form %}
-        <div class="form-field">
-            {{ field.label_tag }}
-            {{ field }}
-            {% if field.errors %}
-            <div class="errorlist">{{ field.errors.0 }}</div>
-            {% endif %}
-            {% if field.help_text %}
-            <div class="helptext">{{ field.help_text }}</div>
-            {% endif %}
+        
+        <div class="form-section">
+            <h3 class="section-title">Personal Information</h3>
+            
+            <!-- Name Row -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                        <i class="fas fa-user" style="color: var(--admin-accent); margin-right: 8px;"></i>
+                        {{ form.first_name.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                    <div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                        <i class="fas fa-user" style="color: var(--admin-accent); margin-right: 8px;"></i>
+                        {{ form.last_name.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                    <div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}" class="form-label">
+                    <i class="fas fa-envelope" style="color: var(--admin-accent); margin-right: 8px;"></i>
+                    {{ form.email.label }} <span class="required">*</span>
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                {% endif %}
+            </div>
         </div>
-        {% endfor %}
-        <button type="submit" class="btn-primary">
-            <i class="fas fa-save"></i> Save Voter
-        </button>
-        <a href="{% url 'administration:voters' %}" class="btn-primary" style="background:#6b7280;margin-left:0.5rem;">
-            <i class="fas fa-times"></i> Cancel
-        </a>
+
+        <div class="form-section">
+            <h3 class="section-title">Account Details</h3>
+            
+            <!-- Student ID -->
+            <div class="form-group">
+                <label for="{{ form.student_id.id_for_label }}" class="form-label">
+                    <i class="fas fa-id-card" style="color: var(--admin-accent); margin-right: 8px;"></i>
+                    {{ form.student_id.label }} <span class="required">*</span>
+                </label>
+                {{ form.student_id }}
+                {% if form.student_id.errors %}
+                <div class="invalid-feedback d-block">{{ form.student_id.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}" class="form-label">
+                    <i class="fas fa-lock" style="color: var(--admin-accent); margin-right: 8px;"></i>
+                    {{ form.password.label }}
+                    {% if form.password.field.required %}<span class="required">*</span>{% endif %}
+                </label>
+                {{ form.password }}
+                {% if form.password.help_text %}
+                <small class="form-text text-muted">{{ form.password.help_text }}</small>
+                {% endif %}
+                {% if form.password.errors %}
+                <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title">Academic Information</h3>
+            
+            <!-- Academic Row -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.course.id_for_label }}" class="form-label">
+                        <i class="fas fa-graduation-cap" style="color: var(--admin-accent); margin-right: 8px;"></i>
+                        {{ form.course.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.course }}
+                    {% if form.course.errors %}
+                    <div class="invalid-feedback d-block">{{ form.course.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.year_level.id_for_label }}" class="form-label">
+                        <i class="fas fa-layer-group" style="color: var(--admin-accent); margin-right: 8px;"></i>
+                        {{ form.year_level.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.year_level }}
+                    {% if form.year_level.errors %}
+                    <div class="invalid-feedback d-block">{{ form.year_level.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.section.id_for_label }}" class="form-label">
+                        <i class="fas fa-users-class" style="color: var(--admin-accent); margin-right: 8px;"></i>
+                        {{ form.section.label }}
+                    </label>
+                    {{ form.section }}
+                    {% if form.section.errors %}
+                    <div class="invalid-feedback d-block">{{ form.section.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 class="section-title">Status</h3>
+            
+            <!-- Eligibility Status -->
+            <div class="form-group2">
+                <div class="form-check">
+                    {{ form.is_eligible_to_vote }}
+                    <label for="{{ form.is_eligible_to_vote.id_for_label }}" class="form-check-label">
+                        {{ form.is_eligible_to_vote.label }}
+                    </label>
+                </div>
+                <div class="form-text">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i> Determines if the student can participate in elections.
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-save"></i> Save Voter
+            </button>
+            <a href="{% url 'administration:voters' %}" class="btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
     </form>
 </div>
 {% endblock %}

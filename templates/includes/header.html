@@ -62,7 +62,7 @@
                 <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active-link{% endif %}">Home</a></li>
                 <li><a href="{% url 'results' %}"
                         class="{% if 'results' in request.path %}active-link{% endif %}">Results</a></li>
-                <li><a href="#timeline" class="{% if 'timeline' in request.path %}active-link{% endif %}">Timeline</a>
+                <li><a href="{% url 'elections:timeline' %}" class="{% if 'timeline' in request.path %}active-link{% endif %}">Timeline</a>
                 </li>
                 <li><a href="{% url 'about' %}"
                         class="{% if request.path == '/about/' %}active-link{% endif %}">About</a></li>

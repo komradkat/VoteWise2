@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Election Timeline - VoteWise{% endblock %}
+
+{% block css %}
+<style>
+    .timeline-section {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(23, 37, 84, 0.9) 100%),
+              url('/static/core/img/voting-background.png') center/cover no-repeat;
+    position: relative;
+        min-height: 80vh;
+    }
+
+    .timeline-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        animation: fadeInDown 0.8s ease-out;
+        color: white;
+    }
+
+    .page-header h1 {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+
+    .page-header p {
+        color: var(--text-muted);
+        font-size: 1.25rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Election Group Styles */
+    .election-group {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2.5rem;
+        margin-bottom: 4rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        border: 1px solid rgba(0,0,0,0.05);
+        animation: fadeInUp 0.8s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    .election-group:nth-child(1) { animation-delay: 0.2s; }
+    .election-group:nth-child(2) { animation-delay: 0.4s; }
+
+    .election-header {
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 1.5rem;
+        margin-bottom: 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .election-title {
+        font-size: 1.75rem;
+        color: var(--text-dark);
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .election-title i {
+        color: var(--primary-color);
+    }
+
+    .election-status {
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .status-active {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+
+    .status-pending {
+        background-color: #fff7ed;
+        color: #9a3412;
+    }
+
+    /* Timeline Styles */
+    .timeline {
+        position: relative;
+        padding-left: 3rem;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 1rem;
+        bottom: 0;
+        width: 3px;
+        background: #e2e8f0;
+        border-radius: 1.5px;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 3rem;
+    }
+
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: -3.9rem;
+        top: 0;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid var(--primary-color);
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        font-size: 0.875rem;
+        box-shadow: 0 0 0 4px #f8fafc;
+        transition: all 0.3s ease;
+    }
+    
+    .timeline-item:hover .timeline-marker {
+        transform: scale(1.1);
+        background: var(--primary-color);
+        color: white;
+        box-shadow: 0 0 0 6px #e0f2fe;
+    }
+
+    .timeline-content {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .timeline-content:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary-light);
+    }
+    
+    .timeline-content::before {
+        content: '';
+        position: absolute;
+        left: -0.5rem;
+        top: 1rem;
+        width: 1rem;
+        height: 1rem;
+        background: white;
+        border-left: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+        transform: rotate(45deg);
+        transition: border-color 0.3s ease;
+    }
+    
+    .timeline-content:hover::before {
+        border-color: var(--primary-light);
+    }
+
+    .timeline-date {
+        font-size: 0.875rem;
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .timeline-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .timeline-desc {
+        color: var(--text-muted);
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: white;
+        border-radius: 1.5rem;
+        color: var(--text-muted);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 640px) {
+        .election-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .timeline {
+            padding-left: 2rem;
+        }
+        
+        .timeline-marker {
+            left: -2.9rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            font-size: 0.7rem;
+        }
+        
+        .timeline::before {
+            left: -0.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="timeline-section">
+    <div class="timeline-container">
+        <div class="page-header">
+            <h1>Election Schedule</h1>
+            <p>Stay updated with upcoming election events and deadlines</p>
+        </div>
+
+        {% if elections %}
+            {% for election in elections %}
+            <div class="election-group">
+                <div class="election-header">
+                    <h2 class="election-title">
+                        <i class="fas fa-vote-yea"></i>
+                        {{ election.name }}
+                    </h2>
+                    <span class="election-status status-{{ election.status|lower }}">
+                        {{ election.status }}
+                    </span>
+                </div>
+
+                <div class="timeline">
+                    {% for event in election.timeline_events.all %}
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <span class="timeline-date">
+                                <i class="far fa-calendar-alt me-1"></i>
+                                {{ event.start_time|date:"M d, Y g:i A" }} - {{ event.end_time|date:"M d, Y g:i A" }}
+                            </span>
+                            <h3 class="timeline-title">
+                                {% if "Filing" in event.title %}
+                                    <i class="fas fa-file-signature text-primary"></i>
+                                {% elif "Campaign" in event.title %}
+                                    <i class="fas fa-bullhorn text-warning"></i>
+                                {% elif "Voting" in event.title %}
+                                    <i class="fas fa-box-open text-success"></i>
+                                {% else %}
+                                    <i class="fas fa-calendar-day text-info"></i>
+                                {% endif %}
+                                {{ event.title }}
+                            </h3>
+                            {% if event.description %}
+                            <p class="timeline-desc">{{ event.description }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No timeline events scheduled yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-calendar-times fa-4x mb-4 text-muted"></i>
+                <h3>No Upcoming Elections</h3>
+                <p>There are currently no active or upcoming elections scheduled.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

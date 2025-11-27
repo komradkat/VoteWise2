@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login as auth_login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
+from django.views.decorators.http import require_http_methods
 from apps.elections.models import Election, Position, Partylist, Candidate, Vote
 from django.core.paginator import Paginator
 from apps.accounts.models import StudentProfile
@@ -568,6 +569,29 @@ def administrator_toggle_status(request, pk):
     messages.success(request, f'Administrator {admin.user.get_full_name()} has been {status}.')
     
     return redirect('administration:administrators')
+
+
+
+@user_passes_test(is_admin, login_url='administration:login')
+@require_http_methods(["GET"])
+def get_student_profile_data(request, pk):
+    """API endpoint to get student profile data for auto-filling admin form"""
+    from django.http import JsonResponse
+    from apps.accounts.models import StudentProfile
+    
+    try:
+        student = get_object_or_404(StudentProfile, pk=pk)
+        data = {
+            'success': True,
+            'student_id': student.student_id,
+            'first_name': student.user.first_name,
+            'last_name': student.user.last_name,
+            'email': student.user.email,
+        }
+        return JsonResponse(data)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
 
 
 # ----------------------------------------------------------------------

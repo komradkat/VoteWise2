@@ -1,7 +1,42 @@
 /* Voter Form Specific Styles */
 
-/* This file contains styles specific to the voter registration/edit form */
-/* Shared form styles are in admin_forms.css */
+/* Header Title Override */
+.admin-header-2 .admin-title {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* Form Icons */
+.form-label i {
+    color: var(--admin-accent);
+    margin-right: 8px;
+}
+
+/* Status Group (Matches Election/Candidate Form) */
+.form-group2 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    background-color: var(--admin-slate-50);
+    border: 1px solid var(--admin-slate-200);
+    border-radius: 8px;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.form-text {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
 
 /* Student ID field styling */
 .form-field input[name="student_id"] {

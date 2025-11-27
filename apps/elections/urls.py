@@ -9,4 +9,7 @@ urlpatterns = [
     
     # Voting
     path('<int:election_id>/vote/', views.vote_view, name='vote'),
+    
+    # Timeline
+    path('timeline/', views.timeline_view, name='timeline'),
 ]

@@ -7,18 +7,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="admin-header-2">
-    <h1 class="admin-title">
-        {% if is_edit %}Edit Administrator{% else %}Add Administrator{% endif %}
-    </h1>
-    <div class="admin-actions">
-        <a href="{% url 'administration:administrators' %}" class="btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to List
-        </a>
-    </div>
-</div>
-
 <div class="form-container">
+    <div class="admin-header-2">
+        <h2 class="admin-title">{{ title }}</h2>
+    </div>
+
     <form method="post" class="admin-form">
         {% csrf_token %}
         
@@ -29,73 +22,122 @@
         {% endif %}
         
         <div class="form-section">
-            <h3 class="section-title">User Account Information</h3>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.username.id_for_label }}">Username *</label>
-                    {{ form.username }}
-                    {% if form.username.errors %}
-                    <div class="error-message">{{ form.username.errors }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}">Email Address *</label>
-                    {{ form.email }}
-                    {% if form.email.errors %}
-                    <div class="error-message">{{ form.email.errors }}</div>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.first_name.id_for_label }}">First Name *</label>
-                    {{ form.first_name }}
-                    {% if form.first_name.errors %}
-                    <div class="error-message">{{ form.first_name.errors }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.last_name.id_for_label }}">Last Name *</label>
-                    {{ form.last_name }}
-                    {% if form.last_name.errors %}
-                    <div class="error-message">{{ form.last_name.errors }}</div>
-                    {% endif %}
-                </div>
-            </div>
+            <h3 class="section-title">Administrator Type</h3>
             
             <div class="form-group">
-                <label for="{{ form.password.id_for_label }}">
-                    Password {% if not is_edit %}*{% endif %}
+                <label for="{{ form.admin_type.id_for_label }}" class="form-label">
+                    <i class="fas fa-user-shield"></i>
+                    {{ form.admin_type.label }} <span class="required">*</span>
                 </label>
-                {{ form.password }}
-                {% if form.password.errors %}
-                <div class="error-message">{{ form.password.errors }}</div>
+                {{ form.admin_type }}
+                {% if form.admin_type.errors %}
+                <div class="error-message">{{ form.admin_type.errors.0 }}</div>
                 {% endif %}
-                <small class="form-text">{{ form.password.help_text }}</small>
+            </div>
+
+            <!-- Student Profile Selection (shown only for Student admin type) -->
+            <div class="form-group" id="student-profile-group">
+                <label for="{{ form.student_profile.id_for_label }}" class="form-label">
+                    <i class="fas fa-user-graduate"></i>
+                    {{ form.student_profile.label }}
+                </label>
+                
+                <div class="search-box">
+                    <input type="text" id="studentSearch" class="form-control" placeholder="Type to search by name or ID..." autocomplete="off">
+                </div>
+                
+                {{ form.student_profile }}
+                {% if form.student_profile.errors %}
+                <div class="error-message">{{ form.student_profile.errors.0 }}</div>
+                {% endif %}
+                <small class="form-text">{{ form.student_profile.help_text }}</small>
+            </div>
+
+            <!-- Employee ID (shown only for Employee/Instructor admin type) -->
+            <div class="form-group" id="employee-id-group">
+                <label for="{{ form.employee_id.id_for_label }}" class="form-label">
+                    <i class="fas fa-id-badge"></i>
+                    {{ form.employee_id.label }}
+                </label>
+                {{ form.employee_id }}
+                {% if form.employee_id.errors %}
+                <div class="error-message">{{ form.employee_id.errors.0 }}</div>
+                {% endif %}
             </div>
         </div>
         
         <div class="form-section">
-            <h3 class="section-title">Administrator Details</h3>
+            <h3 class="section-title">User Account Information</h3>
             
             <div class="form-row">
                 <div class="form-group">
-                    <label for="{{ form.admin_type.id_for_label }}">Administrator Type *</label>
-                    {{ form.admin_type }}
-                    {% if form.admin_type.errors %}
-                    <div class="error-message">{{ form.admin_type.errors }}</div>
+                    <label for="{{ form.username.id_for_label }}" class="form-label">
+                        <i class="fas fa-user"></i>
+                        {{ form.username.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                    <div class="error-message">{{ form.username.errors.0 }}</div>
                     {% endif %}
                 </div>
                 
                 <div class="form-group">
-                    <label for="{{ form.employee_id.id_for_label }}">Employee ID</label>
-                    {{ form.employee_id }}
-                    {% if form.employee_id.errors %}
-                    <div class="error-message">{{ form.employee_id.errors }}</div>
+                    <label for="{{ form.email.id_for_label }}" class="form-label">
+                        <i class="fas fa-envelope"></i>
+                        {{ form.email.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <div class="error-message">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                        <i class="fas fa-user"></i>
+                        {{ form.first_name.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                    <div class="error-message">{{ form.first_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                        <i class="fas fa-user"></i>
+                        {{ form.last_name.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                    <div class="error-message">{{ form.last_name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="password-fields">
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        {{ form.password.label }}
+                    </label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                    <div class="error-message">{{ form.password.errors.0 }}</div>
+                    {% endif %}
+                    <small class="form-text">{{ form.password.help_text }}</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.confirm_password.id_for_label }}" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        {{ form.confirm_password.label }}
+                    </label>
+                    {{ form.confirm_password }}
+                    {% if form.confirm_password.errors %}
+                    <div class="error-message">{{ form.confirm_password.errors.0 }}</div>
                     {% endif %}
                 </div>
             </div>
@@ -104,7 +146,7 @@
         <div class="form-actions">
             <button type="submit" class="btn-primary">
                 <i class="fas fa-save"></i> 
-                {% if is_edit %}Update Administrator{% else %}Create Administrator{% endif %}
+                {% if form.instance.pk %}Update Administrator{% else %}Create Administrator{% endif %}
             </button>
             <a href="{% url 'administration:administrators' %}" class="btn-secondary">
                 <i class="fas fa-times"></i> Cancel
@@ -112,4 +154,116 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const adminTypeSelect = document.getElementById('id_admin_type');
+    const studentProfileGroup = document.getElementById('student-profile-group');
+    const employeeIdGroup = document.getElementById('employee-id-group');
+    const studentProfileSelect = document.getElementById('id_student_profile');
+    const searchInput = document.getElementById('studentSearch');
+    
+    const usernameInput = document.getElementById('id_username');
+    const firstNameInput = document.getElementById('id_first_name');
+    const lastNameInput = document.getElementById('id_last_name');
+    const emailInput = document.getElementById('id_email');
+    
+    // Store original student profile options for search
+    const originalOptions = Array.from(studentProfileSelect.options);
+    
+    // Handle admin type change
+    function updateFieldVisibility() {
+        const adminType = adminTypeSelect.value;
+        
+        if (adminType === 'STU') {  // Student Administrator
+            studentProfileGroup.classList.remove('field-hidden');
+            employeeIdGroup.classList.add('field-hidden');
+        } else {
+            studentProfileGroup.classList.add('field-hidden');
+            employeeIdGroup.classList.remove('field-hidden');
+        }
+    }
+    
+    // Handle student profile selection - fetch data from server
+    function handleStudentSelection() {
+        const selectedStudentId = studentProfileSelect.value;
+        
+        if (selectedStudentId) {
+            // Fetch student data via AJAX
+            fetch(`/administration/api/student-profile/${selectedStudentId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        usernameInput.value = data.student_id;
+                        firstNameInput.value = data.first_name;
+                        lastNameInput.value = data.last_name;
+                        emailInput.value = data.email;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching student data:', error);
+                    // Fallback: try to extract from the selected option text
+                    const selectedOption = studentProfileSelect.options[studentProfileSelect.selectedIndex];
+                    if (selectedOption && selectedOption.text) {
+                        // Format: "John Doe (BSCS 1st Year A)"
+                        const match = selectedOption.text.match(/^(.+?)\s*\(/);
+                        if (match) {
+                            const fullName = match[1].trim();
+                            const nameParts = fullName.split(' ');
+                            if (nameParts.length >= 2) {
+                                firstNameInput.value = nameParts[0];
+                                lastNameInput.value = nameParts.slice(1).join(' ');
+                            }
+                        }
+                    }
+                });
+        }
+    }
+    
+    // Handle student search
+    function handleStudentSearch(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        
+        // Show/hide options based on search term instead of removing them
+        originalOptions.forEach(option => {
+            if (!option.value) {
+                // Keep the empty option
+                option.style.display = '';
+                return;
+            }
+            
+            const text = option.text.toLowerCase();
+            if (text.includes(searchTerm)) {
+                option.style.display = '';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+        
+        // Check if any options are visible
+        const visibleOptions = originalOptions.filter(opt => 
+            opt.value && opt.style.display !== 'none'
+        );
+        
+        // If no matches and search term is not empty, show a message
+        if (visibleOptions.length === 0 && searchTerm) {
+            // Reset all to show
+            originalOptions.forEach(opt => opt.style.display = '');
+            // You could add a "no results" message here if needed
+        }
+    }
+    
+    // Event listeners
+    adminTypeSelect.addEventListener('change', updateFieldVisibility);
+    studentProfileSelect.addEventListener('change', handleStudentSelection);
+    searchInput.addEventListener('input', handleStudentSearch);
+    
+    // Initial state
+    updateFieldVisibility();
+});
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Dynamic form logic handled in inline script above -->
 {% endblock %}

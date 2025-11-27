@@ -237,41 +237,71 @@ class AdminPasswordChangeForm(forms.Form):
 
 class ElectionAdminForm(forms.ModelForm):
     """Form for creating and editing election administrators"""
+    # Student profile selection (for auto-filling from existing students)
+    student_profile = forms.ModelChoiceField(
+        queryset=StudentProfile.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'id': 'id_student_profile'
+        }),
+        label='Select Student (Optional)',
+        help_text='Select a student to auto-fill their information'
+    )
+    
     username = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Username'
+        'placeholder': 'Username',
+        'id': 'id_username'
     }))
     first_name = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'placeholder': 'First Name'
+        'placeholder': 'First Name',
+        'id': 'id_first_name'
     }))
     last_name = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Last Name'
+        'placeholder': 'Last Name',
+        'id': 'id_last_name'
     }))
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Email Address'
+        'placeholder': 'Email Address',
+        'id': 'id_email'
     }))
     password = forms.CharField(
         required=False,
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Password (leave blank to keep current)'
+            'placeholder': 'Password (leave blank to keep current)',
+            'id': 'id_password'
         }),
         min_length=8,
         help_text='Minimum 8 characters'
     )
+    confirm_password = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirm Password',
+            'id': 'id_confirm_password'
+        }),
+        label='Confirm Password'
+    )
     admin_type = forms.ChoiceField(
         choices=AdminType.choices,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'id': 'id_admin_type'
+        })
     )
     employee_id = forms.CharField(
         max_length=20,
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Employee ID (optional)'
+            'placeholder': 'Employee ID (optional)',
+            'id': 'id_employee_id'
         })
     )
 
@@ -291,10 +321,12 @@ class ElectionAdminForm(forms.ModelForm):
             self.fields['email'].initial = self.instance.user.email
             self.fields['password'].required = False
             self.fields['password'].help_text = 'Leave blank to keep current password'
+            self.fields['confirm_password'].required = False
         else:
-            # Creating new admin
-            self.fields['password'].required = True
-            self.fields['password'].help_text = 'Minimum 8 characters'
+            # Creating new admin - password is optional if using existing student
+            self.fields['password'].required = False
+            self.fields['password'].help_text = 'Leave blank to keep student\'s existing password (if selecting a student), or enter a new password'
+            self.fields['confirm_password'].required = False
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
@@ -321,6 +353,19 @@ class ElectionAdminForm(forms.ModelForm):
             if User.objects.filter(email=email).exists():
                 raise forms.ValidationError('Email already exists.')
         return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+        
+        # Validate password confirmation if password is provided
+        if password and password != confirm_password:
+            raise forms.ValidationError({
+                'confirm_password': 'Passwords do not match.'
+            })
+        
+        return cleaned_data
 
     def save(self, commit=True):
         admin = super().save(commit=False)

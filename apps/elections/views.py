@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.db import transaction
 from django.db.models import Prefetch
-from .models import Election, Position, Candidate, Vote, VoterReceipt
+from .models import Election, Position, Candidate, Vote, VoterReceipt, ElectionTimeline
 
 def elections_list(request):
     """
@@ -164,3 +164,28 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+def timeline_view(request):
+    """
+    Display the timeline of events for active and upcoming elections.
+    """
+    now = timezone.now()
+    
+    # Get elections that are either active or upcoming
+    # We want to show timelines for relevant elections
+    elections = Election.objects.filter(
+        is_active=True,
+        end_time__gte=now  # Don't show fully past elections in timeline usually, or maybe we do? 
+                           # Requirement says "upcoming elections", so let's stick to active/future.
+    ).prefetch_related(
+        Prefetch(
+            'timeline_events',
+            queryset=ElectionTimeline.objects.order_by('order', 'start_time')
+        )
+    ).order_by('start_time')
+
+    context = {
+        'elections': elections,
+    }
+    return render(request, 'elections/timeline.html', context)

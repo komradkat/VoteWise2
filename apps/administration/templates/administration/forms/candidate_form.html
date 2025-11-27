@@ -8,30 +8,153 @@
 
 {% block content %}
 <div class="form-container">
-    <h2 class="admin-title">{{ title }}</h2>
+    <div class="admin-header-2">
+        <h2 class="admin-title">{{ title }}</h2>
+    </div>
+
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% for field in form %}
-        <div class="form-field">
-            {{ field.label_tag }}
-            {{ field }}
-            {% if field.errors %}
-            <div class="errorlist">{{ field.errors.0 }}</div>
-            {% endif %}
-            {% if field.help_text %}
-            <div class="helptext">{{ field.help_text }}</div>
-            {% endif %}
+        
+        <div class="form-section">
+            <!-- Student Selection with Search -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-user-graduate"></i>
+                    Select Student <span class="required">*</span>
+                </label>
+                
+                <div class="search-box">
+                    <input type="text" id="studentSearch" class="form-control" placeholder="Type to search by name or ID..." autocomplete="off">
+                </div>
+                
+                {{ form.student_profile }}
+                {% if form.student_profile.errors %}
+                <div class="invalid-feedback d-block">{{ form.student_profile.errors.0 }}</div>
+                {% endif %}
+                <small class="form-text text-muted">Search and select the student to register as a candidate.</small>
+            </div>
+
+            <!-- Election & Position Row -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.election.id_for_label }}" class="form-label">
+                        <i class="fas fa-calendar-alt"></i>
+                        {{ form.election.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.election }}
+                    {% if form.election.errors %}
+                    <div class="invalid-feedback d-block">{{ form.election.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.position.id_for_label }}" class="form-label">
+                        <i class="fas fa-chair"></i>
+                        {{ form.position.label }} <span class="required">*</span>
+                    </label>
+                    {{ form.position }}
+                    {% if form.position.errors %}
+                    <div class="invalid-feedback d-block">{{ form.position.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Partylist -->
+            <div class="form-group">
+                <label for="{{ form.partylist.id_for_label }}" class="form-label">
+                    <i class="fas fa-users"></i>
+                    {{ form.partylist.label }}
+                </label>
+                {{ form.partylist }}
+                {% if form.partylist.errors %}
+                <div class="invalid-feedback d-block">{{ form.partylist.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Biography -->
+            <div class="form-group">
+                <label for="{{ form.biography.id_for_label }}" class="form-label">
+                    <i class="fas fa-align-left"></i>
+                    {{ form.biography.label }}
+                </label>
+                {{ form.biography }}
+                {% if form.biography.errors %}
+                <div class="invalid-feedback d-block">{{ form.biography.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Photo -->
+            <div class="form-group">
+                <label for="{{ form.photo.id_for_label }}" class="form-label">
+                    <i class="fas fa-camera"></i>
+                    {{ form.photo.label }}
+                </label>
+                {{ form.photo }}
+                {% if form.photo.errors %}
+                <div class="invalid-feedback d-block">{{ form.photo.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Approval Status -->
+            <div class="form-group2">
+                <div class="form-check">
+                    {{ form.is_approved }}
+                    <label for="{{ form.is_approved.id_for_label }}" class="form-check-label">
+                        {{ form.is_approved.label }}
+                    </label>
+                </div>
+                <div class="form-text">
+                    <small class="text-muted">
+                        <i class="fas fa-check-circle"></i> Approved candidates appear on the ballot.
+                    </small>
+                </div>
+            </div>
         </div>
-        {% endfor %}
-        <button type="submit" class="btn-primary">
-            <i class="fas fa-save"></i> Save Candidate
-        </button>
-        <a href="{% url 'administration:candidates' %}" class="btn-primary"
-            style="background:#6b7280;margin-left:0.5rem;">
-            <i class="fas fa-times"></i> Cancel
-        </a>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-save"></i> Save Candidate
+            </button>
+            <a href="{% url 'administration:candidates' %}" class="btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('studentSearch');
+    const selectElement = document.getElementById('id_student_profile');
+    
+    // Store original options
+    const originalOptions = Array.from(selectElement.options);
+    
+    searchInput.addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        
+        // Clear current options
+        selectElement.innerHTML = '';
+        
+        // Filter and re-add options
+        const filteredOptions = originalOptions.filter(option => {
+            const text = option.text.toLowerCase();
+            return text.includes(searchTerm);
+        });
+        
+        filteredOptions.forEach(option => {
+            selectElement.add(option);
+        });
+        
+        // If no matches, add a placeholder
+        if (filteredOptions.length === 0) {
+            const noMatch = new Option('No students found matching "' + searchTerm + '"', '');
+            noMatch.disabled = true;
+            selectElement.add(noMatch);
+        }
+    });
+});
+</script>
 {% endblock %}
 
 {% block extra_js %}

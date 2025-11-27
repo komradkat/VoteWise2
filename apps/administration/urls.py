@@ -46,6 +46,9 @@ urlpatterns = [
     path('administrators/<int:pk>/edit/', views.administrator_edit, name='administrator_edit'),
     path('administrators/<int:pk>/toggle/', views.administrator_toggle_status, name='administrator_toggle_status'),
     
+    # API Endpoints
+    path('api/student-profile/<int:pk>/', views.get_student_profile_data, name='api_student_profile'),
+    
     # Timeline Management
     path('timeline/', views.timeline_list, name='timeline_list'),
     path('timeline/create/', views.timeline_create, name='timeline_create'),

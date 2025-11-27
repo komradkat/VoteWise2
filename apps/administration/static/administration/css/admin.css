@@ -82,7 +82,7 @@ body {
     margin-left: 260px;
     flex: 1;
     padding: 2rem;
-    height: 1211px;
+    height: 1400px;
     padding-top: 140px; /* Account for fixed header height (~120px) + padding */
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(23, 37, 84, 0.9) 100%),
               url('/static/core/img/voting-background.png') center/cover no-repeat;

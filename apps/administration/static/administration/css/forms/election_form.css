@@ -22,9 +22,29 @@
     margin-bottom: 2.5rem;
 }
 
-/* Form Groups */
-.form-group {
+.form-group2 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
     margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    background-color: var(--color-slate-50);
+    border: 1px solid var(--color-slate-200);
+    border-radius: 8px;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.form-text {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
 }
 
 .form-label {

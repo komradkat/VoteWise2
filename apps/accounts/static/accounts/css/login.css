@@ -171,7 +171,6 @@ body {
 
 /* Form Styling */
 
-
 .form-group {
     margin-bottom: 1.25rem;
 }
@@ -198,9 +197,10 @@ body {
     z-index: 1;
 }
 
+/* Updated padding to avoid overlap with eye icon */
 .input-wrapper input {
     width: 100%;
-    padding: 0.875rem 1rem 0.875rem 3rem;
+    padding: 0.875rem 3rem 0.875rem 3rem;  
     border: 2px solid var(--color-slate-200);
     border-radius: 10px;
     font-size: var(--font-size-base);
@@ -217,16 +217,26 @@ body {
     box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.1);
 }
 
+/* Improved Password Toggle Button */
 .toggle-password {
     position: absolute;
     right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
     background: none;
     border: none;
+    outline: none;
     color: var(--color-slate-500);
-    font-size: var(--font-size-sm);
     cursor: pointer;
-    transition: color 0.3s ease;
     padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-password i {
+    pointer-events: none;
+    font-size: 1.1rem;
 }
 
 .toggle-password:hover {
