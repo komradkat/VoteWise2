@@ -1,0 +1,397 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Chatbot - VoteWise{% endblock %}
+
+{% block css %}
+<style>
+    .chatbot-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        
+    }
+    .main {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(23, 37, 84, 0.9) 100%),
+              url('/static/core/img/voting-background.png') center/cover no-repeat;
+    position: relative; 
+    }
+    
+    .chat-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px 12px 0 0;
+        text-align: center;
+    }
+    
+    .chat-header h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+    }
+    
+    .chat-header p {
+        margin: 0;
+        opacity: 0.9;
+    }
+    
+    .election-selector {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+    
+    .election-selector select {
+        width: 100%;
+        padding: 0.75rem;
+        border-radius: 6px;
+        border: none;
+        font-size: 1rem;
+        background: white;
+        color: #333;
+    }
+    
+    .chat-window {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-top: none;
+        height: 500px;
+        overflow-y: auto;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .message {
+        display: flex;
+        gap: 0.75rem;
+        max-width: 80%;
+        animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .message.user {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+    }
+    
+    .message-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+    
+    .message.user .message-avatar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .message.assistant .message-avatar {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+    }
+    
+    .message-content {
+        background: #f7fafc;
+        padding: 1rem;
+        border-radius: 12px;
+        line-height: 1.6;
+    }
+    
+    .message.user .message-content {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .message.assistant .message-content {
+        background: #f7fafc;
+        color: #2d3748;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .message-time {
+        font-size: 0.75rem;
+        color: #a0aec0;
+        margin-top: 0.25rem;
+    }
+    
+    .typing-indicator {
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: #f7fafc;
+        border-radius: 12px;
+        max-width: 100px;
+    }
+    
+    .typing-indicator.active {
+        display: flex;
+    }
+    
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #cbd5e0;
+        animation: typing 1.4s infinite;
+    }
+    
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+        }
+        30% {
+            transform: translateY(-10px);
+        }
+    }
+    
+    .chat-input-container {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-top: 2px solid #667eea;
+        border-radius: 0 0 12px 12px;
+        padding: 1.5rem;
+    }
+    
+    .chat-input-form {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .chat-input {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+    
+    .chat-input:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+    
+    .chat-send-btn {
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .chat-send-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .chat-send-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .api-notice {
+        background: #fef3c7;
+        border: 1px solid #fbbf24;
+        color: #92400e;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+    
+    .api-notice strong {
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chatbot-container">
+    <div class="chat-header">
+        <h1>🤖 AI Election Assistant</h1>
+        <p>Ask me anything about the candidates - I'll provide unbiased, factual information</p>
+        
+        {% if active_elections %}
+        <div class="election-selector">
+            <select id="electionSelect" onchange="changeElection(this.value)">
+                {% for election in active_elections %}
+                <option value="{{ election.id }}" {% if election == selected_election %}selected{% endif %}>
+                    {{ election.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if not api_configured %}
+    <div class="api-notice">
+        <strong>⚠️ API Key Not Configured</strong>
+        The chatbot is running in demo mode with mock responses. To enable full AI functionality, 
+        please configure your Gemini API key in the settings.
+    </div>
+    {% endif %}
+    
+    <div class="chat-window" id="chatWindow">
+        {% for message in messages %}
+        <div class="message {{ message.role }}">
+            <div class="message-avatar">
+                {% if message.role == 'user' %}
+                    {{ request.user.first_name.0|default:'U' }}
+                {% else %}
+                    🤖
+                {% endif %}
+            </div>
+            <div>
+                <div class="message-content">{{ message.content }}</div>
+                <div class="message-time">{{ message.timestamp|date:"g:i A" }}</div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    </div>
+    
+    <div class="chat-input-container">
+        <form class="chat-input-form" id="chatForm" onsubmit="sendMessage(event)">
+            <input 
+                type="text" 
+                class="chat-input" 
+                id="messageInput" 
+                placeholder="Ask about candidates, their platforms, positions..."
+                required
+            >
+            <button type="submit" class="chat-send-btn" id="sendBtn">
+                Send
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const sessionId = '{{ request.session.chatbot_session_id }}';
+    const electionId = {{ selected_election.id|default:'null' }};
+    const chatWindow = document.getElementById('chatWindow');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const typingIndicator = document.getElementById('typingIndicator');
+    
+    function scrollToBottom() {
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+    
+    function addMessage(role, content) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${role}`;
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        avatar.textContent = role === 'user' ? '{{ request.user.first_name.0|default:"U" }}' : '🤖';
+        
+        const contentWrapper = document.createElement('div');
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
+        messageContent.textContent = content;
+        
+        const messageTime = document.createElement('div');
+        messageTime.className = 'message-time';
+        messageTime.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        
+        contentWrapper.appendChild(messageContent);
+        contentWrapper.appendChild(messageTime);
+        
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(contentWrapper);
+        
+        chatWindow.insertBefore(messageDiv, typingIndicator);
+        scrollToBottom();
+    }
+    
+    async function sendMessage(event) {
+        event.preventDefault();
+        
+        const message = messageInput.value.trim();
+        if (!message) return;
+        
+        // Add user message to UI
+        addMessage('user', message);
+        messageInput.value = '';
+        
+        // Disable input
+        sendBtn.disabled = true;
+        messageInput.disabled = true;
+        typingIndicator.classList.add('active');
+        
+        try {
+            const response = await fetch('{% url "chatbot:chat_api" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: message,
+                    session_id: sessionId,
+                    election_id: electionId
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                addMessage('assistant', data.message);
+            } else {
+                addMessage('assistant', `Error: ${data.error}`);
+            }
+        } catch (error) {
+            addMessage('assistant', `Error: ${error.message}`);
+        } finally {
+            typingIndicator.classList.remove('active');
+            sendBtn.disabled = false;
+            messageInput.disabled = false;
+            messageInput.focus();
+        }
+    }
+    
+    function changeElection(electionId) {
+        window.location.href = `?election_id=${electionId}`;
+    }
+    
+    // Auto-scroll on load
+    scrollToBottom();
+</script>
+{% endblock %}

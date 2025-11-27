@@ -25,6 +25,9 @@ urlpatterns = [
     
     # Administration URLs
     path('administration/', include('apps.administration.urls')),
+    
+    # Chatbot URLs
+    path('chatbot/', include('apps.chatbot.urls')),
 ]
 
 # Serve static and media files in development
