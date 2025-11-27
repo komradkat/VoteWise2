@@ -107,75 +107,14 @@ Login - VoteWise
                 <span>or</span>
             </div>
             
-            <button type="button" id="faceLoginBtn" class="cta-button secondary full-width" style="background: var(--color-slate-800); margin-bottom: 1rem;">
+            <div class="admin-login-divider">
+                <span>or</span>
+            </div>
+            
+            <a href="{% url 'biometrics:login' %}" class="cta-button secondary full-width" style="background: var(--color-slate-800); margin-bottom: 1rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                 <i class="fas fa-camera"></i>
                 Login with Face ID
-            </button>
-            
-            <div id="faceLoginContainer" style="display: none; text-align: center; margin-bottom: 1rem;">
-                <video id="video" width="320" height="240" autoplay style="border-radius: 8px; margin-bottom: 0.5rem;"></video>
-                <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
-                <p id="statusMsg" style="color: var(--color-slate-500); font-size: 0.9rem;">Looking for face...</p>
-            </div>
-
-            <script>
-                const faceLoginBtn = document.getElementById('faceLoginBtn');
-                const faceLoginContainer = document.getElementById('faceLoginContainer');
-                const video = document.getElementById('video');
-                const canvas = document.getElementById('canvas');
-                const statusMsg = document.getElementById('statusMsg');
-                let stream = null;
-
-                faceLoginBtn.addEventListener('click', async () => {
-                    faceLoginContainer.style.display = 'block';
-                    faceLoginBtn.style.display = 'none';
-                    
-                    try {
-                        stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                        video.srcObject = stream;
-                        statusMsg.textContent = "Position your face in the camera...";
-                        
-                        // Capture after 2 seconds
-                        setTimeout(captureAndVerify, 2000);
-                    } catch (err) {
-                        console.error("Error accessing camera:", err);
-                        statusMsg.textContent = "Camera access denied or not available.";
-                    }
-                });
-
-                function captureAndVerify() {
-                    statusMsg.textContent = "Verifying...";
-                    const context = canvas.getContext('2d');
-                    context.drawImage(video, 0, 0, 320, 240);
-                    
-                    const imageData = canvas.toDataURL('image/jpeg');
-                    
-                    fetch('/biometrics/verify/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ image: imageData })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            statusMsg.textContent = "Success! Redirecting...";
-                            statusMsg.style.color = "var(--color-green)";
-                            window.location.href = data.redirect_url;
-                        } else {
-                            statusMsg.textContent = "Face not recognized. Try again.";
-                            statusMsg.style.color = "var(--color-red)";
-                            // Retry after 2 seconds
-                            setTimeout(captureAndVerify, 2000);
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Error:", err);
-                        statusMsg.textContent = "Error verifying face.";
-                    });
-                }
-            </script>
+            </a>
             <div class="admin-login-divider"></div>
             <p>New to VoteWise? <a href="{% url 'accounts:register' %}" class="signup-link">Create Account</a></p>
           </div>

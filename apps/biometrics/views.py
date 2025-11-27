@@ -96,11 +96,15 @@ def enroll_face(request):
         if temp_file and os.path.exists(temp_file.name):
             os.unlink(temp_file.name)
 
+def face_login_view(request):
+    """Render the dedicated Face ID login page."""
+    return render(request, 'biometrics/face_login.html')
+
 @csrf_exempt
 def verify_face(request):
     """
-    Verify a user's face for login using DeepFace.
-    Expects a POST request with a base64 encoded image.
+    Verify a user's face for login using DeepFace (1:1 Verification).
+    Expects a POST request with 'username' and base64 encoded 'image'.
     """
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)
@@ -112,10 +116,25 @@ def verify_face(request):
     try:
         data = json.loads(request.body)
         image_data = data.get('image')
+        username = data.get('username')
         
         if not image_data:
             return JsonResponse({'error': 'No image data provided'}, status=400)
             
+        if not username:
+            return JsonResponse({'error': 'Please enter your username first'}, status=400)
+            
+        # 1. Find the user first (1:1 Verification)
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Authentication failed'}, status=401)
+            
+        try:
+            user_biometric = UserBiometric.objects.get(user=user, is_active=True)
+        except UserBiometric.DoesNotExist:
+            return JsonResponse({'error': 'Face ID not enabled for this user'}, status=400)
+
         # Decode base64 image
         if 'base64,' in image_data:
             image_data = image_data.split('base64,')[1]
@@ -144,42 +163,26 @@ def verify_face(request):
         except ValueError:
             return JsonResponse({'error': 'No face detected'}, status=400)
         
-        # Compare with all active biometric users
-        biometric_users = UserBiometric.objects.filter(is_active=True).select_related('user')
+        # 2. Compare ONLY with this user's stored embedding
+        stored_embedding = np.frombuffer(user_biometric.face_encoding, dtype=np.float32)
         
-        best_match = None
-        best_distance = float('inf')
-        threshold = 0.6  # Cosine distance threshold (lower is more similar)
+        # Calculate Cosine Distance
+        dot_product = np.dot(unknown_embedding, stored_embedding)
+        norm_a = np.linalg.norm(unknown_embedding)
+        norm_b = np.linalg.norm(stored_embedding)
         
-        for bio in biometric_users:
-            # Reconstruct the stored embedding
-            stored_embedding = np.frombuffer(bio.face_encoding, dtype=np.float32)
-            
-            # Debug shapes
-            # print(f"Unknown shape: {unknown_embedding.shape}, Stored shape: {stored_embedding.shape}")
-            
-            # Calculate Cosine Distance (1 - Cosine Similarity)
-            # Facenet embeddings are typically compared using Cosine Distance
-            dot_product = np.dot(unknown_embedding, stored_embedding)
-            norm_a = np.linalg.norm(unknown_embedding)
-            norm_b = np.linalg.norm(stored_embedding)
-            
-            if norm_a == 0 or norm_b == 0:
-                distance = 1.0 # Max distance if one vector is zero
-            else:
-                distance = 1 - (dot_product / (norm_a * norm_b))
-            
-            print(f"Comparing with user {bio.user.username}: Cosine distance={distance}")
-            
-            # Threshold for Facenet Cosine Distance is typically around 0.4
-            if distance < 0.4 and distance < best_distance:
-                best_distance = distance
-                best_match = bio.user
+        if norm_a == 0 or norm_b == 0:
+            distance = 1.0
+        else:
+            distance = 1 - (dot_product / (norm_a * norm_b))
         
-        if best_match:
+        print(f"Verifying user {username}: Cosine distance={distance}")
+        
+        # Threshold for Facenet Cosine Distance (0.5 is more forgiving for webcams)
+        if distance < 0.5:
             # Match found! Login the user
-            login(request, best_match)
-            return JsonResponse({'success': True, 'redirect_url': '/dashboard/'})
+            login(request, user)
+            return JsonResponse({'success': True, 'redirect_url': '/auth/profile/'})
         
         return JsonResponse({'error': 'Face not recognized'}, status=401)
         

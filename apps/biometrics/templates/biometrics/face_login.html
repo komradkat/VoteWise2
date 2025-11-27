@@ -1,0 +1,357 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Face ID Login - VoteWise{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'accounts/css/login.css' %}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    .step-indicator {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+        gap: 1rem;
+    }
+    
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-slate-500);
+    }
+    
+    .step.active {
+        color: var(--color-blue);
+        font-weight: 600;
+    }
+    
+    .step.completed {
+        color: var(--color-green);
+    }
+    
+    .step-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--color-slate-200);
+        color: var(--color-slate-600);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .step.active .step-number {
+        background: var(--color-blue);
+        color: white;
+    }
+    
+    .step.completed .step-number {
+        background: var(--color-green);
+        color: white;
+    }
+    
+    .step-content {
+        display: none;
+    }
+    
+    .step-content.active {
+        display: block;
+    }
+    
+    .camera-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto 1.5rem;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #000;
+    }
+    
+    #video {
+        width: 100%;
+        display: block;
+        transform: scaleX(-1);
+    }
+    
+    .camera-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 250px;
+        border: 3px solid rgba(255, 255, 255, 0.5);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    
+    .status-message {
+        text-align: center;
+        margin: 1rem 0;
+        font-weight: 500;
+        min-height: 24px;
+    }
+    
+    .status-message.success {
+        color: var(--color-green);
+    }
+    
+    .status-message.error {
+        color: var(--color-red);
+    }
+    
+    .back-link {
+        display: inline-block;
+        margin-top: 1.5rem;
+        color: var(--color-slate-500);
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    
+    .back-link:hover {
+        color: var(--color-blue);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="auth-hero">
+  <div class="auth-container">
+    <div class="auth-card" style="max-width: 500px; margin: 0 auto; display: block;">
+      
+      <div class="auth-form-container" style="padding: 2rem;">
+        <div class="auth-header">
+            <div class="icon-circle" style="background: var(--color-blue-light); color: var(--color-blue); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.5rem;">
+                <i class="fas fa-face-smile"></i>
+            </div>
+            <h3>Face ID Login</h3>
+            <p>Secure biometric authentication</p>
+        </div>
+
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step active" id="step-indicator-1">
+                <div class="step-number">1</div>
+                <span>Enter ID</span>
+            </div>
+            <div class="step" id="step-indicator-2">
+                <div class="step-number">2</div>
+                <span>Verify Face</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Enter Username -->
+        <div class="step-content active" id="step-1">
+            <div class="form-group">
+                <label for="username">Student ID or Email</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="username" class="form-control" placeholder="e.g. 2023-12345" required autofocus>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--color-slate-500); margin-top: 0.5rem;">
+                    <i class="fas fa-info-circle"></i> Enter your registered Student ID or Email address
+                </p>
+            </div>
+            <button id="nextBtn" class="cta-button full-width">
+                Continue to Face Verification <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- Step 2: Face Verification -->
+        <div class="step-content" id="step-2">
+            <p style="color: var(--color-slate-600); margin-bottom: 1rem; text-align: center;">
+                <i class="fas fa-camera"></i> Position your face within the frame
+            </p>
+            
+            <div class="camera-container">
+                <video id="video" autoplay playsinline></video>
+                <div class="camera-overlay"></div>
+                <canvas id="canvas" style="display: none;"></canvas>
+            </div>
+
+            <p id="statusMsg" class="status-message">Initializing camera...</p>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button id="backBtn" class="cta-button secondary" style="flex: 1;">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <button id="retryBtn" class="cta-button" style="flex: 1; display: none;">
+                    <i class="fas fa-redo"></i> Try Again
+                </button>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{% url 'accounts:login' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Password Login
+            </a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block js %}
+<script>
+    const step1 = document.getElementById('step-1');
+    const step2 = document.getElementById('step-2');
+    const stepIndicator1 = document.getElementById('step-indicator-1');
+    const stepIndicator2 = document.getElementById('step-indicator-2');
+    const usernameInput = document.getElementById('username');
+    const nextBtn = document.getElementById('nextBtn');
+    const backBtn = document.getElementById('backBtn');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const statusMsg = document.getElementById('statusMsg');
+    const retryBtn = document.getElementById('retryBtn');
+    
+    let stream = null;
+    let username = '';
+
+    // Step 1: Validate Username and proceed
+    nextBtn.addEventListener('click', () => {
+        username = usernameInput.value.trim();
+        if (!username) {
+            alert("Please enter your Student ID or Email.");
+            usernameInput.focus();
+            return;
+        }
+        
+        // Switch to Step 2
+        step1.classList.remove('active');
+        step2.classList.add('active');
+        stepIndicator1.classList.remove('active');
+        stepIndicator1.classList.add('completed');
+        stepIndicator2.classList.add('active');
+        
+        startCamera();
+    });
+
+    // Allow Enter key in Step 1
+    usernameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            nextBtn.click();
+        }
+    });
+
+    // Back button
+    backBtn.addEventListener('click', () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+        
+        step2.classList.remove('active');
+        step1.classList.add('active');
+        stepIndicator2.classList.remove('active');
+        stepIndicator1.classList.remove('completed');
+        stepIndicator1.classList.add('active');
+        
+        statusMsg.textContent = "Initializing camera...";
+        statusMsg.className = "status-message";
+        retryBtn.style.display = 'none';
+    });
+
+    async function startCamera() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                } 
+            });
+            video.srcObject = stream;
+            statusMsg.textContent = "Position your face in the frame...";
+            statusMsg.className = "status-message";
+            
+            // Auto-capture after 2 seconds
+            setTimeout(captureAndVerify, 2000);
+        } catch (err) {
+            console.error("Error accessing camera:", err);
+            statusMsg.textContent = "Camera access denied. Please enable camera permissions.";
+            statusMsg.className = "status-message error";
+        }
+    }
+
+    function captureAndVerify() {
+        statusMsg.textContent = "Verifying your identity...";
+        statusMsg.className = "status-message";
+        
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const imageData = canvas.toDataURL('image/jpeg');
+        const csrfToken = getCookie('csrftoken');
+
+        fetch('/biometrics/verify/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ 
+                image: imageData,
+                username: username
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                statusMsg.textContent = "✓ Verification successful! Redirecting...";
+                statusMsg.className = "status-message success";
+                
+                // Stop camera
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Redirect after a short delay
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 1000);
+            } else {
+                statusMsg.textContent = data.error || "Face not recognized. Please try again.";
+                statusMsg.className = "status-message error";
+                retryBtn.style.display = 'block';
+            }
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            statusMsg.textContent = "System error. Please try again.";
+            statusMsg.className = "status-message error";
+            retryBtn.style.display = 'block';
+        });
+    }
+
+    retryBtn.addEventListener('click', () => {
+        retryBtn.style.display = 'none';
+        statusMsg.textContent = "Position your face in the frame...";
+        statusMsg.className = "status-message";
+        setTimeout(captureAndVerify, 1500);
+    });
+
+    // Helper to get CSRF token from cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}
