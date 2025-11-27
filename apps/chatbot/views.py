@@ -48,7 +48,8 @@ def chatbot_view(request):
         )
     
     # Get conversation history
-    messages = conversation.messages.all()
+    # messages = conversation.messages.all()
+    messages = []
     
     context = {
         'active_elections': active_elections,
@@ -92,12 +93,12 @@ def chat_api(request):
                 election=election
             )
         
-        # Save user message
-        user_msg = ChatMessage.objects.create(
-            conversation=conversation,
-            role='user',
-            content=user_message
-        )
+        # Save user message - DISABLED for privacy/no-history requirement
+        # user_msg = ChatMessage.objects.create(
+        #     conversation=conversation,
+        #     role='user',
+        #     content=user_message
+        # )
         
         # Get AI response
         election = conversation.election
@@ -110,13 +111,13 @@ def chat_api(request):
             result = get_gemini_response(user_message, election)
         
         if result['success']:
-            # Save assistant message
-            assistant_msg = ChatMessage.objects.create(
-                conversation=conversation,
-                role='assistant',
-                content=result['response'],
-                response_time_ms=result['response_time_ms']
-            )
+            # Save assistant message - DISABLED for privacy/no-history requirement
+            # assistant_msg = ChatMessage.objects.create(
+            #     conversation=conversation,
+            #     role='assistant',
+            #     content=result['response'],
+            #     response_time_ms=result['response_time_ms']
+            # )
             
             return JsonResponse({
                 'success': True,
