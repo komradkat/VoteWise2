@@ -61,22 +61,46 @@ def enroll_face(request):
         
         # Extract face embedding using DeepFace
         try:
-            # Liveness Check (Anti-Spoofing)
+            # Liveness Check (Anti-Spoofing) - MANDATORY
             try:
                 face_objs = DeepFace.extract_faces(
                     img_path=temp_file.name,
                     enforce_detection=True,
                     anti_spoofing=True
                 )
-                if face_objs:
-                    # Check if the primary face is real
-                    if not face_objs[0].get('is_real', True):
-                         return JsonResponse({'error': 'Liveness check failed. Fake face detected.'}, status=400)
-            except TypeError:
-                # anti_spoofing parameter might not be supported in older versions
-                pass
-            except ValueError:
+                
+                if not face_objs:
+                    return JsonResponse({'error': 'No face detected. Please try again.'}, status=400)
+                
+                # CRITICAL: Default to False for security - assume fake unless proven real
+                primary_face = face_objs[0]
+                is_real = primary_face.get('is_real', False)
+                antispoof_score = primary_face.get('antispoof_score', 0)
+                
+                print(f"[FACE ENROLL] Liveness Check: Real={is_real}, Score={antispoof_score}")
+                
+                # Strict check: Must explicitly be marked as real
+                if not is_real:
+                    return JsonResponse({'error': 'Liveness check failed. Fake face detected. Please use a live camera.'}, status=400)
+                
+                # CRITICAL: Require high confidence score (> 0.8 means 80%+ confidence it's real)
+                # Scores between 0.5-0.8 are borderline and could be spoofs
+                if antispoof_score < 0.8:
+                    print(f"[FACE ENROLL] REJECTED: Low confidence score {antispoof_score} (need > 0.8)")
+                    return JsonResponse({'error': f'Liveness confidence too low ({antispoof_score:.2f}). Please ensure good lighting and face the camera directly.'}, status=400)
+                
+                # Additional check: Ensure the liveness model actually ran
+                if 'is_real' not in primary_face:
+                    print(f"[FACE ENROLL] WARNING: Liveness detection did not run properly!")
+                    return JsonResponse({'error': 'Security check failed. Anti-spoofing not available.'}, status=500)
+                    
+            except TypeError as e:
+                # anti_spoofing parameter not supported - FAIL SECURE
+                print(f"[FACE ENROLL] Anti-spoofing not supported: {str(e)}")
+                return JsonResponse({'error': 'Security feature not available. Cannot enroll without anti-spoofing.'}, status=500)
+            except ValueError as e:
                 # No face detected by extract_faces
+                print(f"[FACE ENROLL] No face detected: {str(e)}")
                 return JsonResponse({'error': 'No face detected. Please try again.'}, status=400)
 
             embedding_objs = DeepFace.represent(
@@ -178,10 +202,9 @@ def verify_face(request):
         
         # Extract face embedding
         try:
-            # Liveness Check (Anti-Spoofing)
+            # Liveness Check (Anti-Spoofing) - MANDATORY
             # We must enforce this to prevent "shampoo bottle" logins.
             try:
-                # Use a separate call for liveness to handle it distinctly
                 face_objs = DeepFace.extract_faces(
                     img_path=temp_file.name,
                     enforce_detection=True,
@@ -192,23 +215,39 @@ def verify_face(request):
                      print(f"[FACE VERIFY] No face detected during liveness check.")
                      return JsonResponse({'error': 'No face detected. Please ensure your face is clearly visible.'}, status=400)
 
-                # Check the first detected face
+                # CRITICAL: Default to False for security - assume fake unless proven real
                 primary_face = face_objs[0]
-                is_real = primary_face.get('is_real', True)
+                is_real = primary_face.get('is_real', False)
                 antispoof_score = primary_face.get('antispoof_score', 0)
                 
                 print(f"[FACE VERIFY] Liveness Check: Real={is_real}, Score={antispoof_score}")
 
+                # Strict check: Must explicitly be marked as real
                 if not is_real:
+                     print(f"[FACE VERIFY] REJECTED: Fake face detected (Score: {antispoof_score})")
                      return JsonResponse({'error': 'Liveness check failed. Please use a real camera feed.'}, status=401)
+                
+                # CRITICAL: Require high confidence score (> 0.8 means 80%+ confidence it's real)
+                # Scores between 0.5-0.8 are borderline and could be spoofs
+                if antispoof_score < 0.8:
+                    print(f"[FACE VERIFY] REJECTED: Low confidence score {antispoof_score} (need > 0.8)")
+                    return JsonResponse({'error': f'Liveness confidence too low. Please ensure good lighting and face the camera directly.'}, status=401)
+                
+                # Additional check: Ensure the liveness model actually ran
+                if 'is_real' not in primary_face:
+                    print(f"[FACE VERIFY] WARNING: Liveness detection did not run properly!")
+                    return JsonResponse({'error': 'Security check failed. Anti-spoofing not available.'}, status=500)
 
+            except TypeError as e:
+                # anti_spoofing parameter not supported - FAIL SECURE
+                print(f"[FACE VERIFY] Anti-spoofing not supported: {str(e)}")
+                return JsonResponse({'error': 'Security feature not available. Cannot verify without anti-spoofing.'}, status=500)
             except ValueError as e:
                 # DeepFace.extract_faces raises ValueError if no face is found when enforce_detection=True
                 print(f"[FACE VERIFY] Liveness check error: {str(e)}")
                 return JsonResponse({'error': 'No face detected. Please ensure your face is clearly visible.'}, status=400)
             except Exception as e:
-                # Log other errors but don't crash the whole login if it's just a library quirk, 
-                # UNLESS we are strict. Given the user complaint, we must be strict.
+                # Fail secure on any unexpected error
                 print(f"[FACE VERIFY] Unexpected liveness check error: {str(e)}")
                 return JsonResponse({'error': 'Security check failed. Please try again.'}, status=500)
 

@@ -1,0 +1,378 @@
+/* ============================================================================
+   VoteWise Mobile Optimization
+   Enhances mobile experience across all voter-facing pages
+   ============================================================================ */
+
+/* Base Mobile Adjustments */
+@media (max-width: 768px) {
+    /* Ensure proper viewport scaling */
+    html {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+    }
+
+    /* Improve touch targets */
+    button,
+    a,
+    input[type="submit"],
+    input[type="button"],
+    .btn,
+    .cta-button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Prevent horizontal scroll */
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Container padding for mobile */
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* Improve readability */
+    body {
+        font-size: 16px; /* Prevents iOS zoom on input focus */
+        line-height: 1.6;
+    }
+
+    /* Form inputs */
+    input,
+    textarea,
+    select {
+        font-size: 16px; /* Prevents iOS zoom */
+        max-width: 100%;
+    }
+
+    /* Better spacing for mobile */
+    section {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* Small Mobile Devices (phones in portrait) */
+@media (max-width: 480px) {
+    /* Reduce heading sizes */
+    h1 {
+        font-size: 1.75rem !important;
+        line-height: 1.2;
+    }
+
+    h2 {
+        font-size: 1.5rem !important;
+    }
+
+    h3 {
+        font-size: 1.25rem !important;
+    }
+
+    /* Stack buttons vertically */
+    .buttons,
+    .modal-actions,
+    .form-actions {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+
+    .buttons > *,
+    .modal-actions > *,
+    .form-actions > * {
+        width: 100% !important;
+    }
+
+    /* Improve card spacing */
+    .dashboard-card,
+    .position-section,
+    .feature-card {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+
+    /* Reduce modal padding */
+    .modal-content {
+        padding: 1.5rem !important;
+        margin: 10% auto !important;
+    }
+}
+
+/* Tablet Devices */
+@media (min-width: 481px) and (max-width: 768px) {
+    /* Optimize for tablet viewing */
+    .container {
+        max-width: 720px;
+    }
+
+    /* Two-column grid for tablets */
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Touch-Friendly Enhancements */
+@media (hover: none) and (pointer: coarse) {
+    /* Remove hover effects on touch devices */
+    *:hover {
+        /* Disable problematic hover states */
+    }
+
+    /* Larger tap targets */
+    .nav-links a,
+    .dashboard-nav-item,
+    .candidate-card {
+        padding: 1rem !important;
+    }
+
+    /* Better button feedback */
+    button:active,
+    .btn:active,
+    .cta-button:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
+}
+
+/* Landscape Mobile Optimization */
+@media (max-width: 768px) and (orientation: landscape) {
+    /* Reduce vertical padding in landscape */
+    .hero,
+    .features {
+        padding-top: 100px !important;
+        padding-bottom: 60px !important;
+    }
+
+    /* Adjust header for landscape */
+    .top-bar {
+        min-height: 80px !important;
+    }
+
+    body {
+        padding-top: 130px !important;
+    }
+}
+
+/* Voting Page Mobile Enhancements */
+@media (max-width: 768px) {
+    /* Optimize candidate cards for mobile */
+    .candidate-card {
+        margin-bottom: 1rem;
+    }
+
+    .candidate-photo {
+        height: 180px !important;
+    }
+
+    /* Sticky submit button on mobile */
+    .submit-section {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin: 0 !important;
+        border-radius: 16px 16px 0 0 !important;
+        padding: 1rem !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* Add bottom padding to prevent content hiding behind sticky button */
+    .voting-container {
+        padding-bottom: 120px !important;
+    }
+
+    /* Optimize position sections */
+    .position-section {
+        margin-bottom: 1.5rem !important;
+        border-radius: 16px !important;
+    }
+
+    .position-header h2 {
+        font-size: 1.4rem !important;
+    }
+}
+
+/* Dashboard Mobile Enhancements */
+@media (max-width: 768px) {
+    /* Horizontal scrolling sidebar */
+    .dashboard-sidebar {
+        position: sticky;
+        top: 150px;
+        z-index: 100;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Optimize dashboard content */
+    .dashboard-content {
+        padding: 1rem !important;
+    }
+
+    /* Stack profile sections */
+    .profile-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Improve table responsiveness */
+    .table-responsive {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table {
+        font-size: 0.875rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.75rem 0.5rem !important;
+    }
+}
+
+/* Login/Register Page Mobile Enhancements */
+@media (max-width: 968px) {
+    /* Already handled in login.css, but ensure consistency */
+    .auth-hero {
+        padding: 1rem !important;
+        min-height: 100vh;
+    }
+
+    .auth-card {
+        margin: 1rem !important;
+    }
+
+    /* Optimize form inputs */
+    .input-wrapper input {
+        padding: 0.875rem 2.5rem !important;
+    }
+}
+
+/* Results Page Mobile Enhancements */
+@media (max-width: 768px) {
+    /* Optimize charts for mobile */
+    canvas {
+        max-height: 300px !important;
+    }
+
+    /* Stack result cards */
+    .results-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Improve result card readability */
+    .result-card {
+        padding: 1rem !important;
+    }
+}
+
+/* Face Login Mobile Enhancements */
+@media (max-width: 768px) {
+    /* Optimize camera view */
+    #video,
+    #canvas {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    .camera-container {
+        padding: 1rem !important;
+    }
+
+    /* Larger capture button */
+    .capture-button {
+        padding: 1rem 2rem !important;
+        font-size: 1.1rem !important;
+    }
+}
+
+/* Accessibility Improvements for Mobile */
+@media (max-width: 768px) {
+    /* Ensure focus indicators are visible */
+    *:focus {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+    }
+
+    /* Improve contrast for small screens */
+    .text-muted,
+    .secondary-text {
+        color: #475569 !important;
+    }
+
+    /* Larger clickable areas for checkboxes/radios */
+    input[type="checkbox"],
+    input[type="radio"] {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Better error message visibility */
+    .error,
+    .error-message {
+        font-size: 0.9rem !important;
+        padding: 0.5rem !important;
+        margin-top: 0.5rem !important;
+    }
+}
+
+/* Performance Optimizations for Mobile */
+@media (max-width: 768px) {
+    /* Reduce animation complexity on mobile */
+    * {
+        animation-duration: 0.3s !important;
+    }
+
+    /* Simplify gradients for better performance */
+    .hero::before,
+    .auth-left::before {
+        animation: none !important;
+    }
+
+    /* Optimize images */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+/* Safe Area Insets for Notched Devices */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+
+    .submit-section,
+    .dashboard-sidebar {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+}
+
+/* Print Styles (for voting receipts) */
+@media print {
+    /* Hide navigation and non-essential elements */
+    header,
+    .dashboard-sidebar,
+    .submit-section,
+    button,
+    .cta-button {
+        display: none !important;
+    }
+
+    /* Optimize for printing */
+    body {
+        padding-top: 0 !important;
+        background: white !important;
+    }
+
+    .dashboard-content,
+    .voting-container {
+        padding: 0 !important;
+    }
+
+    /* Ensure content fits on page */
+    * {
+        page-break-inside: avoid;
+    }
+}
