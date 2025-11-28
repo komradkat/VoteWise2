@@ -122,17 +122,24 @@ def verify_face(request):
             return JsonResponse({'error': 'No image data provided'}, status=400)
             
         if not username:
+            print(f"[FACE VERIFY] ERROR: No username provided")
             return JsonResponse({'error': 'Please enter your username first'}, status=400)
             
+        print(f"[FACE VERIFY] Attempting to verify user: {username}")
+        
         # 1. Find the user first (1:1 Verification)
         try:
             user = User.objects.get(username=username)
+            print(f"[FACE VERIFY] User found: {user.username} (ID: {user.id})")
         except User.DoesNotExist:
+            print(f"[FACE VERIFY] ERROR: User '{username}' does not exist")
             return JsonResponse({'error': 'Authentication failed'}, status=401)
             
         try:
             user_biometric = UserBiometric.objects.get(user=user, is_active=True)
+            print(f"[FACE VERIFY] Face ID found for user {username}")
         except UserBiometric.DoesNotExist:
+            print(f"[FACE VERIFY] ERROR: Face ID not enrolled for user '{username}'")
             return JsonResponse({'error': 'Face ID not enabled for this user'}, status=400)
 
         # Decode base64 image
@@ -178,8 +185,8 @@ def verify_face(request):
         
         print(f"Verifying user {username}: Cosine distance={distance}")
         
-        # Threshold for Facenet Cosine Distance (0.5 is more forgiving for webcams)
-        if distance < 0.5:
+        # Threshold for Facenet Cosine Distance (0.6 is more forgiving for webcams)
+        if distance < 0.6:
             # Match found! Login the user
             login(request, user)
             return JsonResponse({'success': True, 'redirect_url': '/auth/profile/'})

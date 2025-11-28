@@ -147,6 +147,49 @@
             </div>
         </div>
 
+        <div class="form-section">
+            <h3 class="section-title">Biometric Authentication (Optional)</h3>
+            
+            <div class="form-group2">
+                <div class="form-check">
+                    <input type="checkbox" id="enableFaceId" class="form-check-input">
+                    <label for="enableFaceId" class="form-check-label">
+                        <i class="fas fa-camera"></i> Enable Face ID Login
+                    </label>
+                </div>
+                <div class="form-text">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i> Allow this voter to login using facial recognition.
+                    </small>
+                </div>
+            </div>
+
+            <div id="faceIdContainer" style="display: none; margin-top: 1rem;">
+                <div style="text-align: center;">
+                    <div style="position: relative; display: inline-block; border-radius: 12px; overflow: hidden; background: #000;">
+                        <video id="faceVideo" width="320" height="240" autoplay playsinline style="display: none; transform: scaleX(-1);"></video>
+                        <canvas id="faceCanvas" width="320" height="240" style="display: none;"></canvas>
+                        <div id="facePreview" style="width: 320px; height: 240px; background: var(--color-slate-100); display: flex; align-items: center; justify-content: center; color: var(--color-slate-500);">
+                            <div style="text-align: center;">
+                                <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                <p>Click "Capture Face" to start</p>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="faceImageData" name="face_image">
+                    <div style="margin-top: 1rem;">
+                        <button type="button" id="captureFaceBtn" class="btn-primary" style="margin-right: 0.5rem;">
+                            <i class="fas fa-camera"></i> Capture Face
+                        </button>
+                        <button type="button" id="retakeFaceBtn" class="btn-secondary" style="display: none;">
+                            <i class="fas fa-redo"></i> Retake
+                        </button>
+                    </div>
+                    <p id="faceStatus" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--color-slate-600);"></p>
+                </div>
+            </div>
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn-primary">
                 <i class="fas fa-save"></i> Save Voter
@@ -160,5 +203,119 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- No additional JS needed for this form -->
+<script>
+    const enableFaceIdCheckbox = document.getElementById('enableFaceId');
+    const faceIdContainer = document.getElementById('faceIdContainer');
+    const captureFaceBtn = document.getElementById('captureFaceBtn');
+    const retakeFaceBtn = document.getElementById('retakeFaceBtn');
+    const faceVideo = document.getElementById('faceVideo');
+    const faceCanvas = document.getElementById('faceCanvas');
+    const facePreview = document.getElementById('facePreview');
+    const faceImageData = document.getElementById('faceImageData');
+    const faceStatus = document.getElementById('faceStatus');
+    
+    let stream = null;
+    let faceCaptured = false;
+
+    // Toggle Face ID container
+    enableFaceIdCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            faceIdContainer.style.display = 'block';
+        } else {
+            faceIdContainer.style.display = 'none';
+            stopCamera();
+            resetFaceCapture();
+        }
+    });
+
+    // Capture Face button
+    captureFaceBtn.addEventListener('click', async function() {
+        if (!faceCaptured) {
+            // Start camera
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                faceVideo.srcObject = stream;
+                faceVideo.style.display = 'block';
+                facePreview.style.display = 'none';
+                faceStatus.textContent = 'Position your face in the frame...';
+                faceStatus.style.color = 'var(--color-slate-600)';
+                
+                captureFaceBtn.innerHTML = '<i class="fas fa-check"></i> Capture';
+                faceCaptured = false;
+                
+                // Auto-capture after 2 seconds
+                setTimeout(() => {
+                    if (stream && !faceCaptured) {
+                        captureImage();
+                    }
+                }, 2000);
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                faceStatus.textContent = 'Camera access denied. Please enable camera permissions.';
+                faceStatus.style.color = 'var(--color-red)';
+            }
+        } else {
+            captureImage();
+        }
+    });
+
+    function captureImage() {
+        const context = faceCanvas.getContext('2d');
+        context.drawImage(faceVideo, 0, 0, 320, 240);
+        
+        const imageData = faceCanvas.toDataURL('image/jpeg');
+        faceImageData.value = imageData;
+        
+        // Show preview
+        facePreview.style.display = 'block';
+        facePreview.style.backgroundImage = `url(${imageData})`;
+        facePreview.style.backgroundSize = 'cover';
+        facePreview.style.backgroundPosition = 'center';
+        facePreview.innerHTML = '';
+        
+        faceVideo.style.display = 'none';
+        stopCamera();
+        
+        faceCaptured = true;
+        captureFaceBtn.style.display = 'none';
+        retakeFaceBtn.style.display = 'inline-block';
+        faceStatus.textContent = '✓ Face captured successfully!';
+        faceStatus.style.color = 'var(--color-green)';
+    }
+
+    // Retake button
+    retakeFaceBtn.addEventListener('click', function() {
+        resetFaceCapture();
+        captureFaceBtn.click();
+    });
+
+    function stopCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+    }
+
+    function resetFaceCapture() {
+        stopCamera();
+        faceCaptured = false;
+        faceImageData.value = '';
+        faceVideo.style.display = 'none';
+        facePreview.style.display = 'flex';
+        facePreview.style.backgroundImage = 'none';
+        facePreview.innerHTML = `
+            <div style="text-align: center;">
+                <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <p>Click "Capture Face" to start</p>
+            </div>
+        `;
+        captureFaceBtn.style.display = 'inline-block';
+        captureFaceBtn.innerHTML = '<i class="fas fa-camera"></i> Capture Face';
+        retakeFaceBtn.style.display = 'none';
+        faceStatus.textContent = '';
+    }
+
+    // Clean up on page unload
+    window.addEventListener('beforeunload', stopCamera);
+</script>
 {% endblock %}

@@ -97,24 +97,22 @@ Login - VoteWise
             <div class="admin-login-divider">
               <span>or</span>
             </div>
+
+            <a href="{% url 'biometrics:login' %}" class="cta-button secondary full-width" style="background: var(--color-slate-800); margin-bottom: 1rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="fas fa-camera"></i>
+                Login with Face ID
+            </a>
+            
+            <div class="admin-login-divider">
+                <span>or</span>
+            </div>
+            
             <a href="{% url 'administration:login' %}" class="admin-login-link">
               <i class="fas fa-user-shield"></i>
               <span>Election Admin Login</span>
               <i class="fas fa-arrow-right"></i>
             </a>
             
-            <div class="admin-login-divider">
-                <span>or</span>
-            </div>
-            
-            <div class="admin-login-divider">
-                <span>or</span>
-            </div>
-            
-            <a href="{% url 'biometrics:login' %}" class="cta-button secondary full-width" style="background: var(--color-slate-800); margin-bottom: 1rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                <i class="fas fa-camera"></i>
-                Login with Face ID
-            </a>
             <div class="admin-login-divider"></div>
             <p>New to VoteWise? <a href="{% url 'accounts:register' %}" class="signup-link">Create Account</a></p>
           </div>

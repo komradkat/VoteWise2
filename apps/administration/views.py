@@ -260,8 +260,71 @@ def voter_create(request):
     if request.method == 'POST':
         form = VoterForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Voter registered successfully.')
+            voter = form.save()
+            
+            # Handle Face ID enrollment if provided
+            face_image = request.POST.get('face_image')
+            if face_image:
+                try:
+                    from apps.biometrics.views import enroll_face_for_user
+                    from apps.accounts.views import process_face_enrollment
+                    import base64
+                    import io
+                    from PIL import Image
+                    
+                    # Process the face image
+                    if 'base64,' in face_image:
+                        face_image = face_image.split('base64,')[1]
+                    
+                    image_bytes = base64.b64decode(face_image)
+                    image = Image.open(io.BytesIO(image_bytes))
+                    
+                    # Call the enrollment function
+                    from apps.biometrics.views import FACE_RECOGNITION_AVAILABLE
+                    if FACE_RECOGNITION_AVAILABLE:
+                        from deepface import DeepFace
+                        import numpy as np
+                        import tempfile
+                        import os
+                        
+                        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.jpg')
+                        image.save(temp_file.name, 'JPEG')
+                        temp_file.close()
+                        
+                        try:
+                            embedding_objs = DeepFace.represent(
+                                img_path=temp_file.name,
+                                model_name='Facenet',
+                                enforce_detection=True
+                            )
+                            
+                            if embedding_objs and len(embedding_objs) > 0:
+                                embedding = embedding_objs[0]['embedding']
+                                embedding_array = np.array(embedding, dtype=np.float32)
+                                embedding_bytes = embedding_array.tobytes()
+                                
+                                from apps.biometrics.models import UserBiometric
+                                UserBiometric.objects.update_or_create(
+                                    user=voter.user,
+                                    defaults={
+                                        'face_encoding': embedding_bytes,
+                                        'is_active': True
+                                    }
+                                )
+                                messages.success(request, 'Voter registered successfully with Face ID enabled.')
+                            else:
+                                messages.warning(request, 'Voter registered but Face ID enrollment failed: No face detected.')
+                        finally:
+                            if os.path.exists(temp_file.name):
+                                os.unlink(temp_file.name)
+                    else:
+                        messages.warning(request, 'Voter registered but Face ID is not available.')
+                        
+                except Exception as e:
+                    messages.warning(request, f'Voter registered but Face ID enrollment failed: {str(e)}')
+            else:
+                messages.success(request, 'Voter registered successfully.')
+            
             return redirect('administration:voters')
     else:
         form = VoterForm()
