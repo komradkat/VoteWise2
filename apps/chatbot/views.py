@@ -10,6 +10,7 @@ import json
 from .models import ChatConversation, ChatMessage
 from .services import get_gemini_response, get_mock_response, get_gemini_api_key
 from apps.elections.models import Election
+from apps.core.logging import logger
 
 
 def chatbot_view(request):
@@ -119,12 +120,19 @@ def chat_api(request):
             #     response_time_ms=result['response_time_ms']
             # )
             
+
+            
+            # Log successful interaction (metadata only)
+            user_id = request.user.username if request.user.is_authenticated else "anonymous"
+            logger.info(f"Chat interaction successful", user=user_id, category="CHATBOT", extra_data={'response_time_ms': result['response_time_ms'], 'election_id': election_id})
+            
             return JsonResponse({
                 'success': True,
                 'message': result['response'],
                 'response_time_ms': result['response_time_ms']
             })
         else:
+            logger.error(f"Chatbot error: {result['error']}", category="CHATBOT")
             return JsonResponse({
                 'success': False,
                 'error': result['error']
@@ -133,6 +141,7 @@ def chat_api(request):
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except Exception as e:
+        logger.error(f"Unexpected chatbot error: {str(e)}", category="CHATBOT")
         return JsonResponse({'error': str(e)}, status=500)
 
 

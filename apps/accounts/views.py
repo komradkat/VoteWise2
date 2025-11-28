@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserUpdateForm, StudentProfileForm, PublicRegistrationForm
 from apps.elections.models import VoterReceipt
+from apps.core.logging import logger
 
 # Create your views here.
 def register(request):
@@ -71,6 +72,7 @@ def register(request):
                     print("DeepFace library not available")
                 except Exception as e:
                     # Log error but don't fail registration
+                    logger.error(f"Face enrollment failed during registration: {e}", user=user.username, category="FACE ENROLL")
                     print(f"Face enrollment failed: {e}")
             
             messages.success(
@@ -78,6 +80,9 @@ def register(request):
                 'Registration successful! Your account is pending verification. '
                 'Please visit a registration booth to complete the verification process.'
             )
+            logger.auth(f"New user registered: {user.username}", user=user.username, extra_data={'email': user.email})
+            if face_image:
+                 logger.face_enroll(f"Face enrolled for new user: {user.username}", user=user.username)
             return redirect('accounts:registration_pending')
     else:
         form = PublicRegistrationForm()
@@ -99,6 +104,7 @@ def login(request):
             from django.contrib.auth import login as auth_login
             user = form.get_user()
             auth_login(request, user)
+            logger.auth(f"User logged in: {user.username}", user=user.username, ip=request.META.get('REMOTE_ADDR'))
             if 'next' in request.POST:
                 return redirect(request.POST.get('next'))
             return redirect('accounts:profile')
@@ -111,6 +117,8 @@ def login(request):
     })
 
 def logout_view(request):
+    if request.user.is_authenticated:
+        logger.auth(f"User logged out: {request.user.username}", user=request.user.username)
     logout(request)
     return redirect('home')
 
@@ -127,6 +135,7 @@ def profile_view(request):
             user_form.save()
             if profile_form:
                 profile_form.save()
+            logger.auth(f"Profile updated for user: {user.username}", user=user.username)
             messages.success(request, 'Your profile has been updated successfully.')
             return redirect('accounts:profile')
     else:
