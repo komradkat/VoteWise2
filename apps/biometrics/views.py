@@ -11,6 +11,10 @@ import os
 import tempfile
 from PIL import Image
 
+# Force TensorFlow to use CPU only to avoid CUDA configuration issues
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Reduce TensorFlow logging
+
 try:
     from deepface import DeepFace
     import numpy as np
@@ -175,22 +179,38 @@ def verify_face(request):
         # Extract face embedding
         try:
             # Liveness Check (Anti-Spoofing)
+            # We must enforce this to prevent "shampoo bottle" logins.
             try:
+                # Use a separate call for liveness to handle it distinctly
                 face_objs = DeepFace.extract_faces(
                     img_path=temp_file.name,
                     enforce_detection=True,
                     anti_spoofing=True
                 )
-                if face_objs:
-                    # Check if the primary face is real
-                    if not face_objs[0].get('is_real', True):
-                         print(f"[FACE VERIFY] Spoof detected! Score: {face_objs[0].get('antispoof_score')}")
-                         return JsonResponse({'error': 'Liveness check failed. Fake face detected.'}, status=401)
-            except TypeError:
-                # anti_spoofing parameter might not be supported in older versions
-                pass
-            except ValueError:
-                return JsonResponse({'error': 'No face detected'}, status=400)
+                
+                if not face_objs:
+                     print(f"[FACE VERIFY] No face detected during liveness check.")
+                     return JsonResponse({'error': 'No face detected. Please ensure your face is clearly visible.'}, status=400)
+
+                # Check the first detected face
+                primary_face = face_objs[0]
+                is_real = primary_face.get('is_real', True)
+                antispoof_score = primary_face.get('antispoof_score', 0)
+                
+                print(f"[FACE VERIFY] Liveness Check: Real={is_real}, Score={antispoof_score}")
+
+                if not is_real:
+                     return JsonResponse({'error': 'Liveness check failed. Please use a real camera feed.'}, status=401)
+
+            except ValueError as e:
+                # DeepFace.extract_faces raises ValueError if no face is found when enforce_detection=True
+                print(f"[FACE VERIFY] Liveness check error: {str(e)}")
+                return JsonResponse({'error': 'No face detected. Please ensure your face is clearly visible.'}, status=400)
+            except Exception as e:
+                # Log other errors but don't crash the whole login if it's just a library quirk, 
+                # UNLESS we are strict. Given the user complaint, we must be strict.
+                print(f"[FACE VERIFY] Unexpected liveness check error: {str(e)}")
+                return JsonResponse({'error': 'Security check failed. Please try again.'}, status=500)
 
             embedding_objs = DeepFace.represent(
                 img_path=temp_file.name,
