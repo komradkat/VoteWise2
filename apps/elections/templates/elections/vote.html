@@ -13,8 +13,7 @@
         <h1>Cast Your Vote</h1>
         <div class="election-title">{{ election.name }}</div>
         <div class="election-info">
-            <span><i class="fas fa-calendar"></i> {{ election.start_time|date:"M d, Y" }} - {{ election.end_time|date:"M
-                d, Y" }}</span>
+            <span><i class="fas fa-calendar"></i> {{ election.start_time|date:"M d, Y" }} - {{ election.end_time|date:"M d, Y" }}</span>
             <span><i class="fas fa-users"></i> {{ positions.count }} Position(s)</span>
         </div>
     </div>

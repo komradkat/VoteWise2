@@ -57,6 +57,24 @@ def enroll_face(request):
         
         # Extract face embedding using DeepFace
         try:
+            # Liveness Check (Anti-Spoofing)
+            try:
+                face_objs = DeepFace.extract_faces(
+                    img_path=temp_file.name,
+                    enforce_detection=True,
+                    anti_spoofing=True
+                )
+                if face_objs:
+                    # Check if the primary face is real
+                    if not face_objs[0].get('is_real', True):
+                         return JsonResponse({'error': 'Liveness check failed. Fake face detected.'}, status=400)
+            except TypeError:
+                # anti_spoofing parameter might not be supported in older versions
+                pass
+            except ValueError:
+                # No face detected by extract_faces
+                return JsonResponse({'error': 'No face detected. Please try again.'}, status=400)
+
             embedding_objs = DeepFace.represent(
                 img_path=temp_file.name,
                 model_name='Facenet',  # Fast and accurate
@@ -156,6 +174,24 @@ def verify_face(request):
         
         # Extract face embedding
         try:
+            # Liveness Check (Anti-Spoofing)
+            try:
+                face_objs = DeepFace.extract_faces(
+                    img_path=temp_file.name,
+                    enforce_detection=True,
+                    anti_spoofing=True
+                )
+                if face_objs:
+                    # Check if the primary face is real
+                    if not face_objs[0].get('is_real', True):
+                         print(f"[FACE VERIFY] Spoof detected! Score: {face_objs[0].get('antispoof_score')}")
+                         return JsonResponse({'error': 'Liveness check failed. Fake face detected.'}, status=401)
+            except TypeError:
+                # anti_spoofing parameter might not be supported in older versions
+                pass
+            except ValueError:
+                return JsonResponse({'error': 'No face detected'}, status=400)
+
             embedding_objs = DeepFace.represent(
                 img_path=temp_file.name,
                 model_name='Facenet',
@@ -185,8 +221,9 @@ def verify_face(request):
         
         print(f"Verifying user {username}: Cosine distance={distance}")
         
-        # Threshold for Facenet Cosine Distance (0.6 is more forgiving for webcams)
-        if distance < 0.6:
+        # Threshold for Facenet Cosine Distance (Default is 0.40)
+        # 0.6 was too loose and allowed spoofing. 0.4 is stricter.
+        if distance < 0.4:
             # Match found! Login the user
             login(request, user)
             return JsonResponse({'success': True, 'redirect_url': '/auth/profile/'})
