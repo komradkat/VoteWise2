@@ -61,7 +61,10 @@ def enroll_face(request):
         
         # Extract face embedding using DeepFace
         try:
-            # Liveness Check (Anti-Spoofing) - MANDATORY
+            # ENHANCED MULTI-LAYER ANTI-SPOOFING
+            # Single liveness check is not enough - shampoo bottles can fool it
+            # We need multiple verification layers
+            
             try:
                 face_objs = DeepFace.extract_faces(
                     img_path=temp_file.name,
@@ -79,20 +82,41 @@ def enroll_face(request):
                 
                 print(f"[FACE ENROLL] Liveness Check: Real={is_real}, Score={antispoof_score}")
                 
-                # Strict check: Must explicitly be marked as real
+                # Layer 1: Basic liveness check
                 if not is_real:
                     return JsonResponse({'error': 'Liveness check failed. Fake face detected. Please use a live camera.'}, status=400)
                 
-                # CRITICAL: Require high confidence score (> 0.8 means 80%+ confidence it's real)
-                # Scores between 0.5-0.8 are borderline and could be spoofs
-                if antispoof_score < 0.8:
-                    print(f"[FACE ENROLL] REJECTED: Low confidence score {antispoof_score} (need > 0.8)")
-                    return JsonResponse({'error': f'Liveness confidence too low ({antispoof_score:.2f}). Please ensure good lighting and face the camera directly.'}, status=400)
+                # Layer 2: VERY STRICT confidence threshold (0.95 = 95%+ confidence)
+                if antispoof_score < 0.95:
+                    print(f"[FACE ENROLL] REJECTED: Insufficient confidence {antispoof_score} (need >= 0.95)")
+                    return JsonResponse({'error': f'Liveness confidence too low ({antispoof_score:.2f}). Please ensure optimal lighting and look directly at camera.'}, status=400)
                 
-                # Additional check: Ensure the liveness model actually ran
+                # Layer 3: Face quality check - reject low quality images
+                face_confidence = primary_face.get('confidence', 0)
+                if face_confidence < 0.90:  # Relaxed from 0.95 to 0.90 for usability
+                    print(f"[FACE ENROLL] REJECTED: Low face detection confidence {face_confidence}")
+                    return JsonResponse({'error': 'Face quality too low. Please ensure good lighting and clear view.'}, status=400)
+                
+                # Layer 4: Check facial region size and proportions
+                facial_area = primary_face.get('facial_area', {})
+                if facial_area:
+                    width = facial_area.get('w', 0)
+                    height = facial_area.get('h', 0)
+                    if width < 80 or height < 80:
+                        print(f"[FACE ENROLL] REJECTED: Face too small {width}x{height} (min 80x80)")
+                        return JsonResponse({'error': 'Face appears too small. Move closer to camera.'}, status=400)
+                    aspect_ratio = width / height if height > 0 else 0
+                    # Relaxed from 0.7-1.4 to 0.6-1.5 for different face shapes and angles
+                    if aspect_ratio < 0.6 or aspect_ratio > 1.5:
+                        print(f"[FACE ENROLL] REJECTED: Unusual aspect ratio {aspect_ratio}")
+                        return JsonResponse({'error': 'Face proportions unusual. Please face camera directly.'}, status=400)
+                
+                # Layer 5: Ensure the liveness model actually ran
                 if 'is_real' not in primary_face:
                     print(f"[FACE ENROLL] WARNING: Liveness detection did not run properly!")
                     return JsonResponse({'error': 'Security check failed. Anti-spoofing not available.'}, status=500)
+                
+                print(f"[FACE ENROLL] ✅ All security layers passed - proceeding to enrollment")
                     
             except TypeError as e:
                 # anti_spoofing parameter not supported - FAIL SECURE
@@ -202,8 +226,10 @@ def verify_face(request):
         
         # Extract face embedding
         try:
-            # Liveness Check (Anti-Spoofing) - MANDATORY
-            # We must enforce this to prevent "shampoo bottle" logins.
+            # ENHANCED MULTI-LAYER ANTI-SPOOFING
+            # Single liveness check is not enough - shampoo bottles can fool it
+            # We need multiple verification layers
+            
             try:
                 face_objs = DeepFace.extract_faces(
                     img_path=temp_file.name,
@@ -222,21 +248,44 @@ def verify_face(request):
                 
                 print(f"[FACE VERIFY] Liveness Check: Real={is_real}, Score={antispoof_score}")
 
-                # Strict check: Must explicitly be marked as real
+                # Layer 1: Basic liveness check
                 if not is_real:
                      print(f"[FACE VERIFY] REJECTED: Fake face detected (Score: {antispoof_score})")
                      return JsonResponse({'error': 'Liveness check failed. Please use a real camera feed.'}, status=401)
                 
-                # CRITICAL: Require high confidence score (> 0.8 means 80%+ confidence it's real)
-                # Scores between 0.5-0.8 are borderline and could be spoofs
-                if antispoof_score < 0.8:
-                    print(f"[FACE VERIFY] REJECTED: Low confidence score {antispoof_score} (need > 0.8)")
-                    return JsonResponse({'error': f'Liveness confidence too low. Please ensure good lighting and face the camera directly.'}, status=401)
+                # Layer 2: VERY STRICT confidence threshold (0.95 = 95%+ confidence)
+                # Lowered from 0.8 because 0.9 was still allowing shampoo bottles through
+                if antispoof_score < 0.95:
+                    print(f"[FACE VERIFY] REJECTED: Insufficient confidence {antispoof_score} (need >= 0.95)")
+                    return JsonResponse({'error': 'Liveness confidence insufficient. Please ensure optimal lighting and look directly at camera.'}, status=401)
                 
-                # Additional check: Ensure the liveness model actually ran
+                # Layer 3: Face quality check - reject low quality images (often from photos/prints)
+                face_confidence = primary_face.get('confidence', 0)
+                if face_confidence < 0.90:  # Relaxed from 0.95 to 0.90 for usability
+                    print(f"[FACE VERIFY] REJECTED: Low face detection confidence {face_confidence}")
+                    return JsonResponse({'error': 'Face quality too low. Please ensure good lighting and clear view.'}, status=401)
+                
+                # Layer 4: Check facial region size - photos often have different proportions
+                facial_area = primary_face.get('facial_area', {})
+                if facial_area:
+                    width = facial_area.get('w', 0)
+                    height = facial_area.get('h', 0)
+                    # Reject if face is too small (likely a photo of a photo)
+                    if width < 80 or height < 80:
+                        print(f"[FACE VERIFY] REJECTED: Face too small {width}x{height} (min 80x80)")
+                        return JsonResponse({'error': 'Face appears too small. Move closer to camera.'}, status=401)
+                    # Relaxed from 0.7-1.4 to 0.6-1.5 for different face shapes and angles
+                    aspect_ratio = width / height if height > 0 else 0
+                    if aspect_ratio < 0.6 or aspect_ratio > 1.5:
+                        print(f"[FACE VERIFY] REJECTED: Unusual aspect ratio {aspect_ratio}")
+                        return JsonResponse({'error': 'Face proportions unusual. Please face camera directly.'}, status=401)
+                
+                # Layer 5: Ensure the liveness model actually ran
                 if 'is_real' not in primary_face:
                     print(f"[FACE VERIFY] WARNING: Liveness detection did not run properly!")
                     return JsonResponse({'error': 'Security check failed. Anti-spoofing not available.'}, status=500)
+                
+                print(f"[FACE VERIFY] ✅ All security layers passed - proceeding to face matching")
 
             except TypeError as e:
                 # anti_spoofing parameter not supported - FAIL SECURE
