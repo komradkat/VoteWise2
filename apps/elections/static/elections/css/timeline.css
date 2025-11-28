@@ -1,0 +1,584 @@
+/* ========================================
+   ELECTION TIMELINE PAGE
+   ======================================== */
+
+/* Page Container */
+.timeline-page {
+    min-height: 100vh;
+    padding: 4rem 0;
+    background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-deep-blue) 100%);
+}
+
+.timeline-page .container {
+    max-width: 1200px;
+}
+
+/* ========================================
+   PAGE HEADER
+   ======================================== */
+
+.page-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.header-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, var(--color-blue), #1d4ed8);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: var(--color-white);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+}
+
+.page-title {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-white);
+    margin-bottom: 0.75rem;
+    letter-spacing: var(--letter-spacing-tight);
+}
+
+.page-subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-slate-500);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* ========================================
+   ELECTION SECTION
+   ======================================== */
+
+.election-section {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.election-section:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.election-section:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+/* Election Header */
+.election-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.election-info {
+    flex: 1;
+}
+
+.election-name {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-white);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.election-name i {
+    color: var(--color-blue);
+}
+
+.election-dates {
+    font-size: var(--font-size-base);
+    color: var(--color-slate-500);
+    font-weight: var(--font-weight-medium);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.election-dates i {
+    color: var(--color-blue);
+}
+
+/* Status Badge */
+.election-status-badge {
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.election-status-badge.status-active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.election-status-badge.status-pending {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fcd34d;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.election-status-badge.status-closed {
+    background: rgba(148, 163, 184, 0.15);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--color-green);
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+    }
+}
+
+/* ========================================
+   TIMELINE
+   ======================================== */
+
+.timeline-wrapper {
+    position: relative;
+    padding-left: 4rem;
+}
+
+.timeline-line {
+    position: absolute;
+    left: 2rem;
+    top: 2rem;
+    bottom: 2rem;
+    width: 3px;
+    background: linear-gradient(180deg, 
+        var(--color-blue) 0%, 
+        rgba(37, 99, 235, 0.5) 50%,
+        rgba(37, 99, 235, 0.2) 100%
+    );
+    border-radius: 2px;
+}
+
+.timeline-event {
+    position: relative;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s ease-out;
+}
+
+.timeline-event.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.timeline-event:last-child {
+    margin-bottom: 0;
+}
+
+/* Timeline Marker */
+.timeline-marker {
+    position: absolute;
+    left: -2.75rem;
+    top: 1.5rem;
+    z-index: 2;
+}
+
+.marker-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    background: linear-gradient(135deg, var(--color-blue), #1d4ed8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--color-white);
+    box-shadow: 0 0 0 4px rgba(15, 23, 42, 1),
+                0 0 0 6px rgba(37, 99, 235, 0.3);
+    transition: all 0.3s ease;
+}
+
+.timeline-event:hover .marker-icon {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba(15, 23, 42, 1),
+                0 0 0 8px rgba(37, 99, 235, 0.5);
+}
+
+/* Event Card */
+.event-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.event-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--color-blue), #1d4ed8);
+}
+
+.event-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.event-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-white);
+    flex: 1;
+}
+
+.event-order {
+    background: rgba(37, 99, 235, 0.2);
+    color: var(--color-blue);
+    padding: 0.35rem 0.75rem;
+    border-radius: 50px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+}
+
+/* Event DateTime */
+.event-datetime {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 0.75rem;
+}
+
+.datetime-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.datetime-item i {
+    font-size: 1.25rem;
+    color: var(--color-blue);
+}
+
+.datetime-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.datetime-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-slate-500);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    font-weight: var(--font-weight-semibold);
+}
+
+.datetime-value {
+    font-size: var(--font-size-sm);
+    color: var(--color-white);
+    font-weight: var(--font-weight-medium);
+}
+
+.datetime-divider {
+    color: var(--color-slate-500);
+    font-size: 0.875rem;
+}
+
+/* Event Description */
+.event-description {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.event-description i {
+    color: var(--color-blue);
+    margin-top: 0.25rem;
+    flex-shrink: 0;
+}
+
+.event-description p {
+    color: var(--color-slate-500);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Event Status */
+.event-status {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+}
+
+.status-indicator.upcoming {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fcd34d;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.status-indicator.ongoing {
+    background: rgba(16, 185, 129, 0.15);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-indicator.completed {
+    background: rgba(148, 163, 184, 0.15);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+/* ========================================
+   EMPTY STATES
+   ======================================== */
+
+.no-events,
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+}
+
+.no-events i,
+.empty-icon i {
+    font-size: 4rem;
+    color: var(--color-slate-500);
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.empty-state h3 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-white);
+    margin-bottom: 0.75rem;
+}
+
+.empty-state p,
+.no-events p {
+    font-size: var(--font-size-base);
+    color: var(--color-slate-500);
+    margin: 0;
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.timeline-footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-note {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(37, 99, 235, 0.1);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    border-radius: 0.75rem;
+}
+
+.footer-note i {
+    font-size: 1.5rem;
+    color: var(--color-blue);
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+}
+
+.footer-note p {
+    color: var(--color-slate-500);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.footer-note strong {
+    color: var(--color-white);
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+    .timeline-page {
+        padding: 2rem 0;
+    }
+    
+    .page-title {
+        font-size: var(--font-size-3xl);
+    }
+    
+    .header-icon {
+        width: 64px;
+        height: 64px;
+        font-size: 2rem;
+    }
+    
+    .election-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .election-section {
+        padding: 1.5rem;
+    }
+    
+    .timeline-wrapper {
+        padding-left: 3rem;
+    }
+    
+    .timeline-line {
+        left: 1.5rem;
+    }
+    
+    .timeline-marker {
+        left: -2.25rem;
+    }
+    
+    .marker-icon {
+        width: 3rem;
+        height: 3rem;
+        font-size: 1rem;
+    }
+    
+    .event-datetime {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .datetime-divider {
+        transform: rotate(90deg);
+        align-self: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .event-card {
+        padding: 1.5rem;
+    }
+    
+    .event-header {
+        flex-direction: column;
+    }
+    
+    .event-title {
+        font-size: var(--font-size-lg);
+    }
+    
+    .timeline-wrapper {
+        padding-left: 2.5rem;
+    }
+    
+    .timeline-line {
+        left: 1.25rem;
+    }
+    
+    .timeline-marker {
+        left: -1.75rem;
+    }
+    
+    .marker-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 0.875rem;
+    }
+}

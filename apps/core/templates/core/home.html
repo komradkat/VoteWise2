@@ -1,71 +1,255 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Home - VoteWise{% endblock %}
+
 {% block css %}
 <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-  :root {
-    font-family: 'Inter', system-ui, sans-serif;
-  }
-</style>
 {% endblock %}
-
-{% block title %}Home - VoteWise{% endblock %}
 
 {% block content %}
 
-<!-- Urgency Banner (Live + Closed States) -->
-<div class="urgency-banner" id="urgencyBanner" style="display: none;">
-  <span id="bannerText">Voting closes in <span class="countdown" id="countdown">--:--:--</span></span>
-</div>
-
 <!-- Hero Section -->
-<section class="hero" id="home">
-  <div class="container">
-    <h1>Your Vote Shapes Our Future</h1>
-    <p>Secure, transparent, and accessible voting for every student. Cast your ballot from anywhere, anytime.</p>
-    <div class="buttons">
-      <a href="{% url 'accounts:login' %}" class="cta-button primary">
-        <span>Vote Now</span>
-        <i class="fas fa-arrow-right"></i>
-      </a>
-      <a href="{% url 'results' %}" class="cta-button btn-secondary">View Live Results</a>
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-shield-check"></i>
+                <span>Secure & Transparent Voting</span>
+            </div>
+            
+            <h1 class="hero-title">
+                Your Vote<br>
+                <span class="gradient-text">Shapes Our Future</span>
+            </h1>
+            
+            <p class="hero-description">
+                Participate in student democracy with VoteWise—a secure, accessible, and transparent digital voting platform designed for the modern student.
+            </p>
+            
+            <div class="hero-buttons">
+                <a href="{% url 'accounts:login' %}" class="btn-primary">
+                    <i class="fas fa-vote-yea"></i>
+                    <span>Cast Your Vote</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="{% url 'results' %}" class="btn-secondary">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>View Results</span>
+                </a>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">1000+</div>
+                        <div class="stat-label">Registered Voters</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">100%</div>
+                        <div class="stat-label">Secure</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">Access</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+    
+    <!-- Background Elements -->
+    <div class="hero-bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
 </section>
 
 <!-- Features Section -->
-<section class="features" id="features">
-  <div class="container">
-    <h2 class="section-title">Built for Students</h2>
-    <p class="section-subtitle">A modern voting platform designed with security, accessibility, and transparency at
-      its core.</p>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">📱</div>
-        <h3>Vote Anywhere</h3>
-        <p>Cast your ballot from any device—phone, tablet, or computer. No apps or downloads required.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Real-Time Updates</h3>
-        <p>Watch results pour in live with our transparent, real-time counting dashboard.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">✅</div>
-        <h3>Verified Voters</h3>
-        <p>Only registered students can vote—identity verified through our secure school system.</p>
-      </div>
+<section class="features-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Why Choose VoteWise?</h2>
+            <p class="section-subtitle">
+                A modern voting platform built with security, accessibility, and transparency at its core
+            </p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="feature-title">Vote Anywhere</h3>
+                <p class="feature-description">
+                    Cast your ballot from any device—phone, tablet, or computer. No apps or downloads required.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3 class="feature-title">Real-Time Results</h3>
+                <p class="feature-description">
+                    Watch results update live with our transparent, real-time counting dashboard.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Secure & Private</h3>
+                <p class="feature-description">
+                    Your vote is encrypted and anonymous. Only verified students can participate.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Transparent Process</h3>
+                <p class="feature-description">
+                    Full audit trails and verifiable results ensure trust in the democratic process.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-universal-access"></i>
+                </div>
+                <h3 class="feature-title">Fully Accessible</h3>
+                <p class="feature-description">
+                    Designed for all students with support for screen readers and assistive technologies.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3 class="feature-title">AI Assistant</h3>
+                <p class="feature-description">
+                    Get unbiased information about candidates and their platforms from our AI chatbot.
+                </p>
+            </div>
+        </div>
     </div>
-  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">
+                Voting is simple and secure in just three easy steps
+            </p>
+        </div>
+        
+        <div class="steps-container">
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3 class="step-title">Login</h3>
+                    <p class="step-description">
+                        Sign in with your student credentials to verify your identity
+                    </p>
+                </div>
+            </div>
+            
+            <div class="step-connector">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+            
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3 class="step-title">Vote</h3>
+                    <p class="step-description">
+                        Select your preferred candidates for each position
+                    </p>
+                </div>
+            </div>
+            
+            <div class="step-connector">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+            
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3 class="step-title">Confirm</h3>
+                    <p class="step-description">
+                        Review and submit your ballot securely
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="cta-title">Ready to Make Your Voice Heard?</h2>
+            <p class="cta-description">
+                Join thousands of students participating in democratic elections through VoteWise
+            </p>
+            <div class="cta-buttons">
+                <a href="{% url 'accounts:login' %}" class="btn-primary large">
+                    <i class="fas fa-vote-yea"></i>
+                    <span>Start Voting Now</span>
+                </a>
+                <a href="{% url 'elections:timeline' %}" class="btn-outline large">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>View Election Timeline</span>
+                </a>
+            </div>
+        </div>
+    </div>
 </section>
 
 {% endblock %}
 
 {% block extra_scripts %}
-<script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
-<script src="{% static 'core/js/home.js' %}"></script>
+<script>
+// Add scroll animations
+document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all feature cards and step items
+    document.querySelectorAll('.feature-card, .step-item').forEach(el => {
+        observer.observe(el);
+    });
+});
+</script>
 {% endblock %}

@@ -280,13 +280,25 @@ def dashboard(request):
     # Calculate overall turnout percentage
     overall_turnout_percentage = (total_votes_cast / total_voters * 100) if total_voters > 0 else 0
     
+    # Determine election status label for the stat card
+    election_status_label = None
+    if active_election:
+        if now < active_election.start_time:
+            election_status_label = 'Upcoming'
+        elif now > active_election.end_time:
+            election_status_label = 'Closed'
+        elif active_election.is_active:
+            election_status_label = 'Active'
+        else:
+            election_status_label = 'Paused'
+    
     context = {
         # Primary metrics
         'total_voters': total_voters,
         'eligible_voters': eligible_voters,
         'total_votes_cast': total_votes_cast,
         'overall_turnout_percentage': round(overall_turnout_percentage, 1),
-        'active_elections_count': 1 if active_election else 0,
+        'election_status_label': election_status_label,
         'total_active_candidates': total_active_candidates,
         'total_positions': total_positions,
         

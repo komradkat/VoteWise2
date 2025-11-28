@@ -5,113 +5,143 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'core/css/election-results.css' %}">
-<style>
-    .election-dropdown {
-        padding: 0.75rem 1.5rem;
-        padding-right: 2.5rem;
-        font-size: 1.1rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 0.5rem;
-        background-color: rgba(255, 255, 255, 0.05);
-        color: var(--color-white);
-        cursor: pointer;
-        min-width: 300px;
-        transition: all 0.2s;
-        font-weight: 600;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        background-size: 0.8em auto;
-    }
-    
-    .election-dropdown:hover, .election-dropdown:focus {
-        border-color: var(--color-blue);
-        background-color: rgba(255, 255, 255, 0.1);
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-    }
-    
-    .election-dropdown option {
-        background-color: #1e293b;
-        color: white;
-        padding: 10px;
-    }
-</style>
 {% endblock %}
 
 {% block content %}
-<section class="live-results" id="results">
+<section class="results-page">
     <div class="container">
-        <div style="text-align: center; margin-bottom: 3rem;">
-            <div class="live-badge" id="liveBadge">
-                <span class="live-dot"></span>
-                {% if election.is_active %}LIVE RESULTS{% else %}FINAL RESULTS{% endif %}
-            </div>
-            
-            <!-- Election Selector -->
-            <div class="election-selector-container" style="margin-bottom: 1.5rem;">
-                <select id="electionSelect" class="election-dropdown" onchange="window.location.href='?election_id=' + this.value">
-                    {% for e in all_elections %}
-                    <option value="{{ e.id }}" {% if e.id == selected_election_id %}selected{% endif %}>
-                        {{ e.name }} ({% if e.is_active %}Active{% else %}Closed{% endif %})
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <h2 class="section-title">
+        <!-- Page Header -->
+        <div class="results-header">
+            <div class="header-content">
                 {% if election %}
-                {{ election.name }}
-                {% else %}
-                Election Results
+                <div class="status-badge {% if election.is_active %}live{% else %}final{% endif %}">
+                    {% if election.is_active %}
+                        <span class="pulse-dot"></span>
+                        <span>LIVE RESULTS</span>
+                    {% else %}
+                        <i class="fas fa-check-circle"></i>
+                        <span>FINAL RESULTS</span>
+                    {% endif %}
+                </div>
                 {% endif %}
-            </h2>
-        </div>
-
-        <div class="results-summary">
-            <div class="total-votes">
-                <span class="label">Total Ballots Cast</span>
-                <span class="count">{{ total_ballots }}</span>
-            </div>
-            <div class="status {% if not election.is_active %}closed{% endif %}">
-                {% if election.is_active %}ONGOING{% else %}CLOSED{% endif %}
+                
+                <h1 class="page-title">
+                    {% if election %}
+                        {{ election.name }}
+                    {% else %}
+                        Election Results
+                    {% endif %}
+                </h1>
+                
+                {% if election %}
+                <p class="election-dates">
+                    <i class="fas fa-calendar"></i>
+                    {{ election.start_time|date:"F j, Y" }} - {{ election.end_time|date:"F j, Y" }}
+                </p>
+                {% endif %}
             </div>
         </div>
 
         {% if not election %}
-        <div class="no-data-message">
+        <!-- No Election State -->
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-inbox"></i>
+            </div>
             <h3>No Election Data Available</h3>
-            <p>Please check back later.</p>
+            <p>There are no elections to display at this time. Please check back later.</p>
         </div>
         {% else %}
 
-        <!-- Positions Grid -->
+        <!-- Summary Stats -->
+        <div class="summary-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Total Ballots Cast</div>
+                    <div class="stat-value">{{ total_ballots|default:0 }}</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-list-check"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Positions</div>
+                    <div class="stat-value">{{ positions_data|length }}</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-{{ election.is_active|yesno:'hourglass-half,flag-checkered' }}"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Status</div>
+                    <div class="stat-value status-text {% if election.is_active %}active{% else %}closed{% endif %}">
+                        {{ election.is_active|yesno:"Ongoing,Closed" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results by Position -->
+        {% if positions_data %}
         <div class="positions-container">
             {% for position in positions_data %}
-            <div class="position-group">
-                <h3 class="position-title">{{ position.name }}</h3>
+            <div class="position-section">
+                <div class="position-header">
+                    <h2 class="position-title">{{ position.name }}</h2>
+                    <div class="position-meta">
+                        <span class="vote-count">
+                            <i class="fas fa-vote-yea"></i>
+                            {{ position.total_votes }} vote{{ position.total_votes|pluralize }}
+                        </span>
+                    </div>
+                </div>
+
                 <div class="candidates-grid">
                     {% for candidate in position.candidates %}
-                    <div class="candidate-card {% if forloop.first and not election.is_active %}winner{% endif %}">
-                        <div class="candidate-header">
-                            <!-- Use a default image if no photo -->
-                            <img src="{% if candidate.photo_url %}{{ candidate.photo_url }}{% else %}{% static 'core/img/default-avatar.png' %}{% endif %}"
-                                alt="{{ candidate.name }}">
-                            <h3>{{ candidate.name }}</h3>
-                            <div class="position">{{ candidate.partylist }}</div>
+                    <div class="candidate-card {% if forloop.counter == 1 and not election.is_active %}winner{% endif %}" data-rank="{{ forloop.counter }}">
+                        {% if forloop.counter == 1 and not election.is_active %}
+                        <div class="winner-badge">
+                            <i class="fas fa-crown"></i>
+                            <span>Winner</span>
                         </div>
-                        <div class="candidate-body">
-                            <div class="progress-container">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: {{ candidate.percentage }}%"></div>
-                                </div>
-                                <div class="progress-text">
-                                    <span>{{ candidate.votes }} votes</span>
-                                    <span>{{ candidate.percentage }}%</span>
-                                </div>
+                        {% endif %}
+                        
+                        <div class="candidate-rank">
+                            #{{ forloop.counter }}
+                        </div>
+                        
+                        <div class="candidate-photo">
+                            <img src="{% if candidate.photo_url %}{{ candidate.photo_url }}{% else %}{% static 'core/img/default-avatar.png' %}{% endif %}"
+                                 alt="{{ candidate.name }}"
+                                 onerror="this.src='{% static 'core/img/default-avatar.png' %}'">
+                        </div>
+                        
+                        <div class="candidate-info">
+                            <h3 class="candidate-name">{{ candidate.name }}</h3>
+                            <div class="candidate-party">
+                                <i class="fas fa-flag"></i>
+                                {{ candidate.partylist }}
+                            </div>
+                        </div>
+                        
+                        <div class="candidate-stats">
+                            <div class="vote-info">
+                                <span class="vote-count-label">Votes</span>
+                                <span class="vote-count-value">{{ candidate.votes }}</span>
+                            </div>
+                            <div class="vote-percentage">{{ candidate.percentage }}%</div>
+                        </div>
+                        
+                        <div class="progress-bar-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ candidate.percentage }}%"></div>
                             </div>
                         </div>
                     </div>
@@ -120,15 +150,54 @@
             </div>
             {% endfor %}
         </div>
+        {% else %}
+        <div class="no-results">
+            <i class="fas fa-info-circle"></i>
+            <p>No votes have been cast yet. Results will appear here once voting begins.</p>
+        </div>
         {% endif %}
 
-        <div class="results-note">
-            <p>Results generated on {% now "F j, Y H:i" %}</p>
+        <!-- Footer Note -->
+        <div class="results-footer">
+            <p>
+                <i class="fas fa-clock"></i>
+                Last updated: {% now "F j, Y \a\t g:i A" %}
+            </p>
+            {% if election.is_active %}
+            <p class="auto-refresh-note">
+                <i class="fas fa-sync-alt"></i>
+                Refresh the page to see the latest results
+            </p>
+            {% endif %}
         </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}
 
 {% block extra_scripts %}
-<!-- JS removed to prevent conflict with server-side rendering -->
+<script>
+// Add animation on scroll
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.candidate-card');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+    
+    cards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        observer.observe(card);
+    });
+});
+</script>
 {% endblock %}
