@@ -25,6 +25,8 @@ except ImportError:
     np = None
 
 from .models import UserBiometric
+from apps.core.logging import logger
+
 
 @csrf_exempt
 @login_required

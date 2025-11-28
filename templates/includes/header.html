@@ -55,6 +55,8 @@
                         class="{% if 'elections' in request.path %}active-link{% endif %}">Elections</a></li>
                 <li><a href="{% url 'results' %}"
                         class="{% if 'results' in request.path %}active-link{% endif %}">Results</a></li>
+                <li><a href="{% url 'chatbot:chat' %}"
+                        class="{% if 'chatbot' in request.path %}active-link{% endif %}">Chatbot</a></li>
                 <li><a href="{% url 'about' %}"
                         class="{% if request.path == '/about/' %}active-link{% endif %}">About</a></li>
                 {% else %}
@@ -64,6 +66,8 @@
                         class="{% if 'results' in request.path %}active-link{% endif %}">Results</a></li>
                 <li><a href="{% url 'elections:timeline' %}" class="{% if 'timeline' in request.path %}active-link{% endif %}">Timeline</a>
                 </li>
+                <li><a href="{% url 'chatbot:chat' %}"
+                        class="{% if 'chatbot' in request.path %}active-link{% endif %}">Chatbot</a></li>
                 <li><a href="{% url 'about' %}"
                         class="{% if request.path == '/about/' %}active-link{% endif %}">About</a></li>
                 {% endif %}
