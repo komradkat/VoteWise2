@@ -53,6 +53,17 @@
                             <p>Enter your credentials to access the dashboard</p>
                         </div>
 
+                        {% if messages %}
+                        <div class="messages-container" style="margin-bottom: 1rem;">
+                            {% for message in messages %}
+                            <div class="admin-error-alert" style="{% if message.tags == 'success' %}background-color: #dcfce7; color: #166534; border-color: #bbf7d0;{% endif %}">
+                                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                                <span>{{ message }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
                         {% if form.errors %}
                         <div class="admin-error-alert">
                             <i class="fas fa-exclamation-circle"></i>

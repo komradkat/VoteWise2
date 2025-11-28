@@ -63,6 +63,41 @@
 
         <!-- Main Content -->
         <main class="admin-main">
+            {% if messages %}
+            <div class="messages-container" style="margin-bottom: 1.5rem;">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" style="
+                    padding: 1rem;
+                    border-radius: 0.5rem;
+                    margin-bottom: 0.5rem;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    {% if message.tags == 'success' %}
+                        background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0;
+                    {% elif message.tags == 'error' %}
+                        background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca;
+                    {% elif message.tags == 'warning' %}
+                        background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a;
+                    {% elif message.tags == 'info' %}
+                        background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe;
+                    {% else %}
+                        background-color: #f3f4f6; color: #1f2937; border: 1px solid #e5e7eb;
+                    {% endif %}
+                ">
+                    <span>
+                        {% if message.tags == 'success' %}<i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                        {% elif message.tags == 'error' %}<i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i>
+                        {% elif message.tags == 'warning' %}<i class="fas fa-exclamation-triangle" style="margin-right: 0.5rem;"></i>
+                        {% elif message.tags == 'info' %}<i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>
+                        {% endif %}
+                        {{ message }}
+                    </span>
+                    <button type="button" onclick="this.parentElement.style.display='none'" style="background: none; border: none; cursor: pointer; color: inherit; font-size: 1.25rem;">&times;</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
             {% block content %}{% endblock %}
         </main>
     </div>
