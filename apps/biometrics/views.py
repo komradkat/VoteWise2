@@ -82,7 +82,7 @@ def enroll_face(request):
                 is_real = primary_face.get('is_real', False)
                 antispoof_score = primary_face.get('antispoof_score', 0)
                 
-                print(f"[FACE ENROLL] Liveness Check: Real={is_real}, Score={antispoof_score}")
+                logger.face_enroll(f"Liveness Check: Real={is_real}, Score={antispoof_score}", user=request.user.username)
                 
                 # Layer 1: Basic liveness check
                 if not is_real:
@@ -90,13 +90,13 @@ def enroll_face(request):
                 
                 # Layer 2: VERY STRICT confidence threshold (0.95 = 95%+ confidence)
                 if antispoof_score < 0.95:
-                    print(f"[FACE ENROLL] REJECTED: Insufficient confidence {antispoof_score} (need >= 0.95)")
+                    logger.security(f"REJECTED: Insufficient confidence {antispoof_score} (need >= 0.95)", user=request.user.username, category="FACE ENROLL")
                     return JsonResponse({'error': f'Liveness confidence too low ({antispoof_score:.2f}). Please ensure optimal lighting and look directly at camera.'}, status=400)
                 
                 # Layer 3: Face quality check - reject low quality images
                 face_confidence = primary_face.get('confidence', 0)
                 if face_confidence < 0.90:  # Relaxed from 0.95 to 0.90 for usability
-                    print(f"[FACE ENROLL] REJECTED: Low face detection confidence {face_confidence}")
+                    logger.security(f"REJECTED: Low face detection confidence {face_confidence}", user=request.user.username, category="FACE ENROLL")
                     return JsonResponse({'error': 'Face quality too low. Please ensure good lighting and clear view.'}, status=400)
                 
                 # Layer 4: Check facial region size and proportions
@@ -105,28 +105,28 @@ def enroll_face(request):
                     width = facial_area.get('w', 0)
                     height = facial_area.get('h', 0)
                     if width < 80 or height < 80:
-                        print(f"[FACE ENROLL] REJECTED: Face too small {width}x{height} (min 80x80)")
+                        logger.security(f"REJECTED: Face too small {width}x{height} (min 80x80)", user=request.user.username, category="FACE ENROLL")
                         return JsonResponse({'error': 'Face appears too small. Move closer to camera.'}, status=400)
                     aspect_ratio = width / height if height > 0 else 0
                     # Relaxed from 0.7-1.4 to 0.6-1.5 for different face shapes and angles
                     if aspect_ratio < 0.6 or aspect_ratio > 1.5:
-                        print(f"[FACE ENROLL] REJECTED: Unusual aspect ratio {aspect_ratio}")
+                        logger.security(f"REJECTED: Unusual aspect ratio {aspect_ratio}", user=request.user.username, category="FACE ENROLL")
                         return JsonResponse({'error': 'Face proportions unusual. Please face camera directly.'}, status=400)
                 
                 # Layer 5: Ensure the liveness model actually ran
                 if 'is_real' not in primary_face:
-                    print(f"[FACE ENROLL] WARNING: Liveness detection did not run properly!")
+                    logger.error("Liveness detection did not run properly!", user=request.user.username, category="FACE ENROLL")
                     return JsonResponse({'error': 'Security check failed. Anti-spoofing not available.'}, status=500)
                 
-                print(f"[FACE ENROLL] ✅ All security layers passed - proceeding to enrollment")
+                logger.face_enroll("All security layers passed - proceeding to enrollment", user=request.user.username)
                     
             except TypeError as e:
                 # anti_spoofing parameter not supported - FAIL SECURE
-                print(f"[FACE ENROLL] Anti-spoofing not supported: {str(e)}")
+                logger.error(f"Anti-spoofing not supported: {str(e)}", user=request.user.username, category="FACE ENROLL")
                 return JsonResponse({'error': 'Security feature not available. Cannot enroll without anti-spoofing.'}, status=500)
             except ValueError as e:
                 # No face detected by extract_faces
-                print(f"[FACE ENROLL] No face detected: {str(e)}")
+                logger.warning(f"No face detected: {str(e)}", user=request.user.username, category="FACE ENROLL")
                 return JsonResponse({'error': 'No face detected. Please try again.'}, status=400)
 
             embedding_objs = DeepFace.represent(
@@ -194,24 +194,24 @@ def verify_face(request):
             return JsonResponse({'error': 'No image data provided'}, status=400)
             
         if not username:
-            print(f"[FACE VERIFY] ERROR: No username provided")
+            logger.warning("No username provided", category="FACE VERIFY")
             return JsonResponse({'error': 'Please enter your username first'}, status=400)
             
-        print(f"[FACE VERIFY] Attempting to verify user: {username}")
+        logger.face_verify(f"Attempting to verify user: {username}", user=username)
         
         # 1. Find the user first (1:1 Verification)
         try:
             user = User.objects.get(username=username)
-            print(f"[FACE VERIFY] User found: {user.username} (ID: {user.id})")
+            logger.face_verify(f"User found: {user.username} (ID: {user.id})", user=username)
         except User.DoesNotExist:
-            print(f"[FACE VERIFY] ERROR: User '{username}' does not exist")
+            logger.warning(f"User '{username}' does not exist", category="FACE VERIFY")
             return JsonResponse({'error': 'Authentication failed'}, status=401)
             
         try:
             user_biometric = UserBiometric.objects.get(user=user, is_active=True)
-            print(f"[FACE VERIFY] Face ID found for user {username}")
+            logger.face_verify(f"Face ID found for user {username}", user=username)
         except UserBiometric.DoesNotExist:
-            print(f"[FACE VERIFY] ERROR: Face ID not enrolled for user '{username}'")
+            logger.warning(f"Face ID not enrolled for user '{username}'", user=username, category="FACE VERIFY")
             return JsonResponse({'error': 'Face ID not enabled for this user'}, status=400)
 
         # Decode base64 image
@@ -240,7 +240,7 @@ def verify_face(request):
                 )
                 
                 if not face_objs:
-                     print(f"[FACE VERIFY] No face detected during liveness check.")
+                     logger.warning("No face detected during liveness check.", user=username, category="FACE VERIFY")
                      return JsonResponse({'error': 'No face detected. Please ensure your face is clearly visible.'}, status=400)
 
                 # CRITICAL: Default to False for security - assume fake unless proven real
@@ -248,23 +248,23 @@ def verify_face(request):
                 is_real = primary_face.get('is_real', False)
                 antispoof_score = primary_face.get('antispoof_score', 0)
                 
-                print(f"[FACE VERIFY] Liveness Check: Real={is_real}, Score={antispoof_score}")
+                logger.face_verify(f"Liveness Check: Real={is_real}, Score={antispoof_score}", user=username)
 
                 # Layer 1: Basic liveness check
                 if not is_real:
-                     print(f"[FACE VERIFY] REJECTED: Fake face detected (Score: {antispoof_score})")
+                     logger.security(f"REJECTED: Fake face detected (Score: {antispoof_score})", user=username, category="FACE VERIFY")
                      return JsonResponse({'error': 'Liveness check failed. Please use a real camera feed.'}, status=401)
                 
                 # Layer 2: VERY STRICT confidence threshold (0.95 = 95%+ confidence)
                 # Lowered from 0.8 because 0.9 was still allowing shampoo bottles through
                 if antispoof_score < 0.95:
-                    print(f"[FACE VERIFY] REJECTED: Insufficient confidence {antispoof_score} (need >= 0.95)")
+                    logger.security(f"REJECTED: Insufficient confidence {antispoof_score} (need >= 0.95)", user=username, category="FACE VERIFY")
                     return JsonResponse({'error': 'Liveness confidence insufficient. Please ensure optimal lighting and look directly at camera.'}, status=401)
                 
                 # Layer 3: Face quality check - reject low quality images (often from photos/prints)
                 face_confidence = primary_face.get('confidence', 0)
                 if face_confidence < 0.90:  # Relaxed from 0.95 to 0.90 for usability
-                    print(f"[FACE VERIFY] REJECTED: Low face detection confidence {face_confidence}")
+                    logger.security(f"REJECTED: Low face detection confidence {face_confidence}", user=username, category="FACE VERIFY")
                     return JsonResponse({'error': 'Face quality too low. Please ensure good lighting and clear view.'}, status=401)
                 
                 # Layer 4: Check facial region size - photos often have different proportions
@@ -274,32 +274,32 @@ def verify_face(request):
                     height = facial_area.get('h', 0)
                     # Reject if face is too small (likely a photo of a photo)
                     if width < 80 or height < 80:
-                        print(f"[FACE VERIFY] REJECTED: Face too small {width}x{height} (min 80x80)")
+                        logger.security(f"REJECTED: Face too small {width}x{height} (min 80x80)", user=username, category="FACE VERIFY")
                         return JsonResponse({'error': 'Face appears too small. Move closer to camera.'}, status=401)
                     # Relaxed from 0.7-1.4 to 0.6-1.5 for different face shapes and angles
                     aspect_ratio = width / height if height > 0 else 0
                     if aspect_ratio < 0.6 or aspect_ratio > 1.5:
-                        print(f"[FACE VERIFY] REJECTED: Unusual aspect ratio {aspect_ratio}")
+                        logger.security(f"REJECTED: Unusual aspect ratio {aspect_ratio}", user=username, category="FACE VERIFY")
                         return JsonResponse({'error': 'Face proportions unusual. Please face camera directly.'}, status=401)
                 
                 # Layer 5: Ensure the liveness model actually ran
                 if 'is_real' not in primary_face:
-                    print(f"[FACE VERIFY] WARNING: Liveness detection did not run properly!")
+                    logger.error("Liveness detection did not run properly!", user=username, category="FACE VERIFY")
                     return JsonResponse({'error': 'Security check failed. Anti-spoofing not available.'}, status=500)
                 
-                print(f"[FACE VERIFY] ✅ All security layers passed - proceeding to face matching")
+                logger.face_verify("All security layers passed - proceeding to face matching", user=username)
 
             except TypeError as e:
                 # anti_spoofing parameter not supported - FAIL SECURE
-                print(f"[FACE VERIFY] Anti-spoofing not supported: {str(e)}")
+                logger.error(f"Anti-spoofing not supported: {str(e)}", user=username, category="FACE VERIFY")
                 return JsonResponse({'error': 'Security feature not available. Cannot verify without anti-spoofing.'}, status=500)
             except ValueError as e:
                 # DeepFace.extract_faces raises ValueError if no face is found when enforce_detection=True
-                print(f"[FACE VERIFY] Liveness check error: {str(e)}")
+                logger.warning(f"Liveness check error: {str(e)}", user=username, category="FACE VERIFY")
                 return JsonResponse({'error': 'No face detected. Please ensure your face is clearly visible.'}, status=400)
             except Exception as e:
                 # Fail secure on any unexpected error
-                print(f"[FACE VERIFY] Unexpected liveness check error: {str(e)}")
+                logger.error(f"Unexpected liveness check error: {str(e)}", user=username, category="FACE VERIFY")
                 return JsonResponse({'error': 'Security check failed. Please try again.'}, status=500)
 
             embedding_objs = DeepFace.represent(
@@ -329,7 +329,7 @@ def verify_face(request):
         else:
             distance = 1 - (dot_product / (norm_a * norm_b))
         
-        print(f"Verifying user {username}: Cosine distance={distance}")
+        logger.face_verify(f"Verifying user {username}: Cosine distance={distance}", user=username)
         
         # Threshold for Facenet Cosine Distance (Default is 0.40)
         # 0.6 was too loose and allowed spoofing. 0.4 is stricter.
