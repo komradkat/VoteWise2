@@ -77,12 +77,18 @@ def dashboard(request):
     total_positions = 0
     
     if active_election:
-        # Get votes for this election
-        election_votes = Vote.objects.filter(election=active_election).count()
-        total_votes_cast = election_votes
+        # Get actual number of voters who participated (Ballots Cast)
+        # We use VoterReceipt because one receipt = one voter
+        ballots_cast = VoterReceipt.objects.filter(election=active_election).count()
         
-        # Calculate turnout
-        turnout_percentage = (election_votes / total_voters * 100) if total_voters > 0 else 0
+        # Total individual votes (for internal tracking)
+        total_individual_votes = Vote.objects.filter(election=active_election).count()
+        
+        # Update context variable to reflect ballots cast
+        total_votes_cast = ballots_cast
+        
+        # Calculate turnout based on eligible voters
+        turnout_percentage = (ballots_cast / eligible_voters * 100) if eligible_voters > 0 else 0
         
         # Get positions and candidates grouped by position
         positions_data = []
@@ -181,7 +187,7 @@ def dashboard(request):
             'status_label': status_label,
             'start_time': active_election.start_time,
             'end_time': active_election.end_time,
-            'votes_cast': election_votes,
+            'votes_cast': total_votes_cast,
             'turnout_percentage': round(turnout_percentage, 2),
             'positions_data': positions_data,
             'time_remaining': time_remaining,
