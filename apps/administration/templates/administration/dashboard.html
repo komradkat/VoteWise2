@@ -210,6 +210,9 @@
             <div class="position-group" style="margin-bottom: 2rem;">
                 <h5 class="position-title" style="font-size: 1.1rem; color: #64748b; margin-bottom: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">
                     {{ position.name }}
+                    <span style="font-size: 0.85rem; color: #94a3b8; margin-left: 0.5rem; font-weight: normal;">
+                        ({{ position.number_of_winners }} winner{% if position.number_of_winners > 1 %}s{% endif %})
+                    </span>
                     <span style="float: right; font-size: 0.9rem; font-weight: normal;">{{ position.total_votes }} votes</span>
                 </h5>
                 <div class="candidates-grid">

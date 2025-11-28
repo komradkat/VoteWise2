@@ -91,6 +91,9 @@ def dashboard(request):
         total_active_candidates = Candidate.objects.filter(election=active_election).count()
         total_positions = election_positions.count()
         
+        # Determine election status first to use in loop
+        is_election_closed = now > active_election.end_time
+        
         for position in election_positions:
             pos_candidates = Candidate.objects.filter(election=active_election, position=position).select_related(
                 'student_profile__user', 'partylist'
@@ -116,17 +119,31 @@ def dashboard(request):
             # Sort candidates by votes (descending)
             candidates_list.sort(key=lambda x: x['votes'], reverse=True)
             
-            # Mark the winner/leader
-            if candidates_list:
-                candidates_list[0]['is_winner'] = True
-                # Handle ties - if second place has same votes as first
-                if len(candidates_list) > 1 and candidates_list[1]['votes'] == candidates_list[0]['votes']:
-                     candidates_list[1]['is_winner'] = True # Mark tie as winner too for now, or handle differently
+            # Mark winners based on position.number_of_winners
+            # Only if election is closed
+            if is_election_closed and candidates_list:
+                num_winners = position.number_of_winners
+                
+                # Mark top N candidates as winners
+                for i in range(min(len(candidates_list), num_winners)):
+                    candidates_list[i]['is_winner'] = True
+                
+                # Handle ties for the last winning spot
+                # If the candidate after the last winner has the same votes as the last winner, they are also a winner (tie)
+                if len(candidates_list) > num_winners:
+                    last_winner_votes = candidates_list[num_winners-1]['votes']
+                    # Check subsequent candidates
+                    for i in range(num_winners, len(candidates_list)):
+                        if candidates_list[i]['votes'] == last_winner_votes and last_winner_votes > 0:
+                            candidates_list[i]['is_winner'] = True
+                        else:
+                            break
             
             positions_data.append({
                 'name': position.name,
                 'candidates': candidates_list,
-                'total_votes': position_total_votes
+                'total_votes': position_total_votes,
+                'number_of_winners': position.number_of_winners
             })
         
         # Calculate time remaining
