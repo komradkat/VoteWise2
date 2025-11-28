@@ -117,6 +117,7 @@ class Candidate(models.Model):
 class Election(models.Model):
     """
     Defines a specific, time-bound voting event for a set of positions.
+    Only ONE election can be active at a time (school year policy).
     """
     name = models.CharField(max_length=200, unique=True, help_text="E.g., '2025 General Student Council Election'")
     start_time = models.DateTimeField()
@@ -145,6 +146,16 @@ class Election(models.Model):
         if now > self.end_time:
             return 'Closed'
         return 'Active'
+    
+    def save(self, *args, **kwargs):
+        """
+        Override save to enforce single active election constraint.
+        When this election is activated, all other elections are deactivated.
+        """
+        if self.is_active:
+            # Deactivate all other elections
+            Election.objects.exclude(pk=self.pk).update(is_active=False)
+        super().save(*args, **kwargs)
 
 
 # ----------------------------------------------------------------------

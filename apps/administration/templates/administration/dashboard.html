@@ -199,39 +199,48 @@
         </div>
 
         <!-- Candidates Results -->
-        {% if election.candidates %}
+        {% if election.positions_data %}
         <div class="candidates-section">
             <h4>
                 <i class="fas fa-trophy"></i>
-                Leading Candidates
+                Leading Candidates by Position
             </h4>
-            <div class="candidates-grid">
-                {% for candidate in election.candidates|slice:":6" %}
-                <div class="candidate-card {% if forloop.counter == 1 %}leading{% endif %}">
-                    <div class="candidate-rank">
-                        {% if forloop.counter == 1 %}
-                            <i class="fas fa-crown"></i>
-                        {% else %}
-                            #{{ forloop.counter }}
-                        {% endif %}
-                    </div>
-                    <div class="candidate-info">
-                        <div class="candidate-name">{{ candidate.name }}</div>
-                        <div class="candidate-position">{{ candidate.position }}</div>
-                        <div class="candidate-party">{{ candidate.partylist }}</div>
-                    </div>
-                    <div class="candidate-stats">
-                        <div class="candidate-votes">{{ candidate.votes }}</div>
-                        <div class="candidate-percentage">{{ candidate.percentage }}%</div>
-                        <div class="candidate-progress">
-                            <div class="progress-bar mini">
-                                <div class="progress-fill" style="width: {{ candidate.percentage }}%"></div>
+            
+            {% for position in election.positions_data %}
+            <div class="position-group" style="margin-bottom: 2rem;">
+                <h5 class="position-title" style="font-size: 1.1rem; color: #64748b; margin-bottom: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">
+                    {{ position.name }}
+                    <span style="float: right; font-size: 0.9rem; font-weight: normal;">{{ position.total_votes }} votes</span>
+                </h5>
+                <div class="candidates-grid">
+                    {% for candidate in position.candidates %}
+                    <div class="candidate-card {% if candidate.is_winner %}leading{% endif %}">
+                        <div class="candidate-rank">
+                            {% if candidate.is_winner %}
+                                <i class="fas fa-crown"></i>
+                            {% else %}
+                                #{{ forloop.counter }}
+                            {% endif %}
+                        </div>
+                        <div class="candidate-info">
+                            <div class="candidate-name">{{ candidate.name }}</div>
+                            <!-- Position removed here as it's in the header now -->
+                            <div class="candidate-party">{{ candidate.partylist }}</div>
+                        </div>
+                        <div class="candidate-stats">
+                            <div class="candidate-votes">{{ candidate.votes }}</div>
+                            <div class="candidate-percentage">{{ candidate.percentage }}%</div>
+                            <div class="candidate-progress">
+                                <div class="progress-bar mini">
+                                    <div class="progress-fill" style="width: {{ candidate.percentage }}%"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
         {% else %}
         <div class="no-candidates">

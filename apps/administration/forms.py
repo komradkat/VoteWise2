@@ -10,6 +10,10 @@ class ElectionForm(forms.ModelForm):
         widgets = {
             'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
             'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+        help_texts = {
+            'is_active': 'Check to activate this election. WARNING: Activating this election will automatically deactivate any other currently active elections (Single Election Policy).',
         }
 
     def __init__(self, *args, **kwargs):
