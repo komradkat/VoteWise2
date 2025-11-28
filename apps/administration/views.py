@@ -5,7 +5,7 @@ from django.contrib.auth import login as auth_login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
-from apps.elections.models import Election, Position, Partylist, Candidate, Vote
+from apps.elections.models import Election, Position, Partylist, Candidate, Vote, VoterReceipt
 from django.core.paginator import Paginator
 from apps.accounts.models import StudentProfile
 from .forms import (
@@ -57,20 +57,215 @@ def admin_logout(request):
 
 @user_passes_test(is_admin, login_url='administration:login')
 def dashboard(request):
-    # Prepare data for charts
+    from django.utils import timezone
+    from django.db.models import Q, F
+    
+    # Get current time for status calculations
+    now = timezone.now()
+    
+    # Total registered voters
+    total_voters = StudentProfile.objects.count()
+    eligible_voters = StudentProfile.objects.filter(is_eligible_to_vote=True).count()
+    
+    # Get active elections with detailed analytics
+    active_elections = Election.objects.filter(
+        Q(is_active=True) | Q(start_time__lte=now, end_time__gte=now)
+    ).distinct()
+    
+    # Election analytics data
+    election_analytics = []
+    total_votes_cast = 0
+    
+    for election in active_elections:
+        # Get votes for this election
+        election_votes = Vote.objects.filter(election=election).count()
+        total_votes_cast += election_votes
+        
+        # Calculate turnout
+        turnout_percentage = (election_votes / total_voters * 100) if total_voters > 0 else 0
+        
+        # Get candidates with vote counts for this election
+        candidates_data = []
+        election_candidates = Candidate.objects.filter(election=election).select_related(
+            'student_profile__user', 'position', 'partylist'
+        )
+        
+        for candidate in election_candidates:
+            vote_count = Vote.objects.filter(candidate=candidate, election=election).count()
+            vote_percentage = (vote_count / election_votes * 100) if election_votes > 0 else 0
+            
+            candidates_data.append({
+                'name': candidate.student_profile.user.get_full_name(),
+                'position': candidate.position.name,
+                'partylist': candidate.partylist.name if candidate.partylist else 'Independent',
+                'votes': vote_count,
+                'percentage': round(vote_percentage, 2),
+                'photo': candidate.photo.url if candidate.photo else None,
+            })
+        
+        # Sort candidates by votes (descending)
+        candidates_data.sort(key=lambda x: x['votes'], reverse=True)
+        
+        # Calculate time remaining
+        time_remaining = None
+        if election.end_time > now:
+            delta = election.end_time - now
+            days = delta.days
+            hours = delta.seconds // 3600
+            minutes = (delta.seconds % 3600) // 60
+            time_remaining = {
+                'days': days,
+                'hours': hours,
+                'minutes': minutes,
+                'total_seconds': delta.total_seconds()
+            }
+        
+        # Determine election status
+        if now < election.start_time:
+            status = 'pending'
+            status_label = 'Upcoming'
+        elif now > election.end_time:
+            status = 'closed'
+            status_label = 'Closed'
+        elif election.is_active:
+            status = 'active'
+            status_label = 'Active'
+        else:
+            status = 'paused'
+            status_label = 'Paused'
+        
+        election_analytics.append({
+            'id': election.id,
+            'name': election.name,
+            'status': status,
+            'status_label': status_label,
+            'start_time': election.start_time,
+            'end_time': election.end_time,
+            'votes_cast': election_votes,
+            'turnout_percentage': round(turnout_percentage, 2),
+            'candidates': candidates_data,
+            'time_remaining': time_remaining,
+            'total_candidates': len(candidates_data),
+        })
+    
+    # Votes by position (for all active elections)
+    position_votes = Vote.objects.filter(
+        election__in=active_elections
+    ).values('position__name').annotate(
+        count=Count('id')
+    ).order_by('-count')
+    
+    # Turnout trends over time (last 24 hours for active elections)
+    from datetime import timedelta
+    hourly_votes = []
+    if active_elections.exists():
+        for i in range(24):
+            hour_start = now - timedelta(hours=23-i)
+            hour_end = hour_start + timedelta(hours=1)
+            hour_count = Vote.objects.filter(
+                election__in=active_elections,
+                timestamp__gte=hour_start,
+                timestamp__lt=hour_end
+            ).count()
+            hourly_votes.append({
+                'hour': hour_start.strftime('%H:%M'),
+                'votes': hour_count
+            })
+    
+    # Demographic data for charts
     course_data = StudentProfile.objects.values('course').annotate(count=Count('id')).order_by('-count')
     year_data = StudentProfile.objects.values('year_level').annotate(count=Count('id')).order_by('year_level')
-
+    
+    # Voter participation by demographics (who has voted)
+    voted_student_ids = VoterReceipt.objects.filter(
+        election__in=active_elections
+    ).values_list('voter_id', flat=True).distinct()
+    
+    participation_by_course = StudentProfile.objects.filter(
+        id__in=voted_student_ids
+    ).values('course').annotate(count=Count('id')).order_by('-count')
+    
+    participation_by_year = StudentProfile.objects.filter(
+        id__in=voted_student_ids
+    ).values('year_level').annotate(count=Count('id')).order_by('year_level')
+    
+    # Calculate summary statistics
+    total_active_candidates = Candidate.objects.filter(election__in=active_elections).count()
+    total_positions = Position.objects.filter(candidates__election__in=active_elections).distinct().count()
+    
+    # Detect anomalies
+    alerts = []
+    
+    # Check for low turnout
+    for election in election_analytics:
+        if election['turnout_percentage'] < 10 and election['status'] == 'active':
+            alerts.append({
+                'type': 'warning',
+                'icon': 'exclamation-triangle',
+                'message': f"Low turnout alert: {election['name']} has only {election['turnout_percentage']}% participation"
+            })
+        
+        # Check for ties in leading candidates
+        if len(election['candidates']) >= 2:
+            top_votes = election['candidates'][0]['votes']
+            if election['candidates'][1]['votes'] == top_votes and top_votes > 0:
+                alerts.append({
+                    'type': 'info',
+                    'icon': 'info-circle',
+                    'message': f"Tie detected in {election['name']}: Multiple candidates with {top_votes} votes"
+                })
+    
+    # Check for voting spikes (more than 50 votes in last hour)
+    recent_votes = Vote.objects.filter(
+        election__in=active_elections,
+        timestamp__gte=now - timedelta(hours=1)
+    ).count()
+    
+    if recent_votes > 50:
+        alerts.append({
+            'type': 'success',
+            'icon': 'chart-line',
+            'message': f"High activity: {recent_votes} votes cast in the last hour"
+        })
+    
+    # Calculate overall turnout percentage
+    overall_turnout_percentage = (total_votes_cast / total_voters * 100) if total_voters > 0 else 0
+    
     context = {
-        'total_voters': StudentProfile.objects.count(),
-        'active_elections': Election.objects.filter(is_active=True).count(),
-        'total_candidates': Candidate.objects.count(),
-        'total_votes': Vote.objects.count(),
+        # Primary metrics
+        'total_voters': total_voters,
+        'eligible_voters': eligible_voters,
+        'total_votes_cast': total_votes_cast,
+        'overall_turnout_percentage': round(overall_turnout_percentage, 1),
+        'active_elections_count': active_elections.count(),
+        'total_active_candidates': total_active_candidates,
+        'total_positions': total_positions,
+        
+        # Election analytics
+        'election_analytics': election_analytics,
+        'alerts': alerts,
+        
+        # Chart data - Position votes
+        'position_labels': [item['position__name'] for item in position_votes],
+        'position_counts': [item['count'] for item in position_votes],
+        
+        # Chart data - Turnout trends
+        'turnout_hours': [item['hour'] for item in hourly_votes],
+        'turnout_counts': [item['votes'] for item in hourly_votes],
+        
+        # Chart data - Demographics
         'course_labels': [item['course'] for item in course_data],
         'course_counts': [item['count'] for item in course_data],
-        'year_labels': [f"{item['year_level']} Year" for item in year_data], # Simple label formatting
+        'year_labels': [f"{item['year_level']} Year" for item in year_data],
         'year_counts': [item['count'] for item in year_data],
+        
+        # Chart data - Participation
+        'participation_course_labels': [item['course'] for item in participation_by_course],
+        'participation_course_counts': [item['count'] for item in participation_by_course],
+        'participation_year_labels': [f"Year {item['year_level']}" for item in participation_by_year],
+        'participation_year_counts': [item['count'] for item in participation_by_year],
     }
+    
     return render(request, 'administration/dashboard.html', context)
 
 @user_passes_test(is_admin, login_url='administration:login')

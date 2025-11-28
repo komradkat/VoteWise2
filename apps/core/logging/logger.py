@@ -162,9 +162,9 @@ class VoteWiseLogger:
         """Log a face enrollment event"""
         self._log(logging.INFO, message, 'FACE ENROLL', user=user, **kwargs)
     
-    #def auth(self, message: str, user: Optional[str] = None, **kwargs):
-    #    """Log an authentication event"""
-    #    self._log(logging.INFO, message, 'AUTH', user=user, **kwargs)
+    def auth(self, message: str, user: Optional[str] = None, **kwargs):
+        """Log an authentication event"""
+        self._log(logging.INFO, message, 'AUTH', user=user, **kwargs)
     
     def vote(self, message: str, user: Optional[str] = None, **kwargs):
         """Log a voting event"""
