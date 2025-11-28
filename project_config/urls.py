@@ -32,6 +32,9 @@ urlpatterns = [
     
     # Biometrics URLs
     path('biometrics/', include('apps.biometrics.urls')),
+    
+    # Reports URLs
+    path('reports/', include('apps.reports.urls')),
 ]
 
 # Serve static and media files in development

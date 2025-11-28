@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'apps.administration',
     'apps.chatbot',
     'apps.biometrics',
+    'apps.reports',
 ]
 
 MIDDLEWARE = [

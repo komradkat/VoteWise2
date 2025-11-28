@@ -4,141 +4,243 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}
 
-<header>
-    <!-- Top Bar: Logo and Auth -->
-    <div class="top-bar">
-        <div class="container">
-            <div class="top-bar-content">
-                <div class="logo-container">
-                    <a href="{% url 'home' %}" class="logo">
-                        <img src="{% static 'img/logo.png' %}" alt="VoteWise Logo" class="logo-img">
-                        <div class="logo-info">
-                            <span class="logo-text">ACLC College of Tacloban</span>
-                            <a href="https://www.google.com/maps?q=11.238286010439372,125.0042121335158" target="_blank"
-                                rel="noopener noreferrer" class="school-address" title="View on Google Maps">
-                                <i class="fas fa-map-marker-alt"></i>352 Real St. Tacloban City 6500 Tacloban City,
-                                Philippines
-                            </a>
-                            <p class="system-subtitle">VoteWise - Automated Election System</p>
-                        </div>
-                    </a>
-                </div>
-                <div class="vote-button-container">
-                    <div class="auth-buttons">
-                        {% if user.is_authenticated %}
-                        <button onclick="openLogoutModal()" class="btn-secondary logout-btn">
-                            <i class="fas fa-sign-out-alt"></i>Log Out
-                        </button>
-                        {% else %}
-                        <a href="{% url 'accounts:login' %}" class="cta-button primary">
-                            <i class="fas fa-vote-yea"></i>Log In</a>
-                        {% endif %}
+<header class="site-header">
+    <div class="container">
+        <div class="header-content">
+            <!-- Logo Section -->
+            <div class="header-logo">
+                <a href="{% url 'home' %}" class="logo-link">
+                    <img src="{% static 'img/logo.png' %}" alt="VoteWise Logo" class="logo-image">
+                    <div class="logo-text-container">
+                        <span class="logo-title">VoteWise</span>
+                        <span class="logo-subtitle">Student Election System</span>
                     </div>
-                </div>
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="desktop-nav">
+                <ul class="nav-menu">
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'accounts:profile' %}" class="nav-link {% if 'profile' in request.path %}active{% endif %}">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Dashboard</span>
+                        </a></li>
+                        <li><a href="{% url 'elections:list' %}" class="nav-link {% if 'elections' in request.path and 'timeline' not in request.path %}active{% endif %}">
+                            <i class="fas fa-vote-yea"></i>
+                            <span>Elections</span>
+                        </a></li>
+                        <li><a href="{% url 'results' %}" class="nav-link {% if 'results' in request.path %}active{% endif %}">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Results</span>
+                        </a></li>
+                        <li><a href="{% url 'elections:timeline' %}" class="nav-link {% if 'timeline' in request.path %}active{% endif %}">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Timeline</span>
+                        </a></li>
+                        <li><a href="{% url 'chatbot:chat' %}" class="nav-link {% if 'chatbot' in request.path %}active{% endif %}">
+                            <i class="fas fa-robot"></i>
+                            <span>AI Assistant</span>
+                        </a></li>
+                        <li><a href="{% url 'about' %}" class="nav-link {% if 'about' in request.path %}active{% endif %}">
+                            <i class="fas fa-info-circle"></i>
+                            <span>About</span>
+                        </a></li>
+                    {% else %}
+                        <li><a href="{% url 'home' %}" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </a></li>
+                        <li><a href="{% url 'results' %}" class="nav-link {% if 'results' in request.path %}active{% endif %}">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Results</span>
+                        </a></li>
+                        <li><a href="{% url 'elections:timeline' %}" class="nav-link {% if 'timeline' in request.path %}active{% endif %}">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Timeline</span>
+                        </a></li>
+                        <li><a href="{% url 'chatbot:chat' %}" class="nav-link {% if 'chatbot' in request.path %}active{% endif %}">
+                            <i class="fas fa-robot"></i>
+                            <span>AI Assistant</span>
+                        </a></li>
+                        <li><a href="{% url 'about' %}" class="nav-link {% if 'about' in request.path %}active{% endif %}">
+                            <i class="fas fa-info-circle"></i>
+                            <span>About</span>
+                        </a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+
+            <!-- Auth Actions -->
+            <div class="header-actions">
+                {% if user.is_authenticated %}
+                    <div class="user-menu">
+                        <button class="user-menu-trigger" id="userMenuTrigger">
+                            <div class="user-avatar">
+                                {{ user.first_name.0|default:"U" }}
+                            </div>
+                            <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <a href="{% url 'accounts:profile' %}" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                <span>My Profile</span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button onclick="openLogoutModal()" class="dropdown-item logout-item">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Login</span>
+                    </a>
+                {% endif %}
+                
+                <!-- Mobile Menu Toggle -->
                 <button class="mobile-menu-toggle" id="mobileMenuToggle">
-                    <span><i class="fas fa-bars"></i></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Main Navigation Bar -->
-    <div class="main-nav">
-        <div class="container">
-            <ul class="nav-links" id="navLinks">
-                {% if user.is_authenticated %}
-                <!-- Authenticated User Navigation -->
-                <li><a href="{% url 'accounts:profile' %}"
-                        class="{% if request.path == '/auth/profile/' %}active-link{% endif %}">Dashboard</a>
-                </li>
-                <li><a href="{% url 'elections:list' %}"
-                        class="{% if 'elections' in request.path %}active-link{% endif %}">Elections</a></li>
-                <li><a href="{% url 'results' %}"
-                        class="{% if 'results' in request.path %}active-link{% endif %}">Results</a></li>
-                <li><a href="{% url 'chatbot:chat' %}"
-                        class="{% if 'chatbot' in request.path %}active-link{% endif %}">Chatbot</a></li>
-                <li><a href="{% url 'about' %}"
-                        class="{% if request.path == '/about/' %}active-link{% endif %}">About</a></li>
-                {% else %}
-                <!-- Unauthenticated User Navigation -->
-                <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active-link{% endif %}">Home</a></li>
-                <li><a href="{% url 'results' %}"
-                        class="{% if 'results' in request.path %}active-link{% endif %}">Results</a></li>
-                <li><a href="{% url 'elections:timeline' %}" class="{% if 'timeline' in request.path %}active-link{% endif %}">Timeline</a>
-                </li>
-                <li><a href="{% url 'chatbot:chat' %}"
-                        class="{% if 'chatbot' in request.path %}active-link{% endif %}">Chatbot</a></li>
-                <li><a href="{% url 'about' %}"
-                        class="{% if request.path == '/about/' %}active-link{% endif %}">About</a></li>
-                {% endif %}
-            </ul>
-        </div>
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <ul class="mobile-nav-menu">
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'accounts:profile' %}" class="mobile-nav-link">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Dashboard</span>
+                </a></li>
+                <li><a href="{% url 'elections:list' %}" class="mobile-nav-link">
+                    <i class="fas fa-vote-yea"></i>
+                    <span>Elections</span>
+                </a></li>
+                <li><a href="{% url 'results' %}" class="mobile-nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Results</span>
+                </a></li>
+                <li><a href="{% url 'elections:timeline' %}" class="mobile-nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Timeline</span>
+                </a></li>
+                <li><a href="{% url 'chatbot:chat' %}" class="mobile-nav-link">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a></li>
+                <li><a href="{% url 'about' %}" class="mobile-nav-link">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a></li>
+                <li class="mobile-nav-divider"></li>
+                <li><button onclick="openLogoutModal()" class="mobile-nav-link logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button></li>
+            {% else %}
+                <li><a href="{% url 'home' %}" class="mobile-nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a></li>
+                <li><a href="{% url 'results' %}" class="mobile-nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Results</span>
+                </a></li>
+                <li><a href="{% url 'elections:timeline' %}" class="mobile-nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Timeline</span>
+                </a></li>
+                <li><a href="{% url 'chatbot:chat' %}" class="mobile-nav-link">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a></li>
+                <li><a href="{% url 'about' %}" class="mobile-nav-link">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a></li>
+                <li class="mobile-nav-divider"></li>
+                <li><a href="{% url 'accounts:login' %}" class="mobile-nav-link primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login</span>
+                </a></li>
+            {% endif %}
+        </ul>
     </div>
 </header>
 
 <!-- Logout Confirmation Modal -->
 <div id="logoutModal" class="modal">
+    <div class="modal-overlay" onclick="closeLogoutModal()"></div>
     <div class="modal-content">
-        <h2>Confirm Logout</h2>
-        <p>Are you sure you want to log out?</p>
-        <div class="modal-buttons">
-            <button class="btn-cancel" onclick="closeLogoutModal()">Cancel</button>
-            <a href="{% url 'accounts:logout' %}" class="btn-confirm">Log Out</a>
+        <div class="modal-icon">
+            <i class="fas fa-sign-out-alt"></i>
+        </div>
+        <h3 class="modal-title">Confirm Logout</h3>
+        <p class="modal-message">Are you sure you want to log out of your account?</p>
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" onclick="closeLogoutModal()">Cancel</button>
+            <a href="{% url 'accounts:logout' %}" class="btn-modal-confirm">Logout</a>
         </div>
     </div>
 </div>
 
 <script>
-    // Profile dropdown toggle
-    document.addEventListener('DOMContentLoaded', function () {
-        const profileDropdown = document.querySelector('.profile-dropdown');
-        if (profileDropdown) {
-            const profileTrigger = profileDropdown.querySelector('.profile-trigger');
+// Mobile menu toggle
+const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+const mobileNav = document.getElementById('mobileNav');
 
-            profileTrigger.addEventListener('click', function (e) {
-                e.preventDefault();
-                profileDropdown.classList.toggle('active');
-            });
+if (mobileMenuToggle) {
+    mobileMenuToggle.addEventListener('click', function() {
+        this.classList.toggle('active');
+        mobileNav.classList.toggle('active');
+        document.body.classList.toggle('menu-open');
+    });
+}
 
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function (e) {
-                if (!profileDropdown.contains(e.target)) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
+// User menu dropdown
+const userMenuTrigger = document.getElementById('userMenuTrigger');
+const userDropdown = document.getElementById('userDropdown');
 
-            // Handle dropdown link clicks for hash navigation
-            const dropdownLinks = profileDropdown.querySelectorAll('.dropdown-link[href*="#"]');
-            dropdownLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    const href = this.getAttribute('href');
-                    if (href.includes('#')) {
-                        const hash = href.split('#')[1];
-                        // If we're already on the profile page, just update the hash
-                        if (hash && window.location.pathname.includes('/auth/profile/')) {
-                            e.preventDefault();
-                            window.location.hash = hash;
-                            profileDropdown.classList.remove('active');
-                        }
-                    }
-                });
-            });
-        }
+if (userMenuTrigger) {
+    userMenuTrigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('active');
+        userDropdown.classList.toggle('active');
     });
 
-    function openLogoutModal() {
-        document.getElementById('logoutModal').style.display = 'block';
-    }
-
-    function closeLogoutModal() {
-        document.getElementById('logoutModal').style.display = 'none';
-    }
-
-    // Close modal if user clicks outside of it
-    window.onclick = function (event) {
-        var modal = document.getElementById('logoutModal');
-        if (event.target == modal) {
-            modal.style.display = "none";
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.user-menu')) {
+            userMenuTrigger.classList.remove('active');
+            userDropdown.classList.remove('active');
         }
-    }
+    });
+}
+
+// Logout modal functions
+function openLogoutModal() {
+    document.getElementById('logoutModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLogoutModal() {
+    document.getElementById('logoutModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Close mobile menu when clicking nav links
+document.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.addEventListener('click', function() {
+        mobileMenuToggle.classList.remove('active');
+        mobileNav.classList.remove('active');
+        document.body.classList.remove('menu-open');
+    });
+});
 </script>
