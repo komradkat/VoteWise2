@@ -13,22 +13,22 @@
 <div class="dashboard-container">
     <!-- Sidebar Navigation -->
     <aside class="dashboard-sidebar">
-        <div class="dashboard-nav-item active" onclick="switchTab('profile', this)">
+        <div class="dashboard-nav-item active" onclick="switchTab('tab-profile', this)">
             <i class="fas fa-user-circle"></i> {% trans "My Profile" %}
         </div>
-        <div class="dashboard-nav-item" onclick="switchTab('votes', this)">
+        <div class="dashboard-nav-item" onclick="switchTab('tab-votes', this)">
             <i class="fas fa-vote-yea"></i> {% trans "Voting History" %}
         </div>
-        <div class="dashboard-nav-item" onclick="switchTab('notifications', this)">
+        <div class="dashboard-nav-item" onclick="switchTab('tab-notifications', this)">
             <i class="fas fa-bell"></i> {% trans "Notifications" %}
         </div>
-        <div class="dashboard-nav-item" onclick="switchTab('settings', this)">
+        <div class="dashboard-nav-item" onclick="switchTab('tab-settings', this)">
             <i class="fas fa-cog"></i> {% trans "Account Settings" %}
         </div>
-        <div class="dashboard-nav-item" onclick="switchTab('security', this)">
+        <div class="dashboard-nav-item" onclick="switchTab('tab-security', this)">
             <i class="fas fa-shield-alt"></i> {% trans "Security" %}
         </div>
-        <div class="dashboard-nav-item" onclick="switchTab('help', this)">
+        <div class="dashboard-nav-item" onclick="switchTab('tab-help', this)">
             <i class="fas fa-question-circle"></i> {% trans "Help & Support" %}
         </div>
     </aside>
@@ -44,7 +44,7 @@
         {% endif %}
 
         <!-- Tab 1: My Profile -->
-        <div id="profile" class="tab-pane active">
+        <div id="tab-profile" class="tab-pane active">
             <!-- Priority Status Banner -->
             <div class="status-banner">
                 <div class="status-banner-content">
@@ -58,23 +58,23 @@
                     <div class="status-info">
                         <h2 class="status-title">
                             {% if user.student_profile.is_eligible_to_vote %}
-                            You're Ready to Vote!
+                            {% trans "You're Ready to Vote!" %}
                             {% else %}
-                            Voting Not Available
+                            {% trans "Voting Not Available" %}
                             {% endif %}
                         </h2>
                         <p class="status-description">
                             {% if user.student_profile.is_eligible_to_vote %}
-                            Your account is verified and eligible to participate in elections.
+                            {% trans "Your account is verified and eligible to participate in elections." %}
                             {% else %}
-                            Please contact the administrator to verify your account.
+                            {% trans "Please contact the administrator to verify your account." %}
                             {% endif %}
                         </p>
                     </div>
                     <div class="status-action">
                         {% if user.student_profile.is_eligible_to_vote %}
                         <a href="{% url 'elections:list' %}" class="btn-vote-now">
-                            <i class="fas fa-vote-yea"></i> View Elections
+                            <i class="fas fa-vote-yea"></i> {% trans "View Elections" %}
                         </a>
                         {% endif %}
                     </div>
@@ -88,12 +88,12 @@
                         <i class="fas fa-user-check"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-label">Voting Status</div>
+                        <div class="stat-label">{% trans "Voting Status" %}</div>
                         <div class="stat-value">
                             {% if user.student_profile.is_eligible_to_vote %}
-                            <span class="status-eligible">Eligible</span>
+                            <span class="status-eligible">{% trans "Eligible" %}</span>
                             {% else %}
-                            <span class="status-not-eligible">Not Eligible</span>
+                            <span class="status-not-eligible">{% trans "Not Eligible" %}</span>
                             {% endif %}
                         </div>
                     </div>
@@ -104,7 +104,7 @@
                         <i class="fas fa-vote-yea"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-label">Elections Participated</div>
+                        <div class="stat-label">{% trans "Elections Participated" %}</div>
                         <div class="stat-value">{{ receipts.count }}</div>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
                         <i class="fas fa-id-card"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-label">Student ID</div>
+                        <div class="stat-label">{% trans "Student ID" %}</div>
                         <div class="stat-value">{{ user.student_profile.student_id|default:"N/A" }}</div>
                     </div>
                 </div>
@@ -124,7 +124,7 @@
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-label">Course & Year</div>
+                        <div class="stat-label">{% trans "Course & Year" %}</div>
                         <div class="stat-value">{{ user.student_profile.course|default:"N/A" }} - {{ user.student_profile.year_level|default:"N/A" }}</div>
                     </div>
                 </div>
@@ -134,7 +134,7 @@
             <div class="dashboard-card">
                 <div class="card-header">
                     <h2 class="card-title">
-                        <i class="fas fa-user-circle"></i> Profile Information
+                        <i class="fas fa-user-circle"></i> {% trans "Profile Information" %}
                     </h2>
                 </div>
 
@@ -142,7 +142,7 @@
                 <div class="profile-info-grid">
                     <div class="info-item">
                         <div class="info-label">
-                            <i class="fas fa-user"></i> Full Name
+                            <i class="fas fa-user"></i> {% trans "Full Name" %}
                         </div>
                         <div class="info-value">
                             {{ user.get_full_name|default:user.username }}
@@ -150,7 +150,7 @@
                     </div>
                     <div class="info-item">
                         <div class="info-label">
-                            <i class="fas fa-envelope"></i> Email
+                            <i class="fas fa-envelope"></i> {% trans "Email" %}
                         </div>
                         <div class="info-value">{{ user.email }}</div>
                     </div>
@@ -164,7 +164,7 @@
 
                     <div class="form-section-header">
                         <i class="fas fa-user-edit"></i>
-                        <h3>Account Information</h3>
+                        <h3>{% trans "Account Information" %}</h3>
                     </div>
                     {% for field in user_form %}
                     <div class="form-group">
@@ -182,7 +182,7 @@
                     {% if profile_form %}
                     <div class="form-section-header">
                         <i class="fas fa-graduation-cap"></i>
-                        <h3>Student Information</h3>
+                        <h3>{% trans "Student Information" %}</h3>
                     </div>
                     {% for field in profile_form %}
                     <div class="form-group">
@@ -197,7 +197,7 @@
 
                     <div class="form-actions">
                         <button type="submit" class="btn-primary">
-                            <i class="fas fa-save"></i> Save Changes
+                            <i class="fas fa-save"></i> {% trans "Save Changes" %}
                         </button>
                     </div>
                 </form>
@@ -205,20 +205,20 @@
         </div>
 
         <!-- Tab 2: Voting History -->
-        <div id="votes" class="tab-pane">
+        <div id="tab-votes" class="tab-pane">
             <div class="dashboard-card">
                 <div class="card-header">
-                    <h2 class="card-title">Voting History (Receipts)</h2>
+                    <h2 class="card-title">{% trans "Voting History (Receipts)" %}</h2>
                 </div>
                 {% if receipts %}
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Election</th>
-                                <th>Ballot ID</th>
-                                <th>Date Voted</th>
-                                <th>Status</th>
+                                <th>{% trans "Election" %}</th>
+                                <th>{% trans "Ballot ID" %}</th>
+                                <th>{% trans "Date Voted" %}</th>
+                                <th>{% trans "Status" %}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -231,7 +231,7 @@
                                 <td>{{ receipt.timestamp|date:"M j, Y H:i" }}</td>
                                 <td>
                                     <span
-                                        style="color: #166534; background: #dcfce7; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Verified</span>
+                                        style="color: #166534; background: #dcfce7; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">{% trans "Verified" %}</span>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -239,56 +239,55 @@
                     </table>
                 </div>
                 <p style="margin-top: 1rem; font-size: 0.9rem; color: #64748b;">
-                    <i class="fas fa-lock"></i> Your individual choices are encrypted for privacy. You can verify your
-                    participation using the Ballot ID above.
+                    <i class="fas fa-lock"></i> {% trans "Your individual choices are encrypted for privacy. You can verify your participation using the Ballot ID above." %}
                 </p>
                 {% else %}
-                <p style="text-align: center; color: #64748b; padding: 2rem;">You haven't cast any votes yet.</p>
+                <p style="text-align: center; color: #64748b; padding: 2rem;">{% trans "You haven't cast any votes yet." %}</p>
                 {% endif %}
             </div>
         </div>
 
         <!-- Tab 3: Notifications -->
-        <div id="notifications" class="tab-pane">
+        <div id="tab-notifications" class="tab-pane">
             <div class="dashboard-card">
                 <div class="card-header">
-                    <h2 class="card-title">Notifications</h2>
+                    <h2 class="card-title">{% trans "Notifications" %}</h2>
                 </div>
                 <p style="text-align: center; color: #64748b; padding: 2rem;">
                     <i class="fas fa-bell" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
-                    No new notifications at this time.
+                    {% trans "No new notifications at this time." %}
                 </p>
             </div>
         </div>
 
         <!-- Tab 4: Account Settings -->
-        <div id="settings" class="tab-pane">
+        <div id="tab-settings" class="tab-pane">
             <div class="dashboard-card">
                 <div class="card-header">
-                    <h2 class="card-title">Account Settings</h2>
+                    <h2 class="card-title">{% trans "Account Settings" %}</h2>
                 </div>
                 <div style="padding: 1rem;">
-                    <h3 style="color: #64748b; margin-bottom: 1rem;">Preferences</h3>
+                    <h3 style="color: #64748b; margin-bottom: 1rem;">{% trans "Preferences" %}</h3>
                     <div class="form-group">
-                        <label class="form-label">Email Notifications</label>
-                        <p style="color: #64748b; font-size: 0.9rem;">Receive email updates about new elections and
-                            results</p>
+                        <label class="form-label">{% trans "Email Notifications" %}</label>
+                        <p style="color: #64748b; font-size: 0.9rem;">{% trans "Receive email updates about new elections and results" %}</p>
                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
                             <input type="checkbox" checked>
-                            <span>Enable email notifications</span>
+                            <span>{% trans "Enable email notifications" %}</span>
                         </label>
                     </div>
                     <div class="form-group" style="margin-top: 1.5rem;">
-                        <label class="form-label">Language</label>
+                        <label class="form-label">{% trans "Language" %}</label>
                         <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 0.75rem;">
-                            Choose your preferred language for the interface
+                            {% trans "Choose your preferred language for the interface" %}
                         </p>
+                        {% get_current_language as LANGUAGE_CODE %}
                         <form method="post" action="{% url 'accounts:set_language' %}" id="languageForm">
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ request.path }}">
                             <select name="language" class="form-control" style="max-width: 300px;" onchange="this.form.submit()">
-                                <option value="en" {% if LANGUAGE_CODE == 'en' or LANGUAGE_CODE == 'en-us' %}selected{% endif %}>English</option>
-                                <option value="fil" {% if LANGUAGE_CODE == 'fil' %}selected{% endif %}>Filipino</option>
+                                <option value="en" {% if LANGUAGE_CODE == 'en' or LANGUAGE_CODE == 'en-us' %}selected{% endif %}>{% trans "English" %}</option>
+                                <option value="fil" {% if LANGUAGE_CODE == 'fil' %}selected{% endif %}>{% trans "Filipino" %}</option>
                             </select>
                         </form>
                     </div>
@@ -297,62 +296,58 @@
         </div>
 
         <!-- Tab 5: Security -->
-        <div id="security" class="tab-pane">
+        <div id="tab-security" class="tab-pane">
             <div class="dashboard-card">
                 <div class="card-header">
-                    <h2 class="card-title">Security</h2>
+                    <h2 class="card-title">{% trans "Security" %}</h2>
                 </div>
                 <div style="padding: 1rem;">
-                    <h3 style="color: #64748b; margin-bottom: 1rem;">Change Password</h3>
+                    <h3 style="color: #64748b; margin-bottom: 1rem;">{% trans "Change Password" %}</h3>
                     <form>
                         <div class="form-group">
-                            <label class="form-label">Current Password</label>
-                            <input type="password" class="form-control" placeholder="Enter current password">
+                            <label class="form-label">{% trans "Current Password" %}</label>
+                            <input type="password" class="form-control" placeholder="{% trans 'Enter current password' %}">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">New Password</label>
-                            <input type="password" class="form-control" placeholder="Enter new password">
+                            <label class="form-label">{% trans "New Password" %}</label>
+                            <input type="password" class="form-control" placeholder="{% trans 'Enter new password' %}">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control" placeholder="Confirm new password">
+                            <label class="form-label">{% trans "Confirm New Password" %}</label>
+                            <input type="password" class="form-control" placeholder="{% trans 'Confirm new password' %}">
                         </div>
-                        <button type="submit" class="btn-primary">Update Password</button>
+                        <button type="submit" class="btn-primary">{% trans "Update Password" %}</button>
                     </form>
                 </div>
             </div>
         </div>
 
         <!-- Tab 6: Help & Support -->
-        <div id="help" class="tab-pane">
+        <div id="tab-help" class="tab-pane">
             <div class="dashboard-card">
                 <div class="card-header">
-                    <h2 class="card-title">Help & Support</h2>
+                    <h2 class="card-title">{% trans "Help & Support" %}</h2>
                 </div>
                 <div style="padding: 1rem;">
-                    <h3 style="color: #64748b; margin-bottom: 1rem;">Frequently Asked Questions</h3>
+                    <h3 style="color: #64748b; margin-bottom: 1rem;">{% trans "Frequently Asked Questions" %}</h3>
                     <div style="margin-bottom: 1.5rem;">
-                        <h4 style="color: #0f172a; margin-bottom: 0.5rem;">How do I vote?</h4>
-                        <p style="color: #64748b;">Navigate to the Elections page from the header menu, select an active
-                            election, and follow the voting instructions.</p>
+                        <h4 style="color: #0f172a; margin-bottom: 0.5rem;">{% trans "How do I vote?" %}</h4>
+                        <p style="color: #64748b;">{% trans "Navigate to the Elections page from the header menu, select an active election, and follow the voting instructions." %}</p>
                     </div>
                     <div style="margin-bottom: 1.5rem;">
-                        <h4 style="color: #0f172a; margin-bottom: 0.5rem;">Can I change my vote?</h4>
-                        <p style="color: #64748b;">No, once submitted, votes are final and cannot be changed to ensure
-                            election integrity.</p>
+                        <h4 style="color: #0f172a; margin-bottom: 0.5rem;">{% trans "Can I change my vote?" %}</h4>
+                        <p style="color: #64748b;">{% trans "No, once submitted, votes are final and cannot be changed to ensure election integrity." %}</p>
                     </div>
                     <div style="margin-bottom: 1.5rem;">
-                        <h4 style="color: #0f172a; margin-bottom: 0.5rem;">How do I verify my vote?</h4>
-                        <p style="color: #64748b;">Check your Voting History tab for your ballot ID, which serves as
-                            proof of participation.</p>
+                        <h4 style="color: #0f172a; margin-bottom: 0.5rem;">{% trans "How do I verify my vote?" %}</h4>
+                        <p style="color: #64748b;">{% trans "Check your Voting History tab for your ballot ID, which serves as proof of participation." %}</p>
                     </div>
                     <div style="margin-top: 2rem; padding: 1.5rem; background: #eff6ff; border-radius: 8px;">
-                        <h4 style="color: #1e40af; margin-bottom: 0.5rem;">Need more help?</h4>
-                        <p style="color: #64748b; margin-bottom: 1rem;">Contact the election administrator for
-                            additional support.</p>
+                        <h4 style="color: #1e40af; margin-bottom: 0.5rem;">{% trans "Need more help?" %}</h4>
+                        <p style="color: #64748b; margin-bottom: 1rem;">{% trans "Contact the election administrator for additional support." %}</p>
                         <a href="mailto:support@votewise.edu" class="btn-primary"
                             style="display: inline-block; text-decoration: none;">
-                            <i class="fas fa-envelope"></i> Contact Support
+                            <i class="fas fa-envelope"></i> {% trans "Contact Support" %}
                         </a>
                     </div>
                 </div>

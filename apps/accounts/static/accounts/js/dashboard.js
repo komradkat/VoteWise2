@@ -15,17 +15,18 @@ function switchTab(tabId, element) {
     
     // Update URL hash
     const hashMap = {
-        'profile': 'my-profile',
-        'votes': 'my-votes',
-        'notifications': 'notifications',
-        'settings': 'settings',
-        'security': 'security',
-        'help': 'help'
+        'tab-profile': 'my-profile',
+        'tab-votes': 'my-votes',
+        'tab-notifications': 'notifications',
+        'tab-settings': 'settings',
+        'tab-security': 'security',
+        'tab-help': 'help'
     };
     
     const hash = hashMap[tabId];
     if (hash) {
-        window.location.hash = hash;
+        // Use pushState to change URL without triggering scroll
+        history.pushState(null, null, '#' + hash);
     } else {
         // Remove hash if no mapping
         history.pushState('', document.title, window.location.pathname);
@@ -36,12 +37,12 @@ function switchTab(tabId, element) {
 document.addEventListener('DOMContentLoaded', function() {
     const hash = window.location.hash.substring(1);
     const tabMap = {
-        'my-profile': 'profile',
-        'my-votes': 'votes',
-        'notifications': 'notifications',
-        'settings': 'settings',
-        'security': 'security',
-        'help': 'help'
+        'my-profile': 'tab-profile',
+        'my-votes': 'tab-votes',
+        'notifications': 'tab-notifications',
+        'settings': 'tab-settings',
+        'security': 'tab-security',
+        'help': 'tab-help'
     };
     
     if (hash && tabMap[hash]) {
@@ -57,12 +58,12 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('hashchange', function() {
     const hash = window.location.hash.substring(1);
     const tabMap = {
-        'my-profile': 'profile',
-        'my-votes': 'votes',
-        'notifications': 'notifications',
-        'settings': 'settings',
-        'security': 'security',
-        'help': 'help'
+        'my-profile': 'tab-profile',
+        'my-votes': 'tab-votes',
+        'notifications': 'tab-notifications',
+        'settings': 'tab-settings',
+        'security': 'tab-security',
+        'help': 'tab-help'
     };
     
     if (hash && tabMap[hash]) {
@@ -73,9 +74,9 @@ window.addEventListener('hashchange', function() {
         }
     } else {
         // No hash or invalid hash, show profile
-        const navItem = document.querySelector('[onclick*="profile"]');
+        const navItem = document.querySelector('[onclick*="tab-profile"]');
         if (navItem) {
-            switchTab('profile', navItem);
+            switchTab('tab-profile', navItem);
         }
     }
 });

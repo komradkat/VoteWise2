@@ -1,0 +1,190 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: VoteWise2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-29 16:00+0800\n"
+"PO-Revision-Date: 2025-11-29 16:05+0800\n"
+"Last-Translator: \n"
+"Language-Team: Filipino\n"
+"Language: fil\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "My Profile"
+msgstr "Aking Profile"
+
+msgid "Voting History"
+msgstr "Kasaysayan ng Pagboto"
+
+msgid "Notifications"
+msgstr "Mga Abiso"
+
+msgid "Account Settings"
+msgstr "Mga Setting ng Account"
+
+msgid "Security"
+msgstr "Seguridad"
+
+msgid "Help & Support"
+msgstr "Tulong at Suporta"
+
+msgid "You're Ready to Vote!"
+msgstr "Handa Ka Nang Bumoto!"
+
+msgid "Voting Not Available"
+msgstr "Hindi Magagamit ang Pagboto"
+
+msgid "Your account is verified and eligible to participate in elections."
+msgstr "Ang iyong account ay beripikado at kwalipikadong lumahok sa mga halalan."
+
+msgid "Please contact the administrator to verify your account."
+msgstr "Mangyaring makipag-ugnayan sa administrator upang ma-verify ang iyong account."
+
+msgid "View Elections"
+msgstr "Tingnan ang mga Halalan"
+
+msgid "Voting Status"
+msgstr "Katayuan ng Pagboto"
+
+msgid "Eligible"
+msgstr "Kwalipikado"
+
+msgid "Not Eligible"
+msgstr "Hindi Kwalipikado"
+
+msgid "Elections Participated"
+msgstr "Mga Nilahukang Halalan"
+
+msgid "Student ID"
+msgstr "Student ID"
+
+msgid "Course & Year"
+msgstr "Kurso at Taon"
+
+msgid "Profile Information"
+msgstr "Impormasyon ng Profile"
+
+msgid "Full Name"
+msgstr "Buong Pangalan"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Account Information"
+msgstr "Impormasyon ng Account"
+
+msgid "Student Information"
+msgstr "Impormasyon ng Mag-aaral"
+
+msgid "Save Changes"
+msgstr "I-save ang mga Pagbabago"
+
+msgid "Voting History (Receipts)"
+msgstr "Kasaysayan ng Pagboto (Mga Resibo)"
+
+msgid "Election"
+msgstr "Halalan"
+
+msgid "Ballot ID"
+msgstr "Ballot ID"
+
+msgid "Date Voted"
+msgstr "Petsa ng Pagboto"
+
+msgid "Status"
+msgstr "Katayuan"
+
+msgid "Verified"
+msgstr "Beripikado"
+
+msgid "Your individual choices are encrypted for privacy. You can verify your participation using the Ballot ID above."
+msgstr "Ang iyong mga indibidwal na pagpipilian ay naka-encrypt para sa privacy. Maaari mong i-verify ang iyong paglahok gamit ang Ballot ID sa itaas."
+
+msgid "You haven't cast any votes yet."
+msgstr "Wala ka pang naiboboto."
+
+msgid "No new notifications at this time."
+msgstr "Walang bagong abiso sa ngayon."
+
+msgid "Preferences"
+msgstr "Mga Kagustuhan"
+
+msgid "Email Notifications"
+msgstr "Mga Abiso sa Email"
+
+msgid "Receive email updates about new elections and results"
+msgstr "Makatanggap ng mga update sa email tungkol sa mga bagong halalan at resulta"
+
+msgid "Enable email notifications"
+msgstr "Paganahin ang mga abiso sa email"
+
+msgid "Language"
+msgstr "Wika"
+
+msgid "Choose your preferred language for the interface"
+msgstr "Piliin ang iyong gustong wika para sa interface"
+
+msgid "English"
+msgstr "Ingles"
+
+msgid "Filipino"
+msgstr "Filipino"
+
+msgid "Change Password"
+msgstr "Palitan ang Password"
+
+msgid "Current Password"
+msgstr "Kasalukuyang Password"
+
+msgid "Enter current password"
+msgstr "Ilagay ang kasalukuyang password"
+
+msgid "New Password"
+msgstr "Bagong Password"
+
+msgid "Enter new password"
+msgstr "Ilagay ang bagong password"
+
+msgid "Confirm New Password"
+msgstr "Kumpirmahin ang Bagong Password"
+
+msgid "Confirm new password"
+msgstr "Kumpirmahin ang bagong password"
+
+msgid "Update Password"
+msgstr "I-update ang Password"
+
+msgid "Frequently Asked Questions"
+msgstr "Mga Madalas Itanong"
+
+msgid "How do I vote?"
+msgstr "Paano ako boboto?"
+
+msgid "Navigate to the Elections page from the header menu, select an active election, and follow the voting instructions."
+msgstr "Pumunta sa pahina ng Mga Halalan mula sa menu ng header, pumili ng aktibong halalan, at sundin ang mga tagubilin sa pagboto."
+
+msgid "Can I change my vote?"
+msgstr "Maaari ko bang baguhin ang aking boto?"
+
+msgid "No, once submitted, votes are final and cannot be changed to ensure election integrity."
+msgstr "Hindi, kapag naisumite na, ang mga boto ay pinal na at hindi na mababago upang matiyak ang integridad ng halalan."
+
+msgid "How do I verify my vote?"
+msgstr "Paano ko ma-verify ang aking boto?"
+
+msgid "Check your Voting History tab for your ballot ID, which serves as proof of participation."
+msgstr "Tingnan ang iyong tab ng Kasaysayan ng Pagboto para sa iyong ballot ID, na nagsisilbing katibayan ng paglahok."
+
+msgid "Need more help?"
+msgstr "Kailangan ng karagdagang tulong?"
+
+msgid "Contact the election administrator for additional support."
+msgstr "Makipag-ugnayan sa administrator ng halalan para sa karagdagang suporta."
+
+msgid "Contact Support"
+msgstr "Makipag-ugnayan sa Suporta"
