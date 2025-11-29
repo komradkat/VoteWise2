@@ -20,7 +20,7 @@ body {
 }
 
 .header-container {
-    max-width: 1400px; /* Increased from default 1200px */
+    max-width: 1900px; /* Increased from default 1200px */
     margin: 0 auto;
     padding: 0 2rem;
 }
