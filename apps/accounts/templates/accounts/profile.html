@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Dashboard - VoteWise{% endblock %}
+{% block title %}{% trans "Dashboard" %} - VoteWise{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'accounts/css/dashboard.css' %}">
@@ -13,30 +14,30 @@
     <!-- Sidebar Navigation -->
     <aside class="dashboard-sidebar">
         <div class="dashboard-nav-item active" onclick="switchTab('profile', this)">
-            <i class="fas fa-user-circle"></i> My Profile
+            <i class="fas fa-user-circle"></i> {% trans "My Profile" %}
         </div>
         <div class="dashboard-nav-item" onclick="switchTab('votes', this)">
-            <i class="fas fa-vote-yea"></i> Voting History
+            <i class="fas fa-vote-yea"></i> {% trans "Voting History" %}
         </div>
         <div class="dashboard-nav-item" onclick="switchTab('notifications', this)">
-            <i class="fas fa-bell"></i> Notifications
+            <i class="fas fa-bell"></i> {% trans "Notifications" %}
         </div>
         <div class="dashboard-nav-item" onclick="switchTab('settings', this)">
-            <i class="fas fa-cog"></i> Account Settings
+            <i class="fas fa-cog"></i> {% trans "Account Settings" %}
         </div>
         <div class="dashboard-nav-item" onclick="switchTab('security', this)">
-            <i class="fas fa-shield-alt"></i> Security
+            <i class="fas fa-shield-alt"></i> {% trans "Security" %}
         </div>
         <div class="dashboard-nav-item" onclick="switchTab('help', this)">
-            <i class="fas fa-question-circle"></i> Help & Support
+            <i class="fas fa-question-circle"></i> {% trans "Help & Support" %}
         </div>
     </aside>
 
     <!-- Main Content -->
     <main class="dashboard-content">
         {% if messages %}
-        {% for message in messages %}\n <div
-            style="padding: 1rem; margin-bottom: 1rem; border-radius: 6px; background-color: #dcfce7; color: #166534;">
+        {% for message in messages %}
+        <div class="alert-message">
             {{ message }}
         </div>
         {% endfor %}
@@ -44,74 +45,161 @@
 
         <!-- Tab 1: My Profile -->
         <div id="profile" class="tab-pane active">
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <h2 class="card-title">My Profile</h2>
-                </div>
-
-                <!-- User Info Summary -->
-                <div
-                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                    <div style="background: #eff6ff; padding: 1.5rem; border-radius: 8px;">
-                        <h3 style="color: #1e40af; margin-bottom: 0.5rem; font-size: 0.9rem;">Full Name</h3>
-                        <p style="font-size: 1.1rem; font-weight: 600; color: #0f172a;">
-                            {{ user.get_full_name|default:user.username }}
-                        </p>
+            <!-- Priority Status Banner -->
+            <div class="status-banner">
+                <div class="status-banner-content">
+                    <div class="status-icon">
+                        {% if user.student_profile.is_eligible_to_vote %}
+                        <i class="fas fa-check-circle" style="color: var(--color-green);"></i>
+                        {% else %}
+                        <i class="fas fa-exclamation-circle" style="color: var(--color-red);"></i>
+                        {% endif %}
                     </div>
-                    <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px;">
-                        <h3 style="color: #166534; margin-bottom: 0.5rem; font-size: 0.9rem;">Email</h3>
-                        <p style="font-size: 1.1rem; font-weight: 600; color: #0f172a;">{{ user.email }}</p>
-                    </div>
-                    <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px;">
-                        <h3 style="color: #92400e; margin-bottom: 0.5rem; font-size: 0.9rem;">Voting Status</h3>
-                        <p style="font-size: 1.1rem; font-weight: 600;">
+                    <div class="status-info">
+                        <h2 class="status-title">
                             {% if user.student_profile.is_eligible_to_vote %}
-                            <span style="color: #166534;">✓ Eligible to Vote</span>
+                            You're Ready to Vote!
                             {% else %}
-                            <span style="color: #991b1b;">✗ Not Eligible</span>
+                            Voting Not Available
+                            {% endif %}
+                        </h2>
+                        <p class="status-description">
+                            {% if user.student_profile.is_eligible_to_vote %}
+                            Your account is verified and eligible to participate in elections.
+                            {% else %}
+                            Please contact the administrator to verify your account.
                             {% endif %}
                         </p>
                     </div>
-                    <div style="background: #fce7f3; padding: 1.5rem; border-radius: 8px;">
-                        <h3 style="color: #831843; margin-bottom: 0.5rem; font-size: 0.9rem;">Elections Participated
-                        </h3>
-                        <p style="font-size: 2rem; font-weight: 700; color: #831843;">{{ receipts.count }}</p>
+                    <div class="status-action">
+                        {% if user.student_profile.is_eligible_to_vote %}
+                        <a href="{% url 'elections:list' %}" class="btn-vote-now">
+                            <i class="fas fa-vote-yea"></i> View Elections
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats Grid -->
+            <div class="quick-stats-grid">
+                <div class="stat-card stat-card-primary">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Voting Status</div>
+                        <div class="stat-value">
+                            {% if user.student_profile.is_eligible_to_vote %}
+                            <span class="status-eligible">Eligible</span>
+                            {% else %}
+                            <span class="status-not-eligible">Not Eligible</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-card-success">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-vote-yea"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Elections Participated</div>
+                        <div class="stat-value">{{ receipts.count }}</div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-card-info">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-id-card"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Student ID</div>
+                        <div class="stat-value">{{ user.student_profile.student_id|default:"N/A" }}</div>
+                    </div>
+                </div>
+
+                <div class="stat-card stat-card-warning">
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Course & Year</div>
+                        <div class="stat-value">{{ user.student_profile.course|default:"N/A" }} - {{ user.student_profile.year_level|default:"N/A" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Information Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-user-circle"></i> Profile Information
+                    </h2>
+                </div>
+
+                <!-- User Info Summary -->
+                <div class="profile-info-grid">
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-user"></i> Full Name
+                        </div>
+                        <div class="info-value">
+                            {{ user.get_full_name|default:user.username }}
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-envelope"></i> Email
+                        </div>
+                        <div class="info-value">{{ user.email }}</div>
                     </div>
                 </div>
 
                 <!-- Edit Profile Form -->
+                <div class="form-section-divider"></div>
+                
                 <form method="post">
                     {% csrf_token %}
 
-                    <h3 style="margin-bottom: 1rem; color: #64748b;">Account Information</h3>
+                    <div class="form-section-header">
+                        <i class="fas fa-user-edit"></i>
+                        <h3>Account Information</h3>
+                    </div>
                     {% for field in user_form %}
                     <div class="form-group">
                         <label class="form-label">{{ field.label }}</label>
                         {{ field }}
                         {% if field.errors %}
-                        <div style="color: red; font-size: 0.875rem; margin-top: 0.25rem;">{{ field.errors.0 }}</div>
+                        <div class="form-error">{{ field.errors.0 }}</div>
                         {% endif %}
                         {% if field.help_text %}
-                        <div style="color: #94a3b8; font-size: 0.875rem; margin-top: 0.25rem;">{{ field.help_text }}
-                        </div>
+                        <div class="form-help-text">{{ field.help_text }}</div>
                         {% endif %}
                     </div>
                     {% endfor %}
 
                     {% if profile_form %}
-                    <h3 style="margin: 2rem 0 1rem; color: #64748b;">Student Information</h3>
+                    <div class="form-section-header">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h3>Student Information</h3>
+                    </div>
                     {% for field in profile_form %}
                     <div class="form-group">
                         <label class="form-label">{{ field.label }}</label>
                         {{ field }}
                         {% if field.errors %}
-                        <div style="color: red; font-size: 0.875rem; margin-top: 0.25rem;">{{ field.errors.0 }}</div>
+                        <div class="form-error">{{ field.errors.0 }}</div>
                         {% endif %}
                     </div>
                     {% endfor %}
                     {% endif %}
 
-                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -192,10 +280,17 @@
                     </div>
                     <div class="form-group" style="margin-top: 1.5rem;">
                         <label class="form-label">Language</label>
-                        <select class="form-control" style="max-width: 300px;">
-                            <option>English</option>
-                            <option>Filipino</option>
-                        </select>
+                        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 0.75rem;">
+                            Choose your preferred language for the interface
+                        </p>
+                        <form method="post" action="{% url 'accounts:set_language' %}" id="languageForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <select name="language" class="form-control" style="max-width: 300px;" onchange="this.form.submit()">
+                                <option value="en" {% if LANGUAGE_CODE == 'en' or LANGUAGE_CODE == 'en-us' %}selected{% endif %}>English</option>
+                                <option value="fil" {% if LANGUAGE_CODE == 'fil' %}selected{% endif %}>Filipino</option>
+                            </select>
+                        </form>
                     </div>
                 </div>
             </div>

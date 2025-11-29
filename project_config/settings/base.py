@@ -35,6 +35,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # Enable static file caching
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # Language switching
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -90,11 +91,26 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+# Supported languages
+LANGUAGES = [
+    ('en', 'English'),
+    ('fil', 'Filipino'),
+]
+
+# Path to locale files
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
+
 TIME_ZONE = 'Asia/Manila'
 
 USE_I18N = True
 
 USE_TZ = True
+
+# Language cookie settings
+LANGUAGE_COOKIE_NAME = 'votewise_language'
+LANGUAGE_COOKIE_AGE = 31536000  # 1 year
 
 
 # Static files (CSS, JavaScript, Images)

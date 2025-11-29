@@ -155,34 +155,49 @@ def logout_view(request):
 def profile_view(request):
     user = request.user
     student_profile = getattr(user, 'student_profile', None)
+    admin_profile = getattr(user, 'election_admin_profile', None)
+    
+    # Handle non-students
+    if not student_profile:
+        # Superusers should go to admin dashboard
+        if user.is_superuser:
+            messages.info(request, 'Superuser accounts should use the administration dashboard.')
+            return redirect('administration:dashboard')
+        
+        # Regular admins (employees/instructors) should go to admin dashboard
+        if admin_profile:
+            messages.info(request, 'Administrators should use the administration dashboard.')
+            return redirect('administration:dashboard')
+        
+        # User has no profile at all - show error
+        messages.error(request, 'Your account is not properly configured. Please contact support.')
+        return redirect('home')
+    
+    # At this point, user has student_profile (could be student or student admin)
+    # Student administrators have BOTH student_profile AND admin_profile
+    # They can access this voter dashboard
 
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=user)
-        profile_form = StudentProfileForm(request.POST, instance=student_profile) if student_profile else None
+        profile_form = StudentProfileForm(request.POST, instance=student_profile)
 
-        if user_form.is_valid() and (profile_form is None or profile_form.is_valid()):
+        if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            if profile_form:
-                profile_form.save()
+            profile_form.save()
             logger.auth(f"Profile updated for user: {user.username}", user=user.username)
             messages.success(request, 'Your profile has been updated successfully.')
             return redirect('accounts:profile')
     else:
         user_form = UserUpdateForm(instance=user)
-        profile_form = StudentProfileForm(instance=student_profile) if student_profile else None
+        profile_form = StudentProfileForm(instance=student_profile)
 
     # Fetch voting history via Receipts
-    if student_profile:
-        # We can't show individual votes anymore because they are encrypted/anonymous
-        # But we can show WHICH elections they participated in
-        receipts = VoterReceipt.objects.filter(voter=student_profile).select_related('election').order_by('-timestamp')
-    else:
-        receipts = []
+    receipts = VoterReceipt.objects.filter(voter=student_profile).select_related('election').order_by('-timestamp')
 
     context = {
         'user_form': user_form,
         'profile_form': profile_form,
-        'receipts': receipts, # Renamed from 'votes' to 'receipts'
+        'receipts': receipts,
     }
     return render(request, 'accounts/profile.html', context)
 
@@ -263,3 +278,38 @@ def password_reset_confirm(request, uidb64, token):
         return render(request, 'accounts/password_reset_confirm.html', {
             'validlink': False
         })
+
+
+def set_language(request):
+    """Handle language switching"""
+    from django.utils import translation
+    from django.conf import settings
+    from django.http import HttpResponseRedirect
+    
+    if request.method == 'POST':
+        language = request.POST.get('language')
+        
+        # Validate language code
+        if language and language in [lang[0] for lang in settings.LANGUAGES]:
+            # Activate the language
+            translation.activate(language)
+            
+            # Get the redirect URL (previous page or profile)
+            next_url = request.POST.get('next', request.META.get('HTTP_REFERER', 'accounts:profile'))
+            
+            response = HttpResponseRedirect(next_url)
+            
+            # Set language cookie
+            response.set_cookie(
+                settings.LANGUAGE_COOKIE_NAME,
+                language,
+                max_age=settings.LANGUAGE_COOKIE_AGE,
+                path='/',
+                samesite='Lax'
+            )
+            
+            logger.auth(f"Language changed to {language}", user=request.user.username if request.user.is_authenticated else 'anonymous')
+            return response
+    
+    # If not POST or invalid, redirect to profile
+    return redirect('accounts:profile')
