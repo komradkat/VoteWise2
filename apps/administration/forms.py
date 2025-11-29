@@ -250,13 +250,14 @@ class ElectionAdminForm(forms.ModelForm):
             'id': 'id_student_profile'
         }),
         label='Select Student (Optional)',
-        help_text='Select a student to auto-fill their information'
+        help_text='Select a student to link their existing account as administrator'
     )
     
     username = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'Username',
-        'id': 'id_username'
+        'id': 'id_username',
+        'readonly': False
     }))
     first_name = forms.CharField(max_length=150, required=True, widget=forms.TextInput(attrs={
         'class': 'form-control',
@@ -281,7 +282,7 @@ class ElectionAdminForm(forms.ModelForm):
             'id': 'id_password'
         }),
         min_length=8,
-        help_text='Minimum 8 characters'
+        help_text='Minimum 8 characters. Leave blank if linking existing student account.'
     )
     confirm_password = forms.CharField(
         required=False,
@@ -327,52 +328,117 @@ class ElectionAdminForm(forms.ModelForm):
             self.fields['password'].help_text = 'Leave blank to keep current password'
             self.fields['confirm_password'].required = False
         else:
-            # Creating new admin - password is optional if using existing student
+            # Creating new admin
             self.fields['password'].required = False
-            self.fields['password'].help_text = 'Leave blank to keep student\'s existing password (if selecting a student), or enter a new password'
             self.fields['confirm_password'].required = False
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
+        student_profile = self.cleaned_data.get('student_profile')
+        
         if self.instance and self.instance.pk:
             # Editing - check if username changed and if new one exists
             if username != self.instance.user.username:
-                if User.objects.filter(username=username).exists():
-                    raise forms.ValidationError('Username already exists.')
+                existing_user = User.objects.filter(username=username).first()
+                if existing_user:
+                    # Check if it's the same user from student profile
+                    if not (student_profile and student_profile.user == existing_user):
+                        raise forms.ValidationError('Username already exists.')
         else:
             # Creating - check if username exists
-            if User.objects.filter(username=username).exists():
-                raise forms.ValidationError('Username already exists.')
+            existing_user = User.objects.filter(username=username).first()
+            if existing_user:
+                # Allow if we're linking an existing student
+                if not (student_profile and student_profile.user == existing_user):
+                    raise forms.ValidationError(
+                        'Username already exists. If you want to promote an existing user to admin, '
+                        'select them from the student dropdown.'
+                    )
         return username
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
+        student_profile = self.cleaned_data.get('student_profile')
+        
         if self.instance and self.instance.pk:
             # Editing - check if email changed and if new one exists
             if email != self.instance.user.email:
-                if User.objects.filter(email=email).exists():
-                    raise forms.ValidationError('Email already exists.')
+                existing_user = User.objects.filter(email=email).first()
+                if existing_user:
+                    if not (student_profile and student_profile.user == existing_user):
+                        raise forms.ValidationError('Email already exists.')
         else:
             # Creating - check if email exists
-            if User.objects.filter(email=email).exists():
-                raise forms.ValidationError('Email already exists.')
+            existing_user = User.objects.filter(email=email).first()
+            if existing_user:
+                # Allow if we're linking an existing student
+                if not (student_profile and student_profile.user == existing_user):
+                    raise forms.ValidationError(
+                        'Email already exists. If you want to promote an existing user to admin, '
+                        'select them from the student dropdown.'
+                    )
         return email
+
+    def clean_employee_id(self):
+        employee_id = self.cleaned_data.get('employee_id')
+        if employee_id:
+            employee_id = employee_id.strip()
+            if employee_id == '':
+                return None
+        else:
+            return None
+            
+        # Check uniqueness manually to provide clear error message
+        qs = ElectionAdmin.objects.filter(employee_id=employee_id)
+        if self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError("Employee ID already exists.")
+            
+        return employee_id
 
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get('password')
         confirm_password = cleaned_data.get('confirm_password')
+        student_profile = cleaned_data.get('student_profile')
+        username = cleaned_data.get('username')
+        admin_type = cleaned_data.get('admin_type')
         
+        # Logic to handle switching types
+        if admin_type == AdminType.STUDENT:
+            # If Student Admin, ensure employee_id is None
+            cleaned_data['employee_id'] = None
+            # Also clear any errors on employee_id since it's hidden
+            if 'employee_id' in self._errors:
+                del self._errors['employee_id']
+        else:
+            # If Employee/Instructor, ensure student_profile is None
+            cleaned_data['student_profile'] = None
+            student_profile = None # Update local var for subsequent checks
+            # Also clear any errors on student_profile since it's hidden
+            if 'student_profile' in self._errors:
+                del self._errors['student_profile']
+
         # Validate password confirmation if password is provided
         if password and password != confirm_password:
-            raise forms.ValidationError({
-                'confirm_password': 'Passwords do not match.'
-            })
+            self.add_error('confirm_password', 'Passwords do not match.')
+        
+        # If not editing and no student selected, password is required
+        if not self.instance.pk and not student_profile and not password:
+            self.add_error('password', 'Password is required when creating a new administrator account.')
+        
+        # If student selected, verify the user info matches
+        if student_profile:
+            if username and username != student_profile.user.username:
+                self.add_error('username', 
+                    f'Username must match the selected student\'s username: {student_profile.user.username}')
         
         return cleaned_data
 
     def save(self, commit=True):
         admin = super().save(commit=False)
+        student_profile = self.cleaned_data.get('student_profile')
         
         if self.instance and self.instance.pk:
             # Update existing user
@@ -389,15 +455,33 @@ class ElectionAdminForm(forms.ModelForm):
             if commit:
                 user.save()
         else:
-            # Create new user
-            user = User.objects.create_user(
-                username=self.cleaned_data['username'],
-                email=self.cleaned_data['email'],
-                password=self.cleaned_data['password'],
-                first_name=self.cleaned_data['first_name'],
-                last_name=self.cleaned_data['last_name']
-            )
-            admin.user = user
+            # Check if we're linking an existing student
+            if student_profile:
+                # Use the existing user from the student profile
+                user = student_profile.user
+                # Update user info if changed
+                user.first_name = self.cleaned_data['first_name']
+                user.last_name = self.cleaned_data['last_name']
+                user.email = self.cleaned_data['email']
+                
+                # Only update password if provided
+                if self.cleaned_data.get('password'):
+                    user.set_password(self.cleaned_data['password'])
+                
+                if commit:
+                    user.save()
+                
+                admin.user = user
+            else:
+                # Create new user
+                user = User.objects.create_user(
+                    username=self.cleaned_data['username'],
+                    email=self.cleaned_data['email'],
+                    password=self.cleaned_data['password'],
+                    first_name=self.cleaned_data['first_name'],
+                    last_name=self.cleaned_data['last_name']
+                )
+                admin.user = user
         
         if commit:
             admin.save()
