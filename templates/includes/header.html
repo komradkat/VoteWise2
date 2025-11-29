@@ -119,9 +119,29 @@
     <div class="mobile-nav" id="mobileNav">
         <ul class="mobile-nav-menu">
             {% if user.is_authenticated %}
-                <li><a href="{% url 'accounts:profile' %}" class="mobile-nav-link">
+                <li><a href="{% url 'accounts:profile' %}#my-profile" class="mobile-nav-link">
                     <i class="fas fa-user-circle"></i>
-                    <span>Dashboard</span>
+                    <span>My Profile</span>
+                </a></li>
+                <li><a href="{% url 'accounts:profile' %}#my-votes" class="mobile-nav-link">
+                    <i class="fas fa-vote-yea"></i>
+                    <span>Voting History</span>
+                </a></li>
+                <li><a href="{% url 'accounts:profile' %}#notifications" class="mobile-nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a></li>
+                <li><a href="{% url 'accounts:profile' %}#settings" class="mobile-nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Account Settings</span>
+                </a></li>
+                <li><a href="{% url 'accounts:profile' %}#security" class="mobile-nav-link">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Security</span>
+                </a></li>
+                <li><a href="{% url 'accounts:profile' %}#help" class="mobile-nav-link">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help & Support</span>
                 </a></li>
                 <li><a href="{% url 'elections:list' %}" class="mobile-nav-link">
                     <i class="fas fa-vote-yea"></i>
