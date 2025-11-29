@@ -4,287 +4,10 @@
 {% block title %}AI Chatbot - VoteWise{% endblock %}
 
 {% block css %}
+<link rel="stylesheet" href="{% static 'chatbot/css/chat.css' %}">
 <style>
-    .chatbot-container {
-        max-width: 1000px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-        height: calc(100vh - 140px); /* Adjust based on header/footer height */
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .chat-header {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 16px 16px 0 0;
-        border: 1px solid var(--color-slate-200);
-        border-bottom: none;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        z-index: 10;
-    }
-    
-    .header-content h1 {
-        margin: 0;
-        font-size: var(--font-size-xl);
-        color: var(--color-navy);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .header-content p {
-        margin: 0.25rem 0 0 0;
-        color: var(--color-slate-500);
-        font-size: var(--font-size-sm);
-    }
-    
-    .election-selector select {
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        border: 1px solid var(--color-slate-200);
-        font-size: var(--font-size-sm);
-        color: var(--color-slate-800);
-        background-color: var(--color-slate-50);
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .election-selector select:hover {
-        border-color: var(--color-blue);
-    }
-    
-    .chat-window {
-        background: white;
-        border: 1px solid var(--color-slate-200);
-        flex: 1;
-        overflow-y: auto;
-        padding: 2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        scroll-behavior: smooth;
-    }
-    
-    .message {
-        display: flex;
-        gap: 1rem;
-        max-width: 85%;
-        animation: slideIn 0.3s ease;
-    }
-    
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .message.user {
-        align-self: flex-end;
-        flex-direction: row-reverse;
-    }
-    
-    .message-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        flex-shrink: 0;
-        font-size: 0.9rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    .message.user .message-avatar {
-        background: var(--color-blue);
-        color: white;
-    }
-    
-    .message.assistant .message-avatar {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); /* Keep the gradient for AI personality */
-        color: white;
-    }
-    
-    .message-content-wrapper {
-        display: flex;
-        flex-direction: column;
-        max-width: 100%;
-    }
-    
-    .message-content {
-        padding: 1rem 1.25rem;
-        border-radius: 12px;
-        line-height: 1.6;
-        font-size: var(--font-size-base);
-        position: relative;
-        word-wrap: break-word;
-    }
-    
-    .message.user .message-content {
-        background: var(--color-blue);
-        color: white;
-        border-radius: 12px 0 12px 12px;
-        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
-    }
-    
-    .message.assistant .message-content {
-        background: var(--color-slate-50);
-        color: var(--color-slate-800);
-        border: 1px solid var(--color-slate-200);
-        border-radius: 0 12px 12px 12px;
-    }
-    
-    /* Markdown Styles within Assistant Messages */
-    .message.assistant .message-content h1,
-    .message.assistant .message-content h2,
-    .message.assistant .message-content h3 {
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: var(--color-navy);
-    }
-    
-    .message.assistant .message-content h1:first-child,
-    .message.assistant .message-content h2:first-child,
-    .message.assistant .message-content h3:first-child {
-        margin-top: 0;
-    }
-    
-    .message.assistant .message-content ul,
-    .message.assistant .message-content ol {
-        margin-left: 1.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    .message.assistant .message-content p {
-        margin-bottom: 0.75rem;
-    }
-    
-    .message.assistant .message-content p:last-child {
-        margin-bottom: 0;
-    }
-    
-    .message.assistant .message-content strong {
-        font-weight: 600;
-        color: var(--color-deep-blue);
-    }
-    
-    .message-time {
-        font-size: 0.7rem;
-        color: var(--color-slate-500);
-        margin-top: 0.25rem;
-        align-self: flex-end;
-    }
-    
-    .message.user .message-time {
-        align-self: flex-start;
-        color: var(--color-slate-500); /* Keep time readable outside bubble */
-    }
-    
-    .typing-indicator {
-        display: none;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 1rem;
-        background: var(--color-slate-50);
-        border-radius: 0 12px 12px 12px;
-        width: fit-content;
-        margin-left: 3.5rem; /* Align with text */
-        border: 1px solid var(--color-slate-200);
-    }
-    
-    .typing-indicator.active {
-        display: flex;
-    }
-    
-    .typing-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--color-slate-500);
-        animation: typing 1.4s infinite;
-    }
-    
-    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-    
-    @keyframes typing {
-        0%, 60%, 100% { transform: translateY(0); }
-        30% { transform: translateY(-6px); }
-    }
-    
-    .chat-input-container {
-        background: white;
-        border: 1px solid var(--color-slate-200);
-        border-top: none;
-        border-radius: 0 0 16px 16px;
-        padding: 1.5rem;
-        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.02);
-    }
-    
-    .chat-input-form {
-        display: flex;
-        gap: 1rem;
-        position: relative;
-    }
-    
-    .chat-input {
-        flex: 1;
-        padding: 1rem 1.25rem;
-        border: 2px solid var(--color-slate-200);
-        border-radius: 12px;
-        font-size: var(--font-size-base);
-        transition: all 0.2s;
-        background: var(--color-slate-50);
-    }
-    
-    .chat-input:focus {
-        outline: none;
-        border-color: var(--color-blue);
-        background: white;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-    
-    .chat-send-btn {
-        padding: 0 1.5rem;
-        background: var(--color-blue);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .chat-send-btn:hover:not(:disabled) {
-        background: var(--color-deep-blue);
-        transform: translateY(-1px);
-    }
-    
-    .chat-send-btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        background: var(--color-slate-500);
-    }
-    
-    .api-notice {
-        background: #fffbeb;
-        border: 1px solid #fcd34d;
-        color: #92400e;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
-        margin-bottom: 1rem;
-        font-size: var(--font-size-sm);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+    body {
+        background: var(--color-slate-900) !important;
     }
 </style>
 <!-- Add marked.js for markdown parsing -->
@@ -292,66 +15,72 @@
 {% endblock %}
 
 {% block content %}
-<div class="chatbot-container">
-    <div class="chat-header">
-        <div class="header-content">
-            <h1>🤖 AI Election Assistant</h1>
-            <p>Unbiased, factual candidate information</p>
+<div class="chatbot-page">
+    <div class="chatbot-container">
+        <div class="chat-header">
+            <div class="header-content">
+                <h1>
+                    <i class="fas fa-robot header-icon"></i>
+                    AI Election Assistant
+                </h1>
+                <p>Unbiased, factual candidate information</p>
+            </div>
+            
+            {% if active_elections %}
+            <div class="election-selector">
+                <select id="electionSelect" onchange="changeElection(this.value)">
+                    {% for election in active_elections %}
+                    <option value="{{ election.id }}" {% if election == selected_election %}selected{% endif %}>
+                        {{ election.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
         </div>
         
-        {% if active_elections %}
-        <div class="election-selector">
-            <select id="electionSelect" onchange="changeElection(this.value)">
-                {% for election in active_elections %}
-                <option value="{{ election.id }}" {% if election == selected_election %}selected{% endif %}>
-                    {{ election.name }}
-                </option>
-                {% endfor %}
-            </select>
+        {% if not api_configured %}
+        <div class="api-notice">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>Demo Mode Active</strong>
+                <span style="opacity: 0.8; margin-left: 0.5rem;">Configure Gemini API key for full functionality.</span>
+            </div>
         </div>
         {% endif %}
-    </div>
-    
-    {% if not api_configured %}
-    <div class="api-notice">
-        <span>⚠️</span>
-        <div>
-            <strong>Demo Mode Active</strong>
-            <span style="opacity: 0.8; margin-left: 0.5rem;">Configure Gemini API key for full functionality.</span>
-        </div>
-    </div>
-    {% endif %}
-    
-    <div class="chat-window" id="chatWindow">
-        <!-- Messages will be inserted here dynamically -->
         
-        <div class="typing-indicator" id="typingIndicator">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
+        <div class="chat-window" id="chatWindow">
+            <!-- Messages will be inserted here dynamically -->
+            
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
         </div>
-    </div>
-    
-    <div class="chat-input-container">
-        <form class="chat-input-form" id="chatForm" onsubmit="sendMessage(event)">
-            <input 
-                type="text" 
-                class="chat-input" 
-                id="messageInput" 
-                placeholder="Ask about candidates, platforms, or positions..."
-                required
-                autocomplete="off"
-            >
-            <button type="submit" class="chat-send-btn" id="sendBtn">
-                <span>Send</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            </button>
-        </form>
+        
+        <div class="chat-input-container">
+            <form class="chat-input-form" id="chatForm" onsubmit="sendMessage(event)">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="messageInput" 
+                    placeholder="Ask about candidates, platforms, or positions..."
+                    required
+                    autocomplete="off"
+                >
+                <button type="submit" class="chat-send-btn" id="sendBtn">
+                    <span>Send</span>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 
 {{ request.session.chatbot_session_id|json_script:"session-id-data" }}
 {{ selected_election.id|default:None|json_script:"election-id-data" }}
+
 <script>
     const sessionId = JSON.parse(document.getElementById('session-id-data').textContent);
     const electionId = JSON.parse(document.getElementById('election-id-data').textContent);
@@ -376,7 +105,12 @@
         
         const avatar = document.createElement('div');
         avatar.className = 'message-avatar';
-        avatar.textContent = role === 'user' ? '{{ request.user.first_name.0|default:"U" }}' : '🤖';
+        
+        if (role === 'user') {
+            avatar.innerHTML = '<i class="fas fa-user"></i>';
+        } else {
+            avatar.innerHTML = '<i class="fas fa-robot"></i>';
+        }
         
         const contentWrapper = document.createElement('div');
         contentWrapper.className = 'message-content-wrapper';
@@ -426,6 +160,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
                 },
                 body: JSON.stringify({
                     message: message,
@@ -457,7 +192,8 @@
     }
     
     // Add initial welcome message if chat is empty
-    if (chatWindow.children.length <= 1) { // Only typing indicator exists
+    const messages = chatWindow.querySelectorAll('.message');
+    if (messages.length === 0) {
         setTimeout(() => {
             addMessage('assistant', "Hello! I'm your AI Election Assistant. I can help you learn about the candidates and their platforms. What would you like to know?");
         }, 500);
