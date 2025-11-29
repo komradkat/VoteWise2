@@ -7,6 +7,8 @@ from .forms import UserUpdateForm, StudentProfileForm, PublicRegistrationForm
 from apps.elections.models import VoterReceipt
 from apps.core.logging import logger
 
+from apps.core.services.email_service import EmailService
+
 # Create your views here.
 def register(request):
     """Public registration view for voters to create their own accounts"""
@@ -18,6 +20,9 @@ def register(request):
         form = PublicRegistrationForm(request.POST)
         if form.is_valid():
             user, profile = form.save()
+            
+            # Send welcome email
+            EmailService.send_welcome_email(user)
             
             # Handle Face ID Enrollment
             face_image = request.POST.get('face_image')
@@ -103,8 +108,32 @@ def login(request):
         if form.is_valid():
             from django.contrib.auth import login as auth_login
             user = form.get_user()
+            
+            # Handle "Remember Me" functionality
+            remember_me = request.POST.get('remember', None)
+            if not remember_me:
+                # Session expires when browser closes (default is 2 weeks)
+                request.session.set_expiry(0)
+            else:
+                # Session expires after 2 weeks (1209600 seconds)
+                request.session.set_expiry(1209600)
+            
             auth_login(request, user)
-            logger.auth(f"User logged in: {user.username}", user=user.username, ip=request.META.get('REMOTE_ADDR'))
+            ip = request.META.get('REMOTE_ADDR')
+            logger.auth(f"User logged in: {user.username}", user=user.username, ip=ip)
+            
+            # Send login notification
+            EmailService.send_email(
+                subject="New Login to VoteWise",
+                template_name="login_notification",
+                context={
+                    'user': user,
+                    'username': user.get_full_name() or user.username,
+                    'ip_address': ip
+                },
+                recipient_list=[user.email]
+            )
+            
             if 'next' in request.POST:
                 return redirect(request.POST.get('next'))
             return redirect('accounts:profile')
@@ -156,3 +185,81 @@ def profile_view(request):
         'receipts': receipts, # Renamed from 'votes' to 'receipts'
     }
     return render(request, 'accounts/profile.html', context)
+
+
+def password_reset_request(request):
+    """Handle password reset request"""
+    if request.user.is_authenticated:
+        return redirect('accounts:profile')
+    
+    if request.method == 'POST':
+        from .forms import PasswordResetRequestForm
+        from django.contrib.auth.tokens import default_token_generator
+        from django.utils.http import urlsafe_base64_encode
+        from django.utils.encoding import force_bytes
+        from django.contrib.auth.models import User
+        from django.urls import reverse
+        
+        form = PasswordResetRequestForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            user = User.objects.get(email=email)
+            
+            # Generate token
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            # Build reset URL using reverse()
+            reset_path = reverse('accounts:password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
+            reset_url = request.build_absolute_uri(reset_path)
+            
+            # Send email
+            EmailService.send_password_reset_email(user, reset_url)
+            
+            messages.success(
+                request,
+                'Password reset instructions have been sent to your email address.'
+            )
+            logger.auth(f"Password reset requested for: {user.username}", user=user.username)
+            return redirect('accounts:login')
+    else:
+        from .forms import PasswordResetRequestForm
+        form = PasswordResetRequestForm()
+    
+    return render(request, 'accounts/password_reset_request.html', {'form': form})
+
+
+
+def password_reset_confirm(request, uidb64, token):
+    """Handle password reset confirmation"""
+    from django.contrib.auth.tokens import default_token_generator
+    from django.utils.http import urlsafe_base64_decode
+    from django.contrib.auth.models import User
+    from .forms import PasswordResetConfirmForm
+    
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            form = PasswordResetConfirmForm(request.POST)
+            if form.is_valid():
+                user.set_password(form.cleaned_data['password'])
+                user.save()
+                messages.success(request, 'Your password has been reset successfully. You can now log in.')
+                logger.auth(f"Password reset completed for: {user.username}", user=user.username)
+                return redirect('accounts:login')
+        else:
+            form = PasswordResetConfirmForm()
+        
+        return render(request, 'accounts/password_reset_confirm.html', {
+            'form': form,
+            'validlink': True
+        })
+    else:
+        return render(request, 'accounts/password_reset_confirm.html', {
+            'validlink': False
+        })

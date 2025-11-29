@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
 app_name = 'accounts'
@@ -14,4 +14,11 @@ urlpatterns = [
     
     # User Profile
     path('profile/', views.profile_view, name='profile'),
+    
+    # Password Reset
+    path('password-reset/', views.password_reset_request, name='password_reset_request'),
+    re_path(r'^password-reset-confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$', 
+            views.password_reset_confirm, 
+            name='password_reset_confirm'),
 ]
+

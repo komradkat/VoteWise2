@@ -42,7 +42,7 @@ DATABASES = {
 }
 
 # Email backend for development (console)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Development-specific settings
 INTERNAL_IPS = [

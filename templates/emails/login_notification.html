@@ -1,0 +1,9 @@
+{% extends "emails/base_email.html" %}
+
+{% block content %}
+<h2>Login Notification</h2>
+<p>Hello {{ username }},</p>
+<p>This is a notification that your account was just logged into from IP address: {{ ip_address }}.</p>
+<p>If this was you, you can ignore this email.</p>
+<p>If you did not log in, please contact the administrator immediately.</p>
+{% endblock %}

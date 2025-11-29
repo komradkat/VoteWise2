@@ -131,3 +131,51 @@ class PublicRegistrationForm(forms.Form):
         )
         
         return user, profile
+
+
+class PasswordResetRequestForm(forms.Form):
+    """Form for requesting password reset"""
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your email address'
+        }),
+        help_text='Enter the email address associated with your account'
+    )
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not User.objects.filter(email=email).exists():
+            raise forms.ValidationError('No account found with this email address.')
+        return email
+
+
+class PasswordResetConfirmForm(forms.Form):
+    """Form for confirming password reset"""
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'New password'
+        }),
+        help_text='Minimum 8 characters'
+    )
+    password_confirm = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirm new password'
+        }),
+        label='Confirm Password'
+    )
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password_confirm = cleaned_data.get('password_confirm')
+        
+        if password and password_confirm:
+            if password != password_confirm:
+                raise forms.ValidationError('Passwords do not match.')
+            if len(password) < 8:
+                raise forms.ValidationError('Password must be at least 8 characters long.')
+        
+        return cleaned_data

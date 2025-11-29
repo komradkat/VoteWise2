@@ -1,0 +1,8 @@
+Login Notification
+
+Hello {{ username }},
+
+This is a notification that your account was just logged into from IP address: {{ ip_address }}.
+
+If this was you, you can ignore this email.
+If you did not log in, please contact the administrator immediately.

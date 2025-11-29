@@ -84,7 +84,7 @@ Login - VoteWise
                 <span class="checkmark"></span>
                 Remember me
               </label>
-              <a href="#" class="forgot-link">Forgot password?</a>
+              <a href="{% url 'accounts:password_reset_request' %}" class="forgot-link">Forgot password?</a>
             </div>
 
             <button type="submit" class="cta-button full-width">

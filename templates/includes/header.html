@@ -5,15 +5,19 @@
 {% endblock %}
 
 <header class="site-header">
-    <div class="container">
+    <div class="header-container">
         <div class="header-content">
-            <!-- Logo Section -->
+            <!-- Logo Section with Address -->
             <div class="header-logo">
                 <a href="{% url 'home' %}" class="logo-link">
                     <img src="{% static 'img/logo.png' %}" alt="VoteWise Logo" class="logo-image">
                     <div class="logo-text-container">
                         <span class="logo-title">VoteWise</span>
                         <span class="logo-subtitle">Student Election System</span>
+                        <span class="logo-address">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ACLC College of Tacloban - Real Street, Tacloban City
+                        </span>
                     </div>
                 </a>
             </div>

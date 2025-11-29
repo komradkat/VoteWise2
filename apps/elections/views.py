@@ -6,6 +6,7 @@ from django.db import transaction
 from django.db.models import Prefetch
 from .models import Election, Position, Candidate, Vote, VoterReceipt, ElectionTimeline
 from apps.core.logging import logger
+from apps.core.services.email_service import EmailService
 
 def elections_list(request):
     """
@@ -140,6 +141,9 @@ def vote_view(request, election_id):
                     encrypted_choices='{}',  # TODO: Implement encryption
                     voter_ip_address=get_client_ip(request)
                 )
+                
+                # Send confirmation email
+                EmailService.send_vote_confirmation(request.user, election)
                 
                 messages.success(request, f'Your vote has been successfully recorded! You voted for {len(votes_cast)} candidate(s).')
                 logger.vote(f"Vote submitted for election: {election.name}", user=request.user.username, extra_data={'election_id': election.id, 'votes_count': len(votes_cast)})
