@@ -61,7 +61,7 @@ def results(request):
                 candidates_data.append({
                     'object': cand,
                     'name': cand.student_profile.user.get_full_name(),
-                    'photo_url': cand.photo.url if cand.photo else None,
+                    'photo_url': cand.get_photo_url,
                     'votes': votes,
                     'percentage': round(percentage, 1),
                     'partylist': cand.partylist.short_code if cand.partylist else "Independent"

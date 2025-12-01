@@ -116,7 +116,7 @@ class Candidate(models.Model):
         if self.photo:
             return self.photo.url
         from django.conf import settings
-        return f"{settings.STATIC_URL}img/default-avatar.png"
+        return f"{settings.STATIC_URL}core/img/default-avatar.png"
 
 
 # ----------------------------------------------------------------------

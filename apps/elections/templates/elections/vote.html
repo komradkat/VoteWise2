@@ -42,15 +42,8 @@
                     <i class="fas fa-check"></i>
                 </div>
 
-                {% if candidate.photo %}
-                <img src="{{ candidate.photo.url }}" alt="{{ candidate.student_profile.user.get_full_name }}"
+                <img src="{{ candidate.get_photo_url }}" alt="{{ candidate.student_profile.user.get_full_name }}"
                     class="candidate-photo">
-                {% else %}
-                <div class="candidate-photo"
-                    style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #e0e7ff, #f8fafc);">
-                    <i class="fas fa-user" style="font-size: 4rem; color: #cbd5e1;"></i>
-                </div>
-                {% endif %}
 
                 <div class="candidate-info">
                     <div class="candidate-name">{{ candidate.student_profile.user.get_full_name }}</div>
