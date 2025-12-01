@@ -110,6 +110,14 @@ class Candidate(models.Model):
     def __str__(self):
         return f"{self.student_profile.user.get_full_name()} for {self.position.name} ({self.election.name})"
 
+    @property
+    def get_photo_url(self):
+        """Returns the candidate's photo URL or a default avatar."""
+        if self.photo:
+            return self.photo.url
+        from django.conf import settings
+        return f"{settings.STATIC_URL}img/default-avatar.png"
+
 
 # ----------------------------------------------------------------------
 # 4. Election Model (NEW CORE MODEL)
