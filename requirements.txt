@@ -1,4 +1,8 @@
-# Core Django
+# ============================================================================
+# VoteWise2 - Production Requirements
+# ============================================================================
+
+# Core Django Framework
 Django==5.2.8
 asgiref==3.11.0
 sqlparse==0.5.3
@@ -10,25 +14,42 @@ python-decouple==3.8
 # Image Processing
 Pillow==12.0.0
 
-# Database Drivers (for production)
-# PostgreSQL
-# psycopg2-binary==2.9.10  # Uncomment for production with PostgreSQL
+# Face Recognition & Biometrics
+deepface==0.0.93
+tf-keras==2.18.0
+tensorflow==2.18.0
+opencv-python==4.10.0.84
+numpy==1.26.4
 
-# MySQL/MariaDB (alternative)
-# mysqlclient==2.2.6  # Uncomment for production with MySQL/MariaDB
+# AI & Machine Learning (Google Gemini)
+google-generativeai==0.8.3
 
-# WSGI Server
+# PDF Generation & Reporting
+reportlab==4.2.5
+matplotlib==3.9.3
+
+# Database Drivers (Production)
+# Uncomment based on your production database:
+# psycopg2-binary==2.9.10  # PostgreSQL
+# mysqlclient==2.2.6       # MySQL/MariaDB
+
+# WSGI Server (Production)
 gunicorn==23.0.0
 
-# Static Files
+# Static Files Management
 whitenoise==6.11.0
 
 # Security & CORS
 django-cors-headers==4.9.0
 
-# Monitoring (Optional - for production)
-# sentry-sdk==2.20.0  # Uncomment if using Sentry
+# Email Backend (Production)
+# django-ses==4.2.0  # For AWS SES
+# sendgrid==6.11.0   # For SendGrid
 
-# Development Dependencies (install separately with pip install -r requirements-dev.txt)
-# django-debug-toolbar==4.4.6
-# coverage==7.6.10
+# Monitoring & Error Tracking (Optional - Production)
+# sentry-sdk==2.20.0
+
+# ============================================================================
+# Development Dependencies
+# Install separately: pip install -r requirements-dev.txt
+# ============================================================================
