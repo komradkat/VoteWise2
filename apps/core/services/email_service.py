@@ -2,13 +2,11 @@
 Email Service for VoteWise2
 Centralized email sending functionality with template support
 """
-import logging
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.html import strip_tags
-
-logger = logging.getLogger(__name__)
+from apps.core.logging import logger
 
 
 class EmailService:
@@ -33,7 +31,7 @@ class EmailService:
             bool: True if email sent successfully, False otherwise
         """
         if not recipient_list:
-            logger.warning("No recipients provided for email")
+            logger.email("No recipients provided for email")
             return False
             
         if from_email is None:
@@ -67,11 +65,11 @@ class EmailService:
             # Send email
             email.send(fail_silently=False)
             
-            logger.info(f"Email sent successfully: {subject} to {len(recipient_list)} recipient(s)")
+            logger.email(f"Email sent successfully: {subject} to {len(recipient_list)} recipient(s)", extra_data={'subject': subject, 'recipient_count': len(recipient_list)})
             return True
             
         except Exception as e:
-            logger.error(f"Failed to send email '{subject}': {str(e)}")
+            logger.error(f"Failed to send email '{subject}': {str(e)}", category="EMAIL", extra_data={'subject': subject, 'error': str(e)})
             return False
     
     @staticmethod
@@ -169,7 +167,7 @@ class EmailService:
             ):
                 sent_count += 1
         
-        logger.info(f"Sent {sent_count} election {notification_type} notifications for '{election.name}'")
+        logger.email(f"Sent {sent_count} election {notification_type} notifications for '{election.name}'", extra_data={'election_id': election.id, 'notification_type': notification_type, 'sent_count': sent_count})
         return sent_count
     
     @staticmethod
@@ -211,7 +209,7 @@ class EmailService:
             ):
                 sent_count += 1
         
-        logger.info(f"Sent {sent_count} results announcements for '{election.name}'")
+        logger.email(f"Sent {sent_count} results announcements for '{election.name}'", extra_data={'election_id': election.id, 'sent_count': sent_count})
         return sent_count
     
     @staticmethod
@@ -262,7 +260,7 @@ class EmailService:
             admin_emails = [admin.email for admin in admins]
         
         if not admin_emails:
-            logger.warning("No admin emails found for notification")
+            logger.email("No admin emails found for notification")
             return False
         
         template_name = "admin_notification"
@@ -307,5 +305,5 @@ class EmailService:
             ):
                 sent_count += 1
         
-        logger.info(f"Sent {sent_count}/{len(recipient_list)} bulk emails")
+        logger.email(f"Sent {sent_count}/{len(recipient_list)} bulk emails", extra_data={'sent_count': sent_count, 'total_recipients': len(recipient_list)})
         return sent_count

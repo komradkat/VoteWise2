@@ -25,6 +25,12 @@ Professional, color-coded logging system for the VoteWise application with struc
 | `AUTH` | Authentication | Login, logout, session management |
 | `VOTE` | Voting actions | Vote submission, results |
 | `ADMIN` | Admin actions | User management, configuration |
+| `ELECTION` | Election management | Create/update elections, positions, partylists |
+| `CANDIDATE` | Candidate management | Register/update candidates |
+| `VOTER_MGMT` | Voter management | Verify/reject voters, bulk operations |
+| `TIMELINE` | Timeline events | Create/update/delete timeline events |
+| `EMAIL` | Email operations | Send emails, notifications |
+| `CHATBOT` | Chatbot interactions | AI responses, errors |
 | `DATABASE` | Database operations | Queries, connections |
 
 ## Log Levels

@@ -174,6 +174,26 @@ class VoteWiseLogger:
         """Log an admin action"""
         self._log(logging.INFO, message, 'ADMIN', user=user, **kwargs)
     
+    def election(self, message: str, user: Optional[str] = None, **kwargs):
+        """Log an election management event"""
+        self._log(logging.INFO, message, 'ELECTION', user=user, **kwargs)
+    
+    def candidate(self, message: str, user: Optional[str] = None, **kwargs):
+        """Log a candidate management event"""
+        self._log(logging.INFO, message, 'CANDIDATE', user=user, **kwargs)
+    
+    def voter_mgmt(self, message: str, user: Optional[str] = None, **kwargs):
+        """Log a voter management event"""
+        self._log(logging.INFO, message, 'VOTER_MGMT', user=user, **kwargs)
+    
+    def timeline(self, message: str, user: Optional[str] = None, **kwargs):
+        """Log a timeline event"""
+        self._log(logging.INFO, message, 'TIMELINE', user=user, **kwargs)
+    
+    def email(self, message: str, **kwargs):
+        """Log an email operation"""
+        self._log(logging.INFO, message, 'EMAIL', **kwargs)
+    
     def database(self, message: str, **kwargs):
         """Log a database operation"""
         self._log(logging.DEBUG, message, 'DATABASE', **kwargs)

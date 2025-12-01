@@ -37,11 +37,11 @@ def admin_login(request):
             user = form.get_user()
             if is_admin(user):
                 auth_login(request, user)
-            #    logger.auth(f"Admin logged in: {user.username}", user=user.username, category="ADMIN")
-                return redirect('administration:dashboard')
-            else:
-            #    logger.warning(f"Failed admin login attempt: {user.username}", user=user.username, category="SECURITY")
-                form.add_error(None, "Access denied. Administrator privileges required.")
+            logger.admin_action(f"Admin logged in: {user.username}", user=user.username)
+            return redirect('administration:dashboard')
+        else:
+            logger.security(f"Failed admin login attempt: {user.username}", user=user.username)
+            form.add_error(None, "Access denied. Administrator privileges required.")
     else:
         form = AuthenticationForm()
     
@@ -50,7 +50,7 @@ def admin_login(request):
 def admin_logout(request):
     """Logout admin user and redirect to login page"""
     if request.user.is_authenticated:
-    #    logger.auth(f"Admin logged out: {request.user.username}", user=request.user.username, category="ADMIN")
+        logger.admin_action(f"Admin logged out: {request.user.username}", user=request.user.username)
         logout(request)
         messages.success(request, 'You have been successfully logged out.')
         return redirect('administration:login')
@@ -350,7 +350,7 @@ def election_create(request):
                 details=f"Created election: {election.name}",
                 ip_address=request.META.get('REMOTE_ADDR')
             )
-        #    logger.admin_action(f"Created election: {election.name}", user=request.user.username, extra_data={'election_id': election.id})
+            logger.election(f"Created election: {election.name}", user=request.user.username, extra_data={'election_id': election.id})
             messages.success(request, 'Election created successfully.')
             return redirect('administration:elections')
     else:
@@ -378,7 +378,7 @@ def election_edit(request, pk):
                 details=f"Updated election: {election.name}",
                 ip_address=request.META.get('REMOTE_ADDR')
             )
-        #    logger.admin_action(f"Updated election: {election.name}", user=request.user.username, extra_data={'election_id': election.id})
+            logger.election(f"Updated election: {election.name}", user=request.user.username, extra_data={'election_id': election.id})
             messages.success(request, 'Election updated successfully.')
             return redirect('administration:elections')
     else:
@@ -402,7 +402,7 @@ def position_create(request):
         form = PositionForm(request.POST)
         if form.is_valid():
             position = form.save()
-        #    logger.admin_action(f"Created position: {position.name}", user=request.user.username, extra_data={'position_id': position.id})
+            logger.election(f"Created position: {position.name}", user=request.user.username, extra_data={'position_id': position.id})
             messages.success(request, 'Position created successfully.')
             return redirect('administration:positions')
     else:
@@ -416,7 +416,7 @@ def position_edit(request, pk):
         form = PositionForm(request.POST, instance=position)
         if form.is_valid():
             position = form.save()
-        #    logger.admin_action(f"Updated position: {position.name}", user=request.user.username, extra_data={'position_id': position.id})
+            logger.election(f"Updated position: {position.name}", user=request.user.username, extra_data={'position_id': position.id})
             messages.success(request, 'Position updated successfully.')
             return redirect('administration:positions')
     else:
@@ -435,7 +435,7 @@ def partylist_create(request):
         form = PartylistForm(request.POST)
         if form.is_valid():
             partylist = form.save()
-        #    logger.admin_action(f"Created partylist: {partylist.name}", user=request.user.username, extra_data={'partylist_id': partylist.id})
+            logger.election(f"Created partylist: {partylist.name}", user=request.user.username, extra_data={'partylist_id': partylist.id})
             messages.success(request, 'Partylist created successfully.')
             return redirect('administration:partylists')
     else:
@@ -449,7 +449,7 @@ def partylist_edit(request, pk):
         form = PartylistForm(request.POST, instance=partylist)
         if form.is_valid():
             partylist = form.save()
-        #    logger.admin_action(f"Updated partylist: {partylist.name}", user=request.user.username, extra_data={'partylist_id': partylist.id})
+            logger.election(f"Updated partylist: {partylist.name}", user=request.user.username, extra_data={'partylist_id': partylist.id})
             messages.success(request, 'Partylist updated successfully.')
             return redirect('administration:partylists')
     else:
@@ -460,7 +460,56 @@ def partylist_edit(request, pk):
 @user_passes_test(is_admin, login_url='administration:login')
 def candidate_list(request):
     candidates = Candidate.objects.select_related('student_profile__user', 'election', 'position', 'partylist').all()
-    return render(request, 'administration/lists/candidate_list.html', {'candidates': candidates})
+    
+    # Search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        from django.db.models import Q
+        candidates = candidates.filter(
+            Q(student_profile__user__first_name__icontains=search_query) |
+            Q(student_profile__user__last_name__icontains=search_query) |
+            Q(student_profile__user__username__icontains=search_query) |
+            Q(student_profile__student_id__icontains=search_query) |
+            Q(position__name__icontains=search_query) |
+            Q(partylist__name__icontains=search_query)
+        )
+    
+    # Filter by election
+    election_filter = request.GET.get('election')
+    if election_filter:
+        candidates = candidates.filter(election_id=election_filter)
+    
+    # Filter by position
+    position_filter = request.GET.get('position')
+    if position_filter:
+        candidates = candidates.filter(position_id=position_filter)
+    
+    # Filter by partylist
+    partylist_filter = request.GET.get('partylist')
+    if partylist_filter:
+        if partylist_filter == 'independent':
+            candidates = candidates.filter(partylist__isnull=True)
+        else:
+            candidates = candidates.filter(partylist_id=partylist_filter)
+    
+    # Get filter options
+    elections = Election.objects.all()
+    positions = Position.objects.all()
+    partylists = Partylist.objects.all()
+    
+    context = {
+        'candidates': candidates,
+        'elections': elections,
+        'positions': positions,
+        'partylists': partylists,
+        'search_query': search_query,
+        'election_filter': election_filter,
+        'position_filter': position_filter,
+        'partylist_filter': partylist_filter,
+        'total_count': candidates.count(),
+    }
+    
+    return render(request, 'administration/lists/candidate_list.html', context)
 
 @user_passes_test(is_admin, login_url='administration:login')
 def candidate_create(request):
@@ -468,7 +517,7 @@ def candidate_create(request):
         form = CandidateForm(request.POST, request.FILES)
         if form.is_valid():
             candidate = form.save()
-        #    logger.admin_action(f"Registered candidate: {candidate.student_profile.user.get_full_name()}", user=request.user.username, extra_data={'candidate_id': candidate.id})
+            logger.candidate(f"Registered candidate: {candidate.student_profile.user.get_full_name()}", user=request.user.username, extra_data={'candidate_id': candidate.id})
             messages.success(request, 'Candidate registered successfully.')
             return redirect('administration:candidates')
     else:
@@ -482,7 +531,7 @@ def candidate_edit(request, pk):
         form = CandidateForm(request.POST, request.FILES, instance=candidate)
         if form.is_valid():
             candidate = form.save()
-        #    logger.admin_action(f"Updated candidate: {candidate.student_profile.user.get_full_name()}", user=request.user.username, extra_data={'candidate_id': candidate.id})
+            logger.candidate(f"Updated candidate: {candidate.student_profile.user.get_full_name()}", user=request.user.username, extra_data={'candidate_id': candidate.id})
             messages.success(request, 'Candidate updated successfully.')
             return redirect('administration:candidates')
     else:
@@ -495,18 +544,51 @@ def voter_list(request):
     # Retrieve all voters ordered by student_id
     voter_qs = StudentProfile.objects.select_related('user').prefetch_related('receipts').all().order_by('student_id')
     
+    # Search functionality (works across all pages)
+    search_query = request.GET.get('search', '')
+    if search_query:
+        from django.db.models import Q
+        voter_qs = voter_qs.filter(
+            Q(user__username__icontains=search_query) |
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query) |
+            Q(user__email__icontains=search_query) |
+            Q(student_id__icontains=search_query) |
+            Q(course__icontains=search_query)
+        )
+    
     # Filter by verification status if provided
     status_filter = request.GET.get('status')
     if status_filter:
         voter_qs = voter_qs.filter(verification_status=status_filter)
     
-    # Pagination (25 per page)
+    # Filter by course if provided
+    course_filter = request.GET.get('course')
+    if course_filter:
+        voter_qs = voter_qs.filter(course=course_filter)
+    
+    # Filter by year level if provided
+    year_filter = request.GET.get('year_level')
+    if year_filter:
+        voter_qs = voter_qs.filter(year_level=year_filter)
+    
+    # Filter by eligibility if provided
+    eligibility_filter = request.GET.get('eligibility')
+    if eligibility_filter == 'eligible':
+        voter_qs = voter_qs.filter(is_eligible_to_vote=True)
+    elif eligibility_filter == 'not_eligible':
+        voter_qs = voter_qs.filter(is_eligible_to_vote=False)
+    
+    # Pagination (25 per page) - AFTER filtering
     paginator = Paginator(voter_qs, 25)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
     # Get unique courses for filter dropdown
     courses = StudentProfile.objects.values_list('course', flat=True).distinct().order_by('course')
+    
+    # Get unique year levels for filter dropdown
+    year_levels = StudentProfile.objects.values_list('year_level', flat=True).distinct().order_by('year_level')
     
     # Count eligible voters and pending verifications
     eligible_count = StudentProfile.objects.filter(is_eligible_to_vote=True).count()
@@ -518,9 +600,15 @@ def voter_list(request):
         'page_obj': page_obj,
         'voters': page_obj.object_list,
         'courses': courses,
+        'year_levels': year_levels,
         'eligible_count': eligible_count,
         'pending_count': pending_count,
         'current_status_filter': status_filter,
+        'search_query': search_query,
+        'course_filter': course_filter,
+        'year_filter': year_filter,
+        'eligibility_filter': eligibility_filter,
+        'total_filtered_count': voter_qs.count(),
     }
     return render(request, 'administration/lists/voter_list.html', context)
 
@@ -580,11 +668,11 @@ def voter_create(request):
                                         'is_active': True
                                     }
                                 )
-                            #    logger.face_enroll(f"Face enrolled for voter: {voter.user.username}", user=request.user.username)
-                                messages.success(request, 'Voter registered successfully with Face ID enabled.')
-                            else:
-                            #    logger.warning(f"Face enrollment failed for voter {voter.user.username}: No face detected", user=request.user.username, category="FACE ENROLL")
-                                messages.warning(request, 'Voter registered but Face ID enrollment failed: No face detected.')
+                            logger.face_enroll(f"Face enrolled for voter: {voter.user.username}", user=request.user.username)
+                            messages.success(request, 'Voter registered successfully with Face ID enabled.')
+                        except Exception as e:
+                            logger.warning(f"Face enrollment failed for voter {voter.user.username}: No face detected", user=request.user.username, category="FACE ENROLL")
+                            messages.warning(request, 'Voter registered but Face ID enrollment failed: No face detected.')
                         finally:
                             if os.path.exists(temp_file.name):
                                 os.unlink(temp_file.name)
@@ -592,10 +680,10 @@ def voter_create(request):
                         messages.warning(request, 'Voter registered but Face ID is not available.')
                         
                 except Exception as e:
-                #    logger.error(f"Face enrollment error for voter {voter.user.username}: {str(e)}", user=request.user.username, category="FACE ENROLL")
+                    logger.error(f"Face enrollment error for voter {voter.user.username}: {str(e)}", user=request.user.username, category="FACE ENROLL")
                     messages.warning(request, f'Voter registered but Face ID enrollment failed: {str(e)}')
             else:
-            #    logger.admin_action(f"Registered voter: {voter.user.username}", user=request.user.username)
+                logger.voter_mgmt(f"Registered voter: {voter.user.username}", user=request.user.username)
                 messages.success(request, 'Voter registered successfully.')
             
             return redirect('administration:voters')
@@ -610,7 +698,7 @@ def voter_edit(request, pk):
         form = VoterForm(request.POST, instance=voter)
         if form.is_valid():
             voter = form.save()
-        #    logger.admin_action(f"Updated voter profile: {voter.user.username}", user=request.user.username)
+            logger.voter_mgmt(f"Updated voter profile: {voter.user.username}", user=request.user.username)
             messages.success(request, 'Voter profile updated successfully.')
             return redirect('administration:voters')
     else:
@@ -631,7 +719,7 @@ def voter_verify(request, pk):
         voter.verified_by = request.user
         voter.save()
         
-    #    logger.admin_action(f"Verified voter: {voter.user.username}", user=request.user.username)
+        logger.voter_mgmt(f"Verified voter: {voter.user.username}", user=request.user.username)
         messages.success(request, f'Voter {voter.user.get_full_name()} has been verified and is now eligible to vote.')
         return redirect('administration:voters')
     
@@ -650,7 +738,7 @@ def voter_reject(request, pk):
         voter.verified_by = request.user
         voter.save()
         
-    #    logger.admin_action(f"Rejected voter: {voter.user.username}", user=request.user.username)
+        logger.voter_mgmt(f"Rejected voter: {voter.user.username}", user=request.user.username)
         messages.warning(request, f'Voter {voter.user.get_full_name()} has been rejected.')
         return redirect('administration:voters')
     
@@ -669,7 +757,7 @@ def voter_bulk_verify(request):
                 verified_at=timezone.now(),
                 verified_by=request.user
             )
-        #    logger.admin_action(f"Bulk verified {count} voters", user=request.user.username)
+            logger.voter_mgmt(f"Bulk verified {count} voters", user=request.user.username)
             messages.success(request, f'Successfully verified {count} voter(s).')
         else:
             messages.error(request, 'No voters selected for verification.')
@@ -688,7 +776,7 @@ def voter_bulk_verify(request):
                 verified_at=timezone.now(),
                 verified_by=request.user
             )
-        #    logger.admin_action(f"Bulk verified {len(voter_ids)} voters", user=request.user.username)
+            logger.voter_mgmt(f"Bulk verified {len(voter_ids)} voters", user=request.user.username)
             messages.success(request, f'Successfully verified {len(voter_ids)} voter(s).')
         else:
             messages.warning(request, 'No voters selected.')
@@ -734,7 +822,7 @@ def admin_profile(request):
             )
             if profile_form.is_valid():
                 profile_form.save()
-            #    logger.admin_action(f"Updated admin profile", user=request.user.username)
+                logger.admin_action(f"Updated admin profile", user=request.user.username)
                 messages.success(request, 'Profile updated successfully.')
                 return redirect('administration:profile')
         
@@ -748,7 +836,7 @@ def admin_profile(request):
                 # Update session to prevent logout
                 from django.contrib.auth import update_session_auth_hash
                 update_session_auth_hash(request, request.user)
-            #    logger.admin_action(f"Changed admin password", user=request.user.username)
+                logger.admin_action(f"Changed admin password", user=request.user.username)
                 messages.success(request, 'Password changed successfully.')
                 return redirect('administration:profile')
     
@@ -843,7 +931,7 @@ def administrator_create(request):
         form = ElectionAdminForm(request.POST)
         if form.is_valid():
             admin = form.save()
-        #    logger.admin_action(f"Created administrator: {admin.user.username}", user=request.user.username)
+            logger.admin_action(f"Created administrator: {admin.user.username}", user=request.user.username)
             messages.success(request, f'Administrator {admin.user.get_full_name()} created successfully.')
             return redirect('administration:administrators')
     else:
@@ -874,7 +962,7 @@ def administrator_edit(request, pk):
         form = ElectionAdminForm(request.POST, instance=admin, is_edit=True)
         if form.is_valid():
             admin = form.save()
-        #    logger.admin_action(f"Updated administrator: {admin.user.username}", user=request.user.username)
+            logger.admin_action(f"Updated administrator: {admin.user.username}", user=request.user.username)
             messages.success(request, f'Administrator {admin.user.get_full_name()} updated successfully.')
             return redirect('administration:administrators')
     else:
@@ -911,7 +999,7 @@ def administrator_toggle_status(request, pk):
     admin.save()
     
     status = 'enabled' if admin.is_active else 'disabled'
-#    logger.admin_action(f"Toggled administrator status: {admin.user.username} ({status})", user=request.user.username)
+    logger.admin_action(f"Toggled administrator status: {admin.user.username} ({status})", user=request.user.username)
     messages.success(request, f'Administrator {admin.user.get_full_name()} has been {status}.')
     
     return redirect('administration:administrators')
@@ -986,7 +1074,7 @@ def timeline_create(request):
                 details=f"Created timeline event: {event.title} for {event.election.name}",
                 ip_address=request.META.get('REMOTE_ADDR')
             )
-        #    logger.admin_action(f"Created timeline event: {event.title}", user=request.user.username, extra_data={'event_id': event.id})
+            logger.timeline(f"Created timeline event: {event.title}", user=request.user.username, extra_data={'event_id': event.id})
             messages.success(request, 'Timeline event created successfully.')
             return redirect('administration:timeline_list')
     else:
@@ -1025,7 +1113,7 @@ def timeline_edit(request, pk):
                 details=f"Updated timeline event: {event.title}",
                 ip_address=request.META.get('REMOTE_ADDR')
             )
-        #    logger.admin_action(f"Updated timeline event: {event.title}", user=request.user.username, extra_data={'event_id': event.id})
+            logger.timeline(f"Updated timeline event: {event.title}", user=request.user.username, extra_data={'event_id': event.id})
             messages.success(request, 'Timeline event updated successfully.')
             return redirect('administration:timeline_list')
     else:
@@ -1060,7 +1148,7 @@ def timeline_delete(request, pk):
             details=f"Deleted timeline event: {title} from {election_name}",
             ip_address=request.META.get('REMOTE_ADDR')
         )
-    #    logger.admin_action(f"Deleted timeline event: {title}", user=request.user.username)
+        logger.timeline(f"Deleted timeline event: {title}", user=request.user.username)
         messages.success(request, 'Timeline event deleted successfully.')
         return redirect('administration:timeline_list')
     
