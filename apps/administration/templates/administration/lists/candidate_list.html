@@ -55,8 +55,8 @@
                     data-status="{% if candidate.is_approved %}Approved{% else %}Pending{% endif %}">
                     <td>
                         <div class="cell-flex">
-                            <div class="cell-icon">
-                                <i class="fas fa-user"></i>
+                            <div class="cell-icon" style="padding: 0; overflow: hidden;">
+                                <img src="{{ candidate.get_photo_url }}" alt="Photo" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
                             <span class="cell-text-primary">
                                 {{ candidate.student_profile.user.get_full_name }}</span>
