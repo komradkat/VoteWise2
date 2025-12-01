@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from .models import StudentProfile
 
 class UserUpdateForm(forms.ModelForm):
-    email = forms.EmailField()
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
 
     class Meta:
         model = User
@@ -12,7 +14,6 @@ class UserUpdateForm(forms.ModelForm):
             'username': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
     
     def __init__(self, *args, **kwargs):
@@ -28,6 +29,21 @@ class StudentProfileForm(forms.ModelForm):
             'year_level': forms.Select(attrs={'class': 'form-control'}),
             'section': forms.TextInput(attrs={'class': 'form-control'}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        has_active_election = kwargs.pop('has_active_election', False)
+        super().__init__(*args, **kwargs)
+        
+        # If there's an active election, make all fields read-only and disabled
+        if has_active_election:
+            for field_name, field in self.fields.items():
+                field.widget.attrs['readonly'] = 'readonly'
+                field.widget.attrs['disabled'] = 'disabled'
+                field.widget.attrs['title'] = 'Cannot be modified during active election'
+                # Add a visual indicator class
+                current_classes = field.widget.attrs.get('class', '')
+                field.widget.attrs['class'] = f"{current_classes} field-locked"
+                field.help_text = "🔒 Locked during active election for security"
 
 class PublicRegistrationForm(forms.Form):
     """Form for public self-registration of voters"""

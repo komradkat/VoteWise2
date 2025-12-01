@@ -152,7 +152,9 @@
                         <div class="info-label">
                             <i class="fas fa-envelope"></i> {% trans "Email" %}
                         </div>
-                        <div class="info-value">{{ user.email }}</div>
+                        <div class="info-value">
+                            {{ user.email }}
+                        </div>
                     </div>
                 </div>
 
@@ -180,6 +182,18 @@
                     {% endfor %}
 
                     {% if profile_form %}
+                    {% if has_active_election %}
+                    <div class="election-security-banner">
+                        <i class="fas fa-lock"></i>
+                        <div class="banner-content">
+                            <div class="banner-title">{% trans "Student Information Locked" %}</div>
+                            <div class="banner-message">
+                                {% trans "Your course, year level, and section cannot be modified during an active election to ensure voting integrity and prevent manipulation." %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
                     <div class="form-section-header">
                         <i class="fas fa-graduation-cap"></i>
                         <h3>{% trans "Student Information" %}</h3>
@@ -190,6 +204,9 @@
                         {{ field }}
                         {% if field.errors %}
                         <div class="form-error">{{ field.errors.0 }}</div>
+                        {% endif %}
+                        {% if field.help_text %}
+                        <div class="form-help-text">{{ field.help_text }}</div>
                         {% endif %}
                     </div>
                     {% endfor %}

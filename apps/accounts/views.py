@@ -153,6 +153,9 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
+    from apps.elections.models import Election
+    from django.utils import timezone
+    
     user = request.user
     student_profile = getattr(user, 'student_profile', None)
     admin_profile = getattr(user, 'election_admin_profile', None)
@@ -176,20 +179,53 @@ def profile_view(request):
     # At this point, user has student_profile (could be student or student admin)
     # Student administrators have BOTH student_profile AND admin_profile
     # They can access this voter dashboard
+    
+    # Check if there's an active election
+    now = timezone.now()
+    has_active_election = Election.objects.filter(
+        is_active=True,
+        start_time__lte=now,
+        end_time__gte=now
+    ).exists()
 
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=user)
-        profile_form = StudentProfileForm(request.POST, instance=student_profile)
+        
+        # Only allow profile form editing if no active election
+        if has_active_election:
+            # Don't process profile form during active elections
+            profile_form = StudentProfileForm(instance=student_profile)
+            messages.warning(
+                request, 
+                'Student information (course, year level, section) cannot be modified during an active election for security reasons.'
+            )
+            logger.security(
+                f"Attempted profile edit during active election blocked for user: {user.username}",
+                user=user.username,
+                category="PROFILE SECURITY"
+            )
+        else:
+            profile_form = StudentProfileForm(request.POST, instance=student_profile)
 
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            logger.auth(f"Profile updated for user: {user.username}", user=user.username)
-            messages.success(request, 'Your profile has been updated successfully.')
-            return redirect('accounts:profile')
+        if user_form.is_valid():
+            if not has_active_election and profile_form.is_valid():
+                user_form.save()
+                profile_form.save()
+                logger.auth(f"Profile updated for user: {user.username}", user=user.username)
+                messages.success(request, 'Your profile has been updated successfully.')
+                return redirect('accounts:profile')
+            elif not has_active_election:
+                # Profile form has errors
+                pass
+            else:
+                # Only user form was valid, save it
+                user_form.save()
+                logger.auth(f"User information updated for user: {user.username}", user=user.username)
+                messages.success(request, 'Your account information has been updated successfully.')
+                return redirect('accounts:profile')
     else:
         user_form = UserUpdateForm(instance=user)
-        profile_form = StudentProfileForm(instance=student_profile)
+        profile_form = StudentProfileForm(instance=student_profile, has_active_election=has_active_election)
 
     # Fetch voting history via Receipts
     receipts = VoterReceipt.objects.filter(voter=student_profile).select_related('election').order_by('-timestamp')
@@ -198,6 +234,7 @@ def profile_view(request):
         'user_form': user_form,
         'profile_form': profile_form,
         'receipts': receipts,
+        'has_active_election': has_active_election,
     }
     return render(request, 'accounts/profile.html', context)
 
