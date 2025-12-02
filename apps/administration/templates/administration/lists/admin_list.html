@@ -65,9 +65,11 @@
             {% for admin in administrators %}
             <tr>
                 <td>
-                    <div class="user-info">
-                        <i class="fas fa-user-shield user-icon"></i>
-                        <span>{{ admin.user.get_full_name }}</span>
+                    <div class="cell-flex">
+                        <div class="cell-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <span class="cell-text-primary">{{ admin.user.get_full_name }}</span>
                     </div>
                 </td>
                 <td>{{ admin.user.username }}</td>
@@ -80,18 +82,18 @@
                 <td>{{ admin.employee_id|default:"-" }}</td>
                 <td>
                     {% if admin.is_active %}
-                    <span class="status-badge status-active">
+                    <span class="badge badge-green">
                         <i class="fas fa-check-circle"></i> Active
                     </span>
                     {% else %}
-                    <span class="status-badge status-inactive">
+                    <span class="badge badge-red">
                         <i class="fas fa-times-circle"></i> Inactive
                     </span>
                     {% endif %}
                 </td>
                 <td>{{ admin.created_at|date:"M d, Y" }}</td>
-                <td>
-                    <div class="action-buttons">
+                <td class="text-right">
+                    <div class="action-buttons" style="justify-content: flex-end;">
                         <a href="{% url 'administration:administrator_edit' admin.pk %}" 
                            class="action-btn" title="Edit">
                             <i class="fas fa-edit"></i>
@@ -109,10 +111,14 @@
                 </td>
             </tr>
             {% empty %}
-            <tr>
-                <td colspan="8" class="empty-state">
-                    <i class="fas fa-users"></i>
-                    <p>No administrators found</p>
+            <tr id="emptyState">
+                <td colspan="8" class="empty-state-container">
+                    <div class="empty-state-content">
+                        <div>
+                            <h3 class="empty-state-title">No administrators found</h3>
+                            <p class="empty-state-description">Add administrators to manage the system.</p>
+                        </div>
+                    </div>
                 </td>
             </tr>
             {% endfor %}

@@ -2,14 +2,14 @@
 
 :root {
     /* Admin Primary Colors */
-    --admin-primary: #2563eb;
-    --admin-primary-dark: #1e40af;
-    --admin-secondary: #334155;
-    --admin-accent: #3b82f6;
-    --admin-bg: #f1f5f9;
-    --admin-text: #0f172a;
+    --admin-primary: #3b82f6;
+    --admin-primary-dark: #2563eb;
+    --admin-secondary: #1e293b;
+    --admin-accent: #60a5fa;
+    --admin-bg: #0f172a;
+    --admin-text: #f8fafc;
     
-    /* Admin Slate Colors */
+    /* Admin Slate Colors - Standard Scale */
     --admin-slate-50: #f8fafc;
     --admin-slate-100: #f1f5f9;
     --admin-slate-200: #e2e8f0;
@@ -22,14 +22,14 @@
     --admin-slate-900: #0f172a;
     
     /* Admin Status Colors */
-    --admin-red: #ef4444;
-    --admin-green: #10b981;
-    --admin-yellow: #f59e0b;
-    --admin-blue: #3b82f6;
+    --admin-red: #f87171;
+    --admin-green: #34d399;
+    --admin-yellow: #fbbf24;
+    --admin-blue: #60a5fa;
     
     /* Admin Text Colors */
-    --admin-text-primary: #0f172a;
-    --admin-text-secondary: #475569;
+    --admin-text-primary: #f8fafc;
+    --admin-text-secondary: #cbd5e1;
     --admin-text-muted: #94a3b8;
 }
 
