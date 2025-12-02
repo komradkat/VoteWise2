@@ -1,5 +1,6 @@
 import random
 import uuid
+import os
 from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
@@ -9,6 +10,8 @@ from apps.accounts.models import StudentProfile, ElectionAdmin, YearLevel, Cours
 from apps.elections.models import Election, Position, Partylist, Candidate, Vote, VoterReceipt, ElectionTimeline
 from apps.administration.models import AuditLog
 from apps.core.models import SystemSettings
+from apps.biometrics.models import UserBiometric
+from apps.chatbot.models import ChatConversation, ChatMessage
 
 class Command(BaseCommand):
     help = 'Populate or clear dummy data for testing'
@@ -35,20 +38,21 @@ class Command(BaseCommand):
         
         with transaction.atomic():
             # Delete in order of dependencies to avoid protection errors
-            # Though cascading deletes might handle some, explicit is safer for clarity
+            ChatMessage.objects.all().delete()
+            ChatConversation.objects.all().delete()
+            
             Vote.objects.all().delete()
             VoterReceipt.objects.all().delete()
             Candidate.objects.all().delete()
             Partylist.objects.all().delete()
-            
-            # Delete votes first before positions/elections if on_delete=PROTECT
-            # But we just deleted Votes above.
             
             Position.objects.all().delete()
             Election.objects.all().delete()
             
             AuditLog.objects.all().delete()
             SystemSettings.objects.all().delete()
+            
+            UserBiometric.objects.all().delete()
             
             # Delete profiles
             StudentProfile.objects.all().delete()
@@ -96,7 +100,7 @@ class Command(BaseCommand):
                 partylists.append(p)
             self.stdout.write(f'Created {len(partylists)} partylists.')
 
-            # 3. Create Elections (3 Active, 1 Past)
+            # 3. Create Elections (1 Active, 1 Past)
             active_elections = []
             
             # Active 1: Main Student Council
@@ -108,24 +112,6 @@ class Command(BaseCommand):
             )
             active_elections.append(e1)
             
-            # Active 2: Special Election
-            e2 = Election.objects.create(
-                name=f"Special Election {timezone.now().year}",
-                start_time=timezone.now() - timedelta(hours=12),
-                end_time=timezone.now() + timedelta(days=5),
-                is_active=True
-            )
-            active_elections.append(e2)
-            
-            # Active 3: Club Officers
-            e3 = Election.objects.create(
-                name=f"Club Officers Election {timezone.now().year}",
-                start_time=timezone.now() - timedelta(days=2),
-                end_time=timezone.now() + timedelta(days=1),
-                is_active=True
-            )
-            active_elections.append(e3)
-
             # Create Timeline Events for Main Election
             timeline_events = [
                 {
@@ -168,7 +154,7 @@ class Command(BaseCommand):
                 end_time=timezone.now() - timedelta(days=364),
                 is_active=False
             )
-            self.stdout.write('Created 4 elections (3 Active, 1 Past).')
+            self.stdout.write('Created 2 elections (1 Active, 1 Past).')
 
             # 4. Create Users & Students (100 voters)
             first_names = ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Charles', 'Mary', 'Patricia', 'Jennifer', 'Linda', 'Elizabeth', 'Barbara', 'Susan', 'Jessica', 'Sarah', 'Karen', 'Lisa', 'Nancy', 'Betty', 'Helen', 'Sandra', 'Donna', 'Carol', 'Ruth', 'Sharon', 'Michelle']
@@ -228,9 +214,6 @@ class Command(BaseCommand):
 
             # 6. Create Candidates for Active Elections
             # We need at least 20 candidates total. Let's distribute them.
-            # E1: 20 candidates (Full slate)
-            # E2: 10 candidates
-            # E3: 10 candidates
             
             candidates_pool = students[:50] # Use first 50 students as candidate pool
             remaining_students = students[50:] # Rest are voters
@@ -362,5 +345,36 @@ class Command(BaseCommand):
                 }
             )
             self.stdout.write('Initialized System Settings.')
+
+            # 10. Create Biometrics
+            # Create biometrics for first 10 students
+            for student in students[:10]:
+                UserBiometric.objects.create(
+                    user=student.user,
+                    face_encoding=os.urandom(128), # Dummy binary data
+                    is_active=True
+                )
+            self.stdout.write('Created biometrics for 10 students.')
+
+            # 11. Create Chatbot Conversations
+            # Create a conversation for the first student
+            chat_student = students[0]
+            conversation = ChatConversation.objects.create(
+                user=chat_student.user,
+                election=e1,
+                session_id=str(uuid.uuid4())
+            )
+            
+            ChatMessage.objects.create(
+                conversation=conversation,
+                role='user',
+                content='Who are the candidates for President?'
+            )
+            ChatMessage.objects.create(
+                conversation=conversation,
+                role='assistant',
+                content='The candidates for President are...'
+            )
+            self.stdout.write('Created dummy chatbot conversation.')
             
         self.stdout.write(self.style.SUCCESS('Dummy data population complete!'))
