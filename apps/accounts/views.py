@@ -74,11 +74,10 @@ def register(request):
                             
                 except ImportError:
                     # Face recognition libraries not installed
-                    print("DeepFace library not available")
+                    pass
                 except Exception as e:
                     # Log error but don't fail registration
                     logger.error(f"Face enrollment failed during registration: {e}", user=user.username, category="FACE ENROLL")
-                    print(f"Face enrollment failed: {e}")
             
             messages.success(
                 request,

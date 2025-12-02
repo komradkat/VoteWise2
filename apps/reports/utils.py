@@ -111,7 +111,6 @@ def generate_charts(election_data):
             charts[position] = graphic
             
         except Exception as e:
-            print(f"Error generating chart for {position}: {e}")
             # Continue without this chart
             continue
         
