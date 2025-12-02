@@ -38,3 +38,10 @@ body {
     background-color: var(--admin-bg);
     font-family: 'Inter', sans-serif;
 }
+
+.admin-subtitle {
+    font-size: 0.95rem;
+    color: var(--admin-slate-500);
+    margin-top: 0.25rem;
+    font-weight: 500;
+}

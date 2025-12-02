@@ -9,6 +9,7 @@
 {% block content %}
 <div class="form-container">
     <h2 class="admin-title">{{ title }}</h2>
+    <p class="admin-subtitle">Create or edit political party information</p>
     <form method="post">
         {% csrf_token %}
         {% for field in form %}

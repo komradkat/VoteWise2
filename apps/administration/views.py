@@ -19,6 +19,7 @@ from apps.core.logging import logger
 from django.views.decorators.csrf import ensure_csrf_cookie
 import csv
 from django.http import HttpResponse
+from django.utils import timezone
 
 def is_admin(user):
     return user.is_authenticated and (user.is_superuser or hasattr(user, 'election_admin_profile'))
