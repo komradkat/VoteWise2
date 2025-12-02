@@ -159,6 +159,35 @@ VoteWise2/
    - Admin panel: http://localhost:8000/administration/login/
    - Django admin: http://localhost:8000/admin
 
+### 📧 Email Service Setup
+
+VoteWise2 uses SMTP to send notifications. You can configure this in your `.env` file.
+
+#### Option 1: Gmail (Recommended for Development)
+1. Go to your Google Account > Security > 2-Step Verification > App passwords.
+2. Generate a new password for "Mail".
+3. Update your `.env` file:
+   ```env
+   EMAIL_HOST=smtp.gmail.com
+   EMAIL_PORT=587
+   EMAIL_USE_TLS=True
+   EMAIL_HOST_USER=your-email@gmail.com
+   EMAIL_HOST_PASSWORD=your-app-password
+   DEFAULT_FROM_EMAIL=noreply@votewise.com
+   ```
+
+#### Option 2: Local Postfix (Linux)
+If you prefer using a local mail transfer agent:
+1. Install Postfix: `sudo apt-get install postfix`
+2. Select "Internet Site" during installation.
+3. Configure Django to use local SMTP:
+   ```env
+   EMAIL_HOST=localhost
+   EMAIL_PORT=25
+   EMAIL_USE_TLS=False
+   ```
+4. For detailed Postfix relay configuration (to avoid spam folders), refer to `.agent/workflows/setup_email.md`.
+
 ## 📖 Usage Guide
 
 ### For Voters
