@@ -11,6 +11,9 @@
 <div class="admin-header-2">
     <h1 class="admin-title">Voters Management</h1>
     <div class="admin-actions">
+        <a href="{% url 'administration:voter_export' %}" class="btn-primary" style="background-color: var(--admin-slate-600);">
+            <i class="fas fa-file-csv"></i> Export CSV
+        </a>
         <a href="{% url 'administration:voter_create' %}" class="btn-primary">
             <i class="fas fa-plus"></i> Register Voter
         </a>

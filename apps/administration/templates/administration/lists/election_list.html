@@ -74,6 +74,12 @@
                             <a href="{% url 'administration:election_edit' election.pk %}" class="action-btn" title="Edit Election">
                                 <i class="fas fa-edit"></i>
                             </a>
+                            <a href="{% url 'administration:election_reset_votes' election.pk %}" class="action-btn" title="Reset Votes" style="color: var(--admin-red);">
+                                <i class="fas fa-undo-alt"></i>
+                            </a>
+                            <a href="{% url 'administration:election_delete' election.pk %}" class="action-btn" title="Delete Election" style="color: var(--admin-red);">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
                         </td>
                     </tr>
                     {% empty %}

@@ -14,6 +14,8 @@ urlpatterns = [
     path('elections/', views.election_list, name='elections'),
     path('elections/create/', views.election_create, name='election_create'),
     path('elections/<int:pk>/edit/', views.election_edit, name='election_edit'),
+    path('elections/<int:pk>/delete/', views.election_delete, name='election_delete'),
+    path('elections/<int:pk>/reset-votes/', views.election_reset_votes, name='election_reset_votes'),
     
     # Positions Management
     path('positions/', views.position_list, name='positions'),
@@ -32,6 +34,7 @@ urlpatterns = [
     
     # Voters Management
     path('voters/', views.voter_list, name='voters'),
+    path('voters/export/', views.voter_export, name='voter_export'),
     path('voters/create/', views.voter_create, name='voter_create'),
     path('voters/<int:pk>/edit/', views.voter_edit, name='voter_edit'),
     path('voters/<int:pk>/verify/', views.voter_verify, name='voter_verify'),

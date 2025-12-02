@@ -17,6 +17,8 @@ from apps.administration.models import AuditLog
 from apps.core.logging import logger
 
 from django.views.decorators.csrf import ensure_csrf_cookie
+import csv
+from django.http import HttpResponse
 
 def is_admin(user):
     return user.is_authenticated and (user.is_superuser or hasattr(user, 'election_admin_profile'))
@@ -429,6 +431,71 @@ def election_edit(request, pk):
         'election': election
     })
 
+@login_required
+@user_passes_test(is_admin, login_url='administration:login')
+def election_delete(request, pk):
+    # Check if user has verified password for this action
+    if not request.session.get(f'verified_action_{request.path}'):
+        return redirect(f'/administration/verify-password/?next={request.path}')
+
+    election = get_object_or_404(Election, pk=pk)
+    
+    if request.method == 'POST':
+        name = election.name
+        election.delete()
+        
+        # Log action
+        AuditLog.objects.create(
+            user=request.user,
+            action="ELECTION_DELETED",
+            details=f"Deleted election: {name}",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+        logger.election(f"Deleted election: {name}", user=request.user.username)
+        messages.success(request, 'Election deleted successfully.')
+        return redirect('administration:elections')
+    
+    return render(request, 'administration/confirm_delete.html', {
+        'object': election,
+        'title': 'Delete Election',
+        'cancel_url': 'administration:elections'
+    })
+
+@login_required
+@user_passes_test(is_admin, login_url='administration:login')
+def election_reset_votes(request, pk):
+    # Check if user has verified password for this action
+    if not request.session.get(f'verified_action_{request.path}'):
+        return redirect(f'/administration/verify-password/?next={request.path}')
+
+    election = get_object_or_404(Election, pk=pk)
+    
+    if request.method == 'POST':
+        # Delete all votes and receipts for this election
+        vote_count = Vote.objects.filter(election=election).count()
+        receipt_count = VoterReceipt.objects.filter(election=election).count()
+        
+        Vote.objects.filter(election=election).delete()
+        VoterReceipt.objects.filter(election=election).delete()
+        
+        # Log action
+        AuditLog.objects.create(
+            user=request.user,
+            action="ELECTION_RESET",
+            details=f"Reset votes for election: {election.name}. Deleted {vote_count} votes and {receipt_count} receipts.",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+        logger.election(f"Reset votes for election: {election.name}", user=request.user.username, extra_data={'votes_deleted': vote_count})
+        messages.success(request, f'Successfully reset election data. Deleted {vote_count} votes.')
+        return redirect('administration:elections')
+    
+    return render(request, 'administration/confirm_action.html', {
+        'title': 'Reset Election Votes',
+        'message': f'Are you sure you want to reset all votes for "{election.name}"? This action cannot be undone.',
+        'confirm_label': 'Reset Votes',
+        'cancel_url': 'administration:elections'
+    })
+
 # --- Positions ---
 @user_passes_test(is_admin, login_url='administration:login')
 def position_list(request):
@@ -740,9 +807,51 @@ def voter_edit(request, pk):
             logger.voter_mgmt(f"Updated voter profile: {voter.user.username}", user=request.user.username)
             messages.success(request, 'Voter profile updated successfully.')
             return redirect('administration:voters')
+
+
     else:
         form = VoterForm(instance=voter)
     return render(request, 'administration/forms/voter_form.html', {'form': form, 'title': 'Edit Voter'})
+
+
+@user_passes_test(is_admin, login_url='administration:login')
+def voter_export(request):
+    """Export voters to CSV"""
+    # Check if user has verified password for this action
+    if not request.session.get(f'verified_action_{request.path}'):
+        return redirect(f'/administration/verify-password/?next={request.path}')
+        
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="voters_export.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['Student ID', 'First Name', 'Last Name', 'Email', 'Course', 'Year Level', 'Section', 'Status', 'Eligible'])
+    
+    voters = StudentProfile.objects.select_related('user').all().order_by('student_id')
+    
+    for voter in voters:
+        writer.writerow([
+            voter.student_id,
+            voter.user.first_name,
+            voter.user.last_name,
+            voter.user.email,
+            voter.course,
+            voter.year_level,
+            voter.section,
+            voter.verification_status,
+            'Yes' if voter.is_eligible_to_vote else 'No'
+        ])
+        
+    # Log action
+    AuditLog.objects.create(
+        user=request.user,
+        action="DATA_EXPORT",
+        details="Exported voter list to CSV",
+        ip_address=request.META.get('REMOTE_ADDR')
+    )
+    logger.voter_mgmt("Exported voter list", user=request.user.username)
+    
+    return response
 
 # --- Voter Verification ---
 @user_passes_test(is_admin, login_url='administration:login')
@@ -987,6 +1096,10 @@ def administrator_create(request):
 @user_passes_test(is_admin, login_url='administration:login')
 def administrator_edit(request, pk):
     """Edit an existing administrator"""
+    # Check if user has verified password for this action
+    if not request.session.get(f'verified_action_{request.path}'):
+        return redirect(f'/administration/verify-password/?next={request.path}')
+
     from .forms import ElectionAdminForm
     from apps.accounts.models import ElectionAdmin
     
@@ -1019,6 +1132,10 @@ def administrator_edit(request, pk):
 @user_passes_test(is_admin, login_url='administration:login')
 def administrator_toggle_status(request, pk):
     """Toggle administrator active status (enable/disable)"""
+    # Check if user has verified password for this action
+    if not request.session.get(f'verified_action_{request.path}'):
+        return redirect(f'/administration/verify-password/?next={request.path}')
+
     from apps.accounts.models import ElectionAdmin
     
     # Check permission

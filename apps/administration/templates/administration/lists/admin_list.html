@@ -92,13 +92,14 @@
                 <td>
                     <div class="action-buttons">
                         <a href="{% url 'administration:administrator_edit' admin.pk %}" 
-                           class="btn-icon" title="Edit">
+                           class="action-btn" title="Edit">
                             <i class="fas fa-edit"></i>
                         </a>
                         {% if admin.user != request.user %}
                         <a href="{% url 'administration:administrator_toggle_status' admin.pk %}" 
-                           class="btn-icon {% if admin.is_active %}btn-danger{% else %}btn-success{% endif %}" 
+                           class="action-btn" 
                            title="{% if admin.is_active %}Disable{% else %}Enable{% endif %}"
+                           style="color: {% if admin.is_active %}var(--admin-red){% else %}var(--admin-green){% endif %};"
                            onclick="return confirm('Are you sure you want to {% if admin.is_active %}disable{% else %}enable{% endif %} this administrator?');">
                             <i class="fas fa-{% if admin.is_active %}ban{% else %}check{% endif %}"></i>
                         </a>
