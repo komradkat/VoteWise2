@@ -4,7 +4,7 @@ services:
     name: votewise2
     runtime: python
     buildCommand: "./build.sh"
-    startCommand: "gunicorn project_config.wsgi:application"
+    startCommand: "gunicorn project_config.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.8"  # CRITICAL: TensorFlow 2.18.0 requires Python 3.12 (not 3.13)
