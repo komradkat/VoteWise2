@@ -3,11 +3,10 @@ services:
   - type: web
     name: votewise2
     runtime: python
+    pythonVersion: "3.12.8"  # CRITICAL: TensorFlow 2.18.0 requires Python 3.12 (not 3.13)
     buildCommand: "./build.sh"
     startCommand: "gunicorn project_config.wsgi:application"
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.8
       - key: DJANGO_SETTINGS_MODULE
         value: project_config.settings.production
       - key: SECRET_KEY
