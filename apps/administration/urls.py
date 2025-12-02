@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.dashboard, name='dashboard'),
     path('login/', views.admin_login, name='login'),
     path('logout/', views.admin_logout, name='logout'),
+    path('verify-password/', views.verify_password, name='verify_password'),
     
     # Elections Management
     path('elections/', views.election_list, name='elections'),

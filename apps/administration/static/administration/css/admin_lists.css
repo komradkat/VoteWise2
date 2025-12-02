@@ -471,6 +471,31 @@ select.form-control:hover {
     transform: scale(1.1);
 }
 
+/* Action Button Generic Style */
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 6px;
+    color: var(--admin-slate-600);
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.action-btn:hover {
+    background-color: var(--admin-slate-100);
+    color: var(--admin-primary);
+    transform: scale(1.1);
+}
+
+.action-btn[title="Generate Report"]:hover {
+    color: var(--admin-red);
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
 /* No Data State */
 .no-data {
     text-align: center;

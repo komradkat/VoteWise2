@@ -11,7 +11,7 @@ from apps.accounts.models import StudentProfile
 from .forms import (
     ElectionForm, PositionForm, PartylistForm, CandidateForm, 
     VoterForm, AdminProfileForm, AdminPasswordChangeForm, 
-    ElectionAdminForm, ElectionTimelineForm
+    ElectionAdminForm, ElectionTimelineForm, ConfirmPasswordForm
 )
 from apps.administration.models import AuditLog
 from apps.core.logging import logger
@@ -54,6 +54,38 @@ def admin_logout(request):
         logout(request)
         messages.success(request, 'You have been successfully logged out.')
         return redirect('administration:login')
+
+@login_required
+@user_passes_test(is_admin, login_url='administration:login')
+def verify_password(request):
+    """
+    View to verify password before sensitive actions.
+    Expects 'next' parameter in GET to redirect back after success.
+    """
+    next_url = request.GET.get('next')
+    if not next_url:
+        return redirect('administration:dashboard')
+
+    if request.method == 'POST':
+        form = ConfirmPasswordForm(request.user, request.POST)
+        if form.is_valid():
+            # Set a session variable to indicate verification
+            # We can use a generic 'sudo_mode' or specific to the action
+            # For election edit, we'll extract the ID from next_url if possible, 
+            # or just set a short-lived timestamp
+            request.session['last_password_verified_at'] = timezone.now().timestamp()
+            
+            # Also set a specific flag if we can identify the target
+            # For simplicity, let's assume checking the timestamp is enough (sudo mode for 5 mins)
+            # But the user asked for "require password to access/edit", implying per-access or strict session.
+            # Let's use a specific session key for the target URL to be safe/strict.
+            request.session[f'verified_action_{next_url}'] = True
+            
+            return redirect(next_url)
+    else:
+        form = ConfirmPasswordForm(request.user)
+    
+    return render(request, 'administration/verify_password.html', {'form': form})
 
 @user_passes_test(is_admin, login_url='administration:login')
 def dashboard(request):
@@ -364,12 +396,19 @@ def election_create(request):
 @login_required
 @user_passes_test(is_admin, login_url='administration:login')
 def election_edit(request, pk):
+    # Check if user has verified password for this action
+    if not request.session.get(f'verified_action_{request.path}'):
+        return redirect(f'/administration/verify-password/?next={request.path}')
+
     election = get_object_or_404(Election, pk=pk)
     if request.method == 'POST':
         form = ElectionForm(request.POST, instance=election)
         
         if form.is_valid():
             form.save()
+            
+            # Clear the verification flag after successful save (optional, but good for security)
+            # request.session.pop(f'verified_action_{request.path}', None)
             
             # Log action
             AuditLog.objects.create(

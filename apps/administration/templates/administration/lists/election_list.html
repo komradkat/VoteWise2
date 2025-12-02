@@ -68,7 +68,10 @@
                             {% endif %}
                         </td>
                         <td class="text-right">
-                            <a href="{% url 'administration:election_edit' election.pk %}" class="action-btn">
+                            <a href="{% url 'reports:generate_election_report' election.pk %}" class="action-btn" title="Generate Report" target="_blank">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                            <a href="{% url 'administration:election_edit' election.pk %}" class="action-btn" title="Edit Election">
                                 <i class="fas fa-edit"></i>
                             </a>
                         </td>

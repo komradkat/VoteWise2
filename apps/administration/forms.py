@@ -487,3 +487,24 @@ class ElectionAdminForm(forms.ModelForm):
             admin.save()
         
         return admin
+
+
+class ConfirmPasswordForm(forms.Form):
+    """Form for confirming password before sensitive actions"""
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your password to continue'
+        }),
+        label='Password'
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if not self.user.check_password(password):
+            raise forms.ValidationError('Incorrect password.')
+        return password
