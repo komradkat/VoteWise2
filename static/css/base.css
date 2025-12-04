@@ -4,6 +4,23 @@
     box-sizing: border-box;
 }
 
+/* Font Face Declarations */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/static/fonts/inter-regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('/static/fonts/inter-semibold.woff2') format('woff2');
+}
+
 :root {
     /* Primary Colors */
     --color-navy: #0f172a;

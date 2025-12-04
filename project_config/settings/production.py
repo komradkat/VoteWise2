@@ -65,6 +65,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Whitenoise configuration for efficient static file serving
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# WhiteNoise caching - serve static files with far-future expiry headers
+WHITENOISE_MAX_AGE = 31536000  # 1 year in seconds for immutable files
+WHITENOISE_IMMUTABLE_FILE_TEST = lambda path, url: True  # All hashed files are immutable
+
 # Security settings
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True

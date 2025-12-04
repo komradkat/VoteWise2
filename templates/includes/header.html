@@ -1,7 +1,6 @@
 {% load static %}
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/includes/header.css' %}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}
 
 <header class="site-header">
@@ -10,7 +9,7 @@
             <!-- Logo Section with Address -->
             <div class="header-logo">
                 <a href="{% url 'home' %}" class="logo-link">
-                    <img src="{% static 'img/logo.png' %}" alt="VoteWise Logo" class="logo-image">
+                    <img src="{% static 'img/logo.png' %}" alt="VoteWise Logo" class="logo-image" loading="lazy" decoding="async" width="50" height="50">
                     <div class="logo-text-container">
                         <span class="logo-title">VoteWise</span>
                         <span class="logo-subtitle">Student Election System</span>
@@ -196,7 +195,7 @@
                 </a></li>
             {% endif %}
         </ul>
-    </div>
+</div>
 </header>
 
 <!-- Logout Confirmation Modal -->
@@ -215,56 +214,4 @@
     </div>
 </div>
 
-<script>
-// Mobile menu toggle
-const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-const mobileNav = document.getElementById('mobileNav');
-
-if (mobileMenuToggle) {
-    mobileMenuToggle.addEventListener('click', function() {
-        this.classList.toggle('active');
-        mobileNav.classList.toggle('active');
-        document.body.classList.toggle('menu-open');
-    });
-}
-
-// User menu dropdown
-const userMenuTrigger = document.getElementById('userMenuTrigger');
-const userDropdown = document.getElementById('userDropdown');
-
-if (userMenuTrigger) {
-    userMenuTrigger.addEventListener('click', function(e) {
-        e.stopPropagation();
-        this.classList.toggle('active');
-        userDropdown.classList.toggle('active');
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.user-menu')) {
-            userMenuTrigger.classList.remove('active');
-            userDropdown.classList.remove('active');
-        }
-    });
-}
-
-// Logout modal functions
-function openLogoutModal() {
-    document.getElementById('logoutModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeLogoutModal() {
-    document.getElementById('logoutModal').classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-// Close mobile menu when clicking nav links
-document.querySelectorAll('.mobile-nav-link').forEach(link => {
-    link.addEventListener('click', function() {
-        mobileMenuToggle.classList.remove('active');
-        mobileNav.classList.remove('active');
-        document.body.classList.remove('menu-open');
-    });
-});
-</script>
+<script src="{% static 'js/header.js' %}" defer></script>
