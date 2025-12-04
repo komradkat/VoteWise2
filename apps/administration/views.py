@@ -360,7 +360,53 @@ def dashboard(request):
         'participation_course_counts': [item['count'] for item in participation_by_course],
         'participation_year_labels': [f"Year {item['year_level']}" for item in participation_by_year],
         'participation_year_counts': [item['count'] for item in participation_by_year],
+        
+        # New Analytics
+        'recent_activity': AuditLog.objects.select_related('user').order_by('-timestamp')[:5],
     }
+    
+    # Calculate Peak Voting Hour
+    if active_election:
+        from django.db.models.functions import ExtractHour
+        peak_hour_data = Vote.objects.filter(election=active_election).annotate(
+            hour=ExtractHour('timestamp')
+        ).values('hour').annotate(count=Count('id')).order_by('-count').first()
+        
+        if peak_hour_data:
+            hour_int = peak_hour_data['hour']
+            # Convert 24h to 12h format with AM/PM
+            if hour_int == 0:
+                peak_time = "12 AM"
+            elif hour_int < 12:
+                peak_time = f"{hour_int} AM"
+            elif hour_int == 12:
+                peak_time = "12 PM"
+            else:
+                peak_time = f"{hour_int - 12} PM"
+            
+            context['peak_voting_hour'] = peak_time
+            context['peak_voting_count'] = peak_hour_data['count']
+            
+        # Calculate Global Abstention Rate
+        # Total possible votes = voters who cast a ballot * number of positions
+        # (Assuming 1 vote per position for simplicity in this global metric, 
+        # though multi-winner positions exist, this is a rough engagement metric)
+        if ballots_cast > 0 and total_positions > 0:
+            # More accurate: Sum of (ballots_cast * position.number_of_winners) for all positions
+            total_possible_votes = 0
+            for pos in election_positions:
+                total_possible_votes += (ballots_cast * pos.number_of_winners)
+                
+            total_actual_votes = Vote.objects.filter(election=active_election).count()
+            
+            if total_possible_votes > 0:
+                abstention_count = total_possible_votes - total_actual_votes
+                abstention_rate = (abstention_count / total_possible_votes) * 100
+                context['abstention_rate'] = round(max(0, abstention_rate), 1)
+            else:
+                context['abstention_rate'] = 0
+        else:
+            context['abstention_rate'] = 0
     
     return render(request, 'administration/dashboard.html', context)
 

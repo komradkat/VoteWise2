@@ -37,6 +37,26 @@
 </div>
 {% endif %}
 
+<!-- Stats Cards -->
+<div class="stats-card">
+    <div class="stats-card-inner">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>Total Registered</h3>
+                <p class="stat-total">{{ page_obj.paginator.count }}</p>
+            </div>
+            <div class="stat-item">
+                <h3>Eligible to Vote</h3>
+                <p class="stat-eligible">{{ eligible_count }}</p>
+            </div>
+            <div class="stat-item">
+                <h3>Pending Verification</h3>
+                <p class="stat-pending">{{ pending_count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Search and Filter Bar -->
 <div class="filter-bar">
     <div class="search-container">
@@ -63,26 +83,6 @@
         <option value="VERIFIED" {% if current_status_filter == 'VERIFIED' %}selected{% endif %}>Verified</option>
         <option value="REJECTED" {% if current_status_filter == 'REJECTED' %}selected{% endif %}>Rejected</option>
     </select>
-</div>
-
-<!-- Stats Cards -->
-<div class="stats-card">
-    <div class="stats-card-inner">
-        <div class="stats-grid">
-            <div class="stat-item">
-                <h3>Total Registered</h3>
-                <p class="stat-total">{{ page_obj.paginator.count }}</p>
-            </div>
-            <div class="stat-item">
-                <h3>Eligible to Vote</h3>
-                <p class="stat-eligible">{{ eligible_count }}</p>
-            </div>
-            <div class="stat-item">
-                <h3>Pending Verification</h3>
-                <p class="stat-pending">{{ pending_count }}</p>
-            </div>
-        </div>
-    </div>
 </div>
 
 

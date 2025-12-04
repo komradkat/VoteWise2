@@ -8,7 +8,7 @@ body {
 }
 
 .list-container {
-    background: white;
+    background: rgba(30, 41, 59, 0.95);
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     padding: 2rem;
@@ -78,11 +78,11 @@ body {
     margin-left: 260px;
     flex: 1;
     padding: 2rem;
-    height: 1400px;
+    min-height: 100vh;
     padding-top: 140px; /* Account for fixed header height (~120px) + padding */
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(23, 37, 84, 0.9) 100%),
-              url('/static/core/img/voting-background.png') center/cover no-repeat;
-  position: relative;
+              url('/static/core/img/voting-background.png') center/cover no-repeat fixed;
+    position: relative;
 }
 
 .admin-header-2 {

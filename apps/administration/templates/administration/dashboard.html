@@ -67,21 +67,7 @@
             </div>
         </div>
 
-        <div class="stat-card stat-info">
-            <div class="stat-header">
-                <div class="stat-icon">
-                    <i class="fas fa-ballot-check"></i>
-                </div>
-            </div>
-            <div class="stat-body">
-                <h3>Election Status</h3>
-                <div class="stat-value">{{ election_status_label|default:"No Active Election" }}</div>
-                <div class="stat-meta">
-                    <span class="stat-label">Positions:</span>
-                    <span class="stat-number">{{ total_positions|default:0 }}</span>
-                </div>
-            </div>
-        </div>
+
 
         <div class="stat-card stat-warning">
             <div class="stat-header">
@@ -94,6 +80,40 @@
                 <div class="stat-value">{{ total_active_candidates|default:0 }}</div>
                 <div class="stat-meta">
                     <span class="stat-label">Running for office</span>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- New Analytics Cards -->
+        <div class="stat-card stat-purple" style="--card-color-start: #8b5cf6; --card-color-end: #a78bfa;">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+            <div class="stat-body">
+                <h3>Peak Voting Time</h3>
+                <div class="stat-value" style="font-size: 2rem;">{{ peak_voting_hour|default:"N/A" }}</div>
+                <div class="stat-meta">
+                    <span class="stat-label">Volume:</span>
+                    <span class="stat-number">{{ peak_voting_count|default:0 }} votes</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-orange" style="--card-color-start: #f97316; --card-color-end: #fb923c;">
+            <div class="stat-header">
+                <div class="stat-icon">
+                    <i class="fas fa-minus-circle"></i>
+                </div>
+            </div>
+            <div class="stat-body">
+                <h3>Abstention Rate</h3>
+                <div class="stat-value">{{ abstention_rate|default:0 }}%</div>
+                <div class="stat-meta">
+                    <span class="stat-label">Undervotes:</span>
+                    <span class="stat-number">Skipped positions</span>
                 </div>
             </div>
         </div>
@@ -365,6 +385,50 @@
             </div>
             {% endif %}
         </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="section-header" style="margin-top: 3rem;">
+        <h2>
+            <i class="fas fa-history"></i>
+            Recent System Activity
+        </h2>
+    </div>
+
+    <div class="list-container" style="padding: 0; overflow: hidden;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in recent_activity %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar-circle-sm" style="width: 32px; height: 32px; background: var(--admin-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">
+                                {{ log.user.username|make_list|first|upper|default:"?" }}
+                            </div>
+                            <span style="font-weight: 500; color: var(--admin-slate-900);">{{ log.user.username|default:"System" }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-gray" style="background: var(--admin-slate-100); color: var(--admin-slate-700);">{{ log.action }}</span>
+                    </td>
+                    <td style="color: var(--admin-slate-600);">{{ log.details|truncatechars:50 }}</td>
+                    <td style="color: var(--admin-slate-500); font-size: 0.9rem;">{{ log.timestamp|timesince }} ago</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center py-4" style="color: var(--admin-slate-500);">No recent activity found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
