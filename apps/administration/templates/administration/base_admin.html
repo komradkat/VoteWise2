@@ -54,6 +54,10 @@
                     class="admin-nav-item {% if 'voters' in request.path %}active{% endif %}">
                     <i class="fas fa-users"></i> Voters
                 </a>
+                <a href="{% url 'reports:hub' %}"
+                    class="admin-nav-item {% if 'reports' in request.path %}active{% endif %}">
+                    <i class="fas fa-file-alt"></i> Reports
+                </a>
                 <a href="{% url 'administration:administrators' %}"
                     class="admin-nav-item {% if 'administrators' in request.path %}active{% endif %}">
                     <i class="fas fa-user-shield"></i> Administrators

@@ -235,7 +235,8 @@ select.form-control:hover {
 }
 
 /* Filter Select (standalone dropdowns in filter bar) */
-.filter-select {
+.filter-select,
+.server-filter-select {
     padding: 0.75rem 2.5rem 0.75rem 1rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
@@ -252,13 +253,15 @@ select.form-control:hover {
     min-width: 150px;
 }
 
-.filter-select:focus {
+.filter-select:focus,
+.server-filter-select:focus {
     outline: none;
     border-color: var(--admin-accent);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
-.filter-select:hover {
+.filter-select:hover,
+.server-filter-select:hover {
     border-color: rgba(255, 255, 255, 0.2);
 }
 

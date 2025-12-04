@@ -1,0 +1,201 @@
+{% extends 'administration/base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .reports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .report-card {
+        background: rgba(30, 41, 59, 0.95);
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .report-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        border-color: var(--admin-primary);
+    }
+
+    .report-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--admin-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .report-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--admin-slate-50);
+        margin-bottom: 0.75rem;
+    }
+
+    .report-desc {
+        color: var(--admin-slate-400);
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+        flex-grow: 1;
+        line-height: 1.6;
+    }
+
+    .report-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-report {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        background: var(--admin-primary);
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-report:hover {
+        background: var(--admin-primary-dark);
+        transform: translateY(-2px);
+    }
+    
+    .election-select-group {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .election-select {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        color: white;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+    <div>
+        <h1 class="admin-title">
+            <i class="fas fa-file-alt text-primary me-2"></i>
+            Reports Hub
+        </h1>
+        <p class="text-slate-400 mt-2">Generate and download system-wide reports and analytics.</p>
+    </div>
+</div>
+
+<div class="reports-grid">
+    <!-- Voter Demographics -->
+    <div class="report-card">
+        <div class="report-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <h3 class="report-title">Voter Demographics</h3>
+        <p class="report-desc">
+            Comprehensive breakdown of registered voters by course, year level, and section. 
+            Includes verification status statistics.
+        </p>
+        <div class="report-actions">
+            <a href="{% url 'reports:generate_voter_demographics_report' %}" class="btn-report">
+                <i class="fas fa-download"></i> Download PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Audit Logs -->
+    <div class="report-card">
+        <div class="report-icon">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3 class="report-title">Security Audit Logs</h3>
+        <p class="report-desc">
+            Chronological log of system activities, admin actions, and security events. 
+            Essential for accountability and auditing.
+        </p>
+        <div class="report-actions">
+            <a href="{% url 'reports:generate_audit_log_report' %}" class="btn-report">
+                <i class="fas fa-download"></i> Download PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Candidate Summary -->
+    <div class="report-card">
+        <div class="report-icon">
+            <i class="fas fa-user-tie"></i>
+        </div>
+        <h3 class="report-title">Candidate Master List</h3>
+        <p class="report-desc">
+            Complete list of all registered candidates across all elections, grouped by position and party. 
+            Includes platform summaries.
+        </p>
+        <div class="report-actions">
+            <a href="{% url 'reports:generate_candidate_summary_report' %}" class="btn-report">
+                <i class="fas fa-download"></i> Download PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Election Results (Dynamic) -->
+    <div class="report-card">
+        <div class="report-icon">
+            <i class="fas fa-poll"></i>
+        </div>
+        <h3 class="report-title">Election Results</h3>
+        <p class="report-desc">
+            Detailed results for a specific election, including vote counts, percentages, and AI-generated narrative analysis.
+        </p>
+        
+        <div class="election-select-group">
+            <select id="electionSelect" class="election-select">
+                {% for election in elections %}
+                <option value="{{ election.id }}">{{ election.name }} ({{ election.status|title }})</option>
+                {% empty %}
+                <option disabled>No elections found</option>
+                {% endfor %}
+            </select>
+            
+            <button onclick="downloadElectionReport()" class="btn-report" {% if not elections %}disabled{% endif %}>
+                <i class="fas fa-file-pdf"></i> Generate Report
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function downloadElectionReport() {
+        const select = document.getElementById('electionSelect');
+        const electionId = select.value;
+        if (electionId) {
+            window.location.href = `/reports/election/${electionId}/pdf/`;
+        }
+    }
+</script>
+{% endblock %}
