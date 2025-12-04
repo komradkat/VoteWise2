@@ -165,6 +165,8 @@ def generate_election_report(request, election_id):
     buffer.seek(0)
     response = HttpResponse(buffer, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="election_report_{election_id}.pdf"'
+    # Set cookie to signal download start (client-side will poll for this)
+    response.set_cookie('report_download_started', 'true', max_age=20)
     return response
 
 @user_passes_test(is_admin)

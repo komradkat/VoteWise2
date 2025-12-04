@@ -58,32 +58,31 @@
 </div>
 
 <!-- Search and Filter Bar -->
-<div class="filter-bar">
+<!-- Search and Filter Bar -->
+<form method="get" class="filter-bar" action="{% url 'administration:voters' %}">
     <div class="search-container">
         <i class="fas fa-search search-icon"></i>
-        <input type="text" id="searchInput" class="search-input" placeholder="Search voters...">
+        <input type="text" name="search" id="serverSearchInput" class="search-input" placeholder="Search voters..." value="{{ search_query }}" onkeydown="if(event.key === 'Enter') this.form.submit()">
     </div>
-    <select class="filter-select" data-filter="course">
+    <select name="course" class="server-filter-select" onchange="this.form.submit()">
         <option value="">All Courses</option>
         {% for course in courses %}
-        <option value="{{ course }}">{{ course }}</option>
+        <option value="{{ course }}" {% if course_filter == course %}selected{% endif %}>{{ course }}</option>
         {% endfor %}
     </select>
-    <select class="filter-select" data-filter="year">
+    <select name="year_level" class="server-filter-select" onchange="this.form.submit()">
         <option value="">All Years</option>
-        <option value="1">1st Year</option>
-        <option value="2">2nd Year</option>
-        <option value="3">3rd Year</option>
-        <option value="4">4th Year</option>
+        {% for year in year_levels %}
+        <option value="{{ year }}" {% if year_filter == year|stringformat:"i" %}selected{% endif %}>Year {{ year }}</option>
+        {% endfor %}
     </select>
-    <select class="filter-select" onchange="window.location.href='?status=' + this.value">
+    <select name="status" class="server-filter-select" onchange="this.form.submit()">
         <option value="">All Statuses</option>
-        <option value="PENDING" {% if current_status_filter == 'PENDING' %}selected{% endif %}>Pending Verification
-        </option>
+        <option value="PENDING" {% if current_status_filter == 'PENDING' %}selected{% endif %}>Pending Verification</option>
         <option value="VERIFIED" {% if current_status_filter == 'VERIFIED' %}selected{% endif %}>Verified</option>
         <option value="REJECTED" {% if current_status_filter == 'REJECTED' %}selected{% endif %}>Rejected</option>
     </select>
-</div>
+</form>
 
 
     <form method="post" action="{% url 'administration:voter_bulk_verify' %}" id="bulkVerifyForm">
@@ -226,23 +225,102 @@
 
     function updateBulkVerifyButton() {
         const checkedCount = document.querySelectorAll('.voter-checkbox:checked').length;
-        bulkVerifyBtn.disabled = checkedCount === 0;
+        if (bulkVerifyBtn) {
+            bulkVerifyBtn.disabled = checkedCount === 0;
+        }
     }
 
     if (selectAllCheckbox) {
         selectAllCheckbox.addEventListener('change', function () {
-            voterCheckboxes.forEach(checkbox => {
+            const checkboxes = document.querySelectorAll('.voter-checkbox');
+            checkboxes.forEach(checkbox => {
                 checkbox.checked = this.checked;
             });
             updateBulkVerifyButton();
         });
     }
 
-    voterCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
-            const allChecked = Array.from(voterCheckboxes).every(cb => cb.checked);
-            selectAllCheckbox.checked = allChecked;
+    // Event delegation for dynamically loaded checkboxes
+    document.getElementById('votersTable').addEventListener('change', function(e) {
+        if (e.target.classList.contains('voter-checkbox')) {
+            const checkboxes = document.querySelectorAll('.voter-checkbox');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = allChecked;
+            }
             updateBulkVerifyButton();
+        }
+    });
+
+    // Dynamic Search & Filter Script
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('serverSearchInput');
+        const filterForm = document.querySelector('.filter-bar');
+        const tableBody = document.getElementById('votersTable');
+        const paginationContainers = document.querySelectorAll('.pagination-container');
+        
+        let debounceTimer;
+
+        function performSearch() {
+            const formData = new FormData(filterForm);
+            const searchParams = new URLSearchParams(formData);
+            const url = `${window.location.pathname}?${searchParams.toString()}`;
+
+            // Add loading state opacity
+            tableBody.style.opacity = '0.5';
+
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Update Table
+                const newTableBody = doc.getElementById('votersTable');
+                if (newTableBody) {
+                    tableBody.innerHTML = newTableBody.innerHTML;
+                }
+                
+                // Update Pagination
+                const newPagination = doc.querySelectorAll('.pagination-container');
+                paginationContainers.forEach((container, index) => {
+                    if (newPagination[index]) {
+                        container.innerHTML = newPagination[index].innerHTML;
+                    }
+                });
+                
+                // Update URL
+                window.history.pushState({}, '', url);
+                
+                // Restore opacity
+                tableBody.style.opacity = '1';
+                
+                // Re-initialize bulk verify button state
+                updateBulkVerifyButton();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                tableBody.style.opacity = '1';
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(performSearch, 500); // 500ms debounce
+            });
+        }
+        
+        // Handle selects
+        const selects = filterForm.querySelectorAll('select');
+        selects.forEach(select => {
+            // Remove inline submit to prevent double submission
+            select.removeAttribute('onchange'); 
+            select.addEventListener('change', performSearch);
         });
     });
 </script>
