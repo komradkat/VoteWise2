@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentStepSpan = document.getElementById('current-step');
     const totalStepsSpan = document.getElementById('total-steps');
     const finalSubmitBtn = document.getElementById('final-submit-btn');
-    const modalOverlay = document.querySelector('.modal-overlay');
+    const modalOverlay = document.getElementById('confirmation-modal');
     const confirmButton = document.querySelector('.modal-button.confirm');
     const cancelButton = document.querySelector('.modal-button.cancel');
     
@@ -124,27 +124,54 @@ document.addEventListener('DOMContentLoaded', function() {
             const item = document.createElement('div');
             item.className = 'review-item';
             
-            let selectionText = '<span class="review-selection">No selection</span>';
+            let selectionContent = '<div class="review-empty">No selection made</div>';
+            
             if (pos.selected.length > 0) {
-                const names = pos.selected.map(id => {
+                const candidatesHtml = pos.selected.map(id => {
                     const card = document.querySelector(`.candidate-card[data-candidate-id="${id}"]`);
-                    return card.querySelector('.candidate-name').textContent;
-                }).join(', ');
-                selectionText = `<span class="review-selection selected">${names}</span>`;
+                    const name = card.querySelector('.candidate-name').textContent;
+                    const imgSrc = card.querySelector('.candidate-photo').src;
+                    const party = card.querySelector('.candidate-partylist') ? 
+                                 card.querySelector('.candidate-partylist').textContent : '';
+                    
+                    return `
+                        <div class="review-candidate">
+                            <img src="${imgSrc}" alt="${name}" class="review-candidate-photo">
+                            <div class="review-candidate-info">
+                                <span class="review-candidate-name">${name}</span>
+                                ${party ? `<span class="review-candidate-party">${party}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                selectionContent = `<div class="review-candidates-container">${candidatesHtml}</div>`;
             }
             
             item.innerHTML = `
-                <span class="review-position">${pos.name}</span>
-                ${selectionText}
+                <div class="review-position-header">
+                    <span class="review-position-name">${pos.name}</span>
+                    <span class="review-status ${pos.selected.length > 0 ? 'complete' : 'pending'}">
+                        ${pos.selected.length > 0 ? '<i class="fas fa-check"></i> Selected' : '<i class="fas fa-exclamation-circle"></i> Pending'}
+                    </span>
+                </div>
+                ${selectionContent}
             `;
             list.appendChild(item);
         }
     }
     
     // Final Submit
-    finalSubmitBtn.addEventListener('click', function() {
-        showConfirmationModal();
-    });
+    if (finalSubmitBtn) {
+        console.log('Final submit button found');
+        finalSubmitBtn.addEventListener('click', function(e) {
+            console.log('Final submit button clicked');
+            e.preventDefault(); // Prevent any default form submission
+            showConfirmationModal();
+        });
+    } else {
+        console.error('Final submit button NOT found');
+    }
     
     // Modal Logic (Reused)
     function showConfirmationModal() {
@@ -242,6 +269,89 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
     
+    // Secure Voting Flow Logic
+    const startModal = document.getElementById('start-modal');
+    const startBtn = document.getElementById('start-election-btn');
+    const timerDisplay = document.getElementById('timer-display');
+    const timerContainer = document.getElementById('voting-timer');
+    const header = document.querySelector('header');
+    const footer = document.querySelector('footer');
+    
+    let timerInterval;
+    const TIME_LIMIT = 10 * 60; // 10 minutes in seconds
+    let timeRemaining = TIME_LIMIT;
+    let isElectionStarted = false;
+
+    // Start Election Handler
+    startBtn.addEventListener('click', function() {
+        startElection();
+    });
+
+    function startElection() {
+        isElectionStarted = true;
+        
+        // Hide Modal
+        startModal.style.opacity = '0';
+        setTimeout(() => {
+            startModal.style.display = 'none';
+        }, 500);
+
+        // Immersive Mode
+        if (header) header.classList.add('fade-up-out');
+        if (footer) footer.classList.add('fade-down-out');
+
+        // Show Timer
+        timerContainer.classList.add('visible');
+
+        // Start Timer
+        startTimer();
+    }
+
+    function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            timeRemaining--;
+            updateTimerDisplay();
+
+            if (timeRemaining <= 60) {
+                timerContainer.classList.add('warning');
+            }
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                handleTimeExpired();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function handleTimeExpired() {
+        showAlert('Time has expired! Submitting your vote now...', 'error');
+        // Disable all interactions
+        document.body.style.pointerEvents = 'none';
+        
+        // Auto-submit after brief delay
+        setTimeout(() => {
+            // Force submit if possible, or redirect
+            // For now, we'll try to trigger the confirm button logic if valid
+            // Or just reload to prevent further voting
+            window.location.reload(); 
+        }, 2000);
+    }
+
+    // Prevent accidental navigation
+    window.addEventListener('beforeunload', (e) => {
+        if (isElectionStarted && timeRemaining > 0) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
     updateNavigationUI();
     updateProgressBar();
 });
