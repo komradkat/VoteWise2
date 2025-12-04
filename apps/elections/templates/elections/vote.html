@@ -5,16 +5,31 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'elections/css/voting.css' %}">
+<style>
+    /* Override global body background for dark theme on voting page */
+    body {
+        background: #0f172a !important;
+        color: #f8fafc !important;
+    }
+    /* Ensure header/footer blend in if they are transparent */
+    main {
+        background: transparent !important;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
+<div class="progress-container">
+    <div class="progress-bar"></div>
+</div>
+
+<div class="toast-container"></div>
+
 <div class="voting-container">
-    <div class="voting-header">
-        <h1>Cast Your Vote</h1>
-        <div class="election-title">{{ election.name }}</div>
+    <div class="voting-header compact">
+        <h1 class="election-title">{{ election.name }}</h1>
         <div class="election-info">
-            <span><i class="fas fa-calendar"></i> {{ election.start_time|date:"M d, Y" }} - {{ election.end_time|date:"M d, Y" }}</span>
-            <span><i class="fas fa-users"></i> {{ positions.count }} Position(s)</span>
+            <span><i class="fas fa-hourglass-half"></i> Ends: {{ election.end_time|date:"M j, g:i A" }}</span>
         </div>
     </div>
 
@@ -59,7 +74,43 @@
         </div>
     </div>
     {% endfor %}
+    
+    <!-- Review Section -->
+    <div class="review-section" id="review-section">
+        <div class="review-card">
+            <div class="review-header">
+                <h2>Review Your Votes</h2>
+                <p>Please check your selections before submitting.</p>
+            </div>
+            <div class="review-list">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+        
+        <div class="submit-section-wizard" style="text-align: center;">
+            <button type="button" class="submit-button" id="final-submit-btn">
+                <i class="fas fa-check-circle"></i>
+                Submit My Vote
+            </button>
+        </div>
+    </div>
 
+    <!-- Wizard Navigation -->
+    <div class="wizard-navigation">
+        <button type="button" class="nav-button" id="prev-btn" disabled>
+            <i class="fas fa-arrow-left"></i> Previous
+        </button>
+        
+        <div class="step-indicator">
+            Step <span id="current-step">1</span> of <span id="total-steps">1</span>
+        </div>
+        
+        <button type="button" class="nav-button primary" id="next-btn">
+            Next <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <!-- Original submit section hidden by CSS -->
     <div class="submit-section">
         <div class="vote-summary">
             <h3>Your Selections</h3>

@@ -5,6 +5,17 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'elections/css/timeline.css' %}">
+<style>
+    /* Override global body background for dark theme */
+    body {
+        background: #0f172a !important;
+        color: #f8fafc !important;
+    }
+    /* Ensure header/footer blend in if they are transparent */
+    main {
+        background: transparent !important;
+    }
+</style>
 {% endblock %}
 
 {% block content %}

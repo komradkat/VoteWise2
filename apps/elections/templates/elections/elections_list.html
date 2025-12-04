@@ -8,19 +8,32 @@
 <style>
     .elections-container {
         min-height: 100vh;
-        background: linear-gradient(135deg, var(--color-slate-50) 0%, var(--color-slate-200) 100%);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(23, 37, 84, 0.9) 100%),
+                  url('/static/core/img/voting-background.png') center/cover no-repeat;
+        background-attachment: fixed;
         padding: 2rem 1rem;
+    }
+
+    /* Override global body background for dark theme */
+    body {
+        background: #0f172a !important;
+        color: #f8fafc !important;
+    }
+    /* Ensure header/footer blend in if they are transparent */
+    main {
+        background: transparent !important;
     }
 
     /* Voter Status Summary */
     .voter-status-summary {
         max-width: 1200px;
         margin: 0 auto 2rem;
-        background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-deep-blue) 100%);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 58, 138, 0.8) 100%);
+        backdrop-filter: blur(10px);
         border-radius: 20px;
         padding: 2rem;
-        box-shadow: 0 8px 32px rgba(15, 23, 42, 0.3);
-        border: 1px solid rgba(37, 99, 235, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .status-header {
@@ -36,17 +49,17 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        color: var(--color-white);
+        color: #f8fafc;
     }
 
     .status-title i {
         font-size: 1.75rem;
-        color: var(--color-blue);
+        color: #3b82f6;
     }
 
     .status-title h2 {
-        font-size: var(--font-size-2xl);
-        font-weight: var(--font-weight-bold);
+        font-size: 1.5rem;
+        font-weight: 700;
         margin: 0;
     }
 
@@ -58,23 +71,23 @@
     }
 
     .stat-box {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(10px);
         border-radius: 12px;
         padding: 1.25rem;
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
     }
 
     .stat-box:hover {
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.1);
         transform: translateY(-2px);
     }
 
     .stat-label {
-        font-size: var(--font-size-sm);
-        color: rgba(255, 255, 255, 0.7);
-        font-weight: var(--font-weight-medium);
+        font-size: 0.875rem;
+        color: #94a3b8;
+        font-weight: 500;
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
@@ -82,20 +95,20 @@
     }
 
     .stat-label i {
-        font-size: var(--font-size-base);
-        color: var(--color-blue);
+        font-size: 1rem;
+        color: #3b82f6;
     }
 
     .stat-value {
-        font-size: var(--font-size-3xl);
-        font-weight: var(--font-weight-bold);
-        color: var(--color-white);
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #f8fafc;
         line-height: 1;
     }
 
     .stat-subtext {
-        font-size: var(--font-size-xs);
-        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.75rem;
+        color: #94a3b8;
         margin-top: 0.5rem;
     }
 
@@ -107,17 +120,17 @@
     }
 
     .elections-header h1 {
-        font-size: var(--font-size-4xl);
-        font-weight: var(--font-weight-bold);
-        color: var(--color-navy);
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: #f8fafc;
         margin-bottom: 0.5rem;
-        letter-spacing: var(--letter-spacing-tight);
+        letter-spacing: -0.025em;
     }
 
     .elections-header p {
-        color: var(--color-slate-500);
-        font-size: var(--font-size-lg);
-        font-weight: var(--font-weight-normal);
+        color: #94a3b8;
+        font-size: 1.125rem;
+        font-weight: 400;
     }
 
     .elections-content {
@@ -130,43 +143,45 @@
     }
 
     .section-title {
-        font-size: var(--font-size-2xl);
-        font-weight: var(--font-weight-bold);
-        color: var(--color-navy);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #f8fafc;
         margin-bottom: 1.5rem;
         padding-left: 1rem;
-        border-left: 4px solid var(--color-blue);
+        border-left: 4px solid #3b82f6;
         display: flex;
         align-items: center;
         gap: 0.75rem;
     }
 
     .section-title i {
-        color: var(--color-blue);
-        font-size: var(--font-size-xl);
+        color: #3b82f6;
+        font-size: 1.25rem;
     }
 
     .section-badge {
-        background: var(--color-blue);
-        color: var(--color-white);
+        background: rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
-        font-size: var(--font-size-sm);
-        font-weight: var(--font-weight-semibold);
+        font-size: 0.875rem;
+        font-weight: 600;
         margin-left: auto;
+        border: 1px solid rgba(59, 130, 246, 0.3);
     }
 
     /* Election Cards */
     .election-card {
-        background: var(--color-white);
+        background: rgba(30, 41, 59, 0.95);
         border-radius: 16px;
         padding: 2rem;
         margin-bottom: 1.5rem;
-        border: 2px solid var(--color-slate-200);
-        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        backdrop-filter: blur(10px);
     }
 
     .election-card::before {
@@ -176,15 +191,15 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, var(--color-blue), var(--color-green));
+        background: linear-gradient(90deg, #3b82f6, #10b981);
         opacity: 0;
         transition: opacity 0.3s ease;
     }
 
     .election-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.15);
-        border-color: var(--color-blue);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+        border-color: rgba(255, 255, 255, 0.2);
     }
 
     .election-card:hover::before {
@@ -200,29 +215,30 @@
     }
 
     .election-name {
-        font-size: var(--font-size-2xl);
-        font-weight: var(--font-weight-bold);
-        color: var(--color-navy);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #f8fafc;
         margin-bottom: 0.5rem;
-        letter-spacing: var(--letter-spacing-tight);
+        letter-spacing: -0.025em;
     }
 
     .election-status {
         padding: 0.5rem 1.25rem;
         border-radius: 24px;
-        font-size: var(--font-size-sm);
-        font-weight: var(--font-weight-semibold);
+        font-size: 0.875rem;
+        font-weight: 600;
         white-space: nowrap;
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        letter-spacing: var(--letter-spacing-wide);
+        letter-spacing: 0.025em;
     }
 
     .status-active {
-        background: var(--color-green);
-        color: var(--color-white);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
     }
 
     .status-active i {
@@ -235,14 +251,16 @@
     }
 
     .status-upcoming {
-        background: var(--color-gold);
-        color: var(--color-white);
-        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
     }
 
     .status-ended {
-        background: var(--color-slate-200);
-        color: var(--color-slate-500);
+        background: rgba(148, 163, 184, 0.2);
+        color: #94a3b8;
+        border: 1px solid rgba(148, 163, 184, 0.2);
     }
 
     .election-dates {
@@ -256,30 +274,30 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        color: var(--color-slate-500);
-        font-size: var(--font-size-base);
-        font-weight: var(--font-weight-medium);
+        color: #94a3b8;
+        font-size: 1rem;
+        font-weight: 500;
     }
 
     .election-date i {
-        color: var(--color-blue);
-        font-size: var(--font-size-lg);
+        color: #3b82f6;
+        font-size: 1.125rem;
     }
 
     .election-date strong {
-        color: var(--color-navy);
-        font-weight: var(--font-weight-semibold);
+        color: #cbd5e1;
+        font-weight: 600;
     }
 
     /* Vote Button */
     .vote-button {
-        background: linear-gradient(135deg, var(--color-blue), #7c3aed);
-        color: var(--color-white);
+        background: linear-gradient(135deg, #3b82f6, #7c3aed);
+        color: white;
         border: none;
         border-radius: 12px;
         padding: 1rem 2.5rem;
-        font-size: var(--font-size-lg);
-        font-weight: var(--font-weight-semibold);
+        font-size: 1.125rem;
+        font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
         display: inline-flex;
@@ -287,7 +305,7 @@
         gap: 0.75rem;
         text-decoration: none;
         box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
-        letter-spacing: var(--letter-spacing-wide);
+        letter-spacing: 0.025em;
     }
 
     .vote-button:hover {
@@ -296,13 +314,13 @@
     }
 
     .vote-button i {
-        font-size: var(--font-size-xl);
+        font-size: 1.25rem;
     }
 
     .vote-button:disabled,
     .vote-button.disabled {
-        background: var(--color-slate-300);
-        color: var(--color-slate-500);
+        background: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.3);
         cursor: not-allowed;
         box-shadow: none;
         transform: none;
@@ -312,27 +330,28 @@
     .empty-state {
         text-align: center;
         padding: 4rem 1rem;
-        background: var(--color-white);
+        background: rgba(30, 41, 59, 0.95);
         border-radius: 16px;
-        border: 2px dashed var(--color-slate-300);
+        border: 2px dashed rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
     }
 
     .empty-state i {
         font-size: 4rem;
         margin-bottom: 1.5rem;
-        color: var(--color-slate-400);
+        color: #475569;
     }
 
     .empty-state h3 {
-        font-size: var(--font-size-2xl);
-        font-weight: var(--font-weight-bold);
-        color: var(--color-navy);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #f8fafc;
         margin-bottom: 0.75rem;
     }
 
     .empty-state p {
-        color: var(--color-slate-500);
-        font-size: var(--font-size-lg);
+        color: #94a3b8;
+        font-size: 1.125rem;
     }
 
     /* Responsive */
@@ -347,7 +366,7 @@
         }
 
         .elections-header h1 {
-            font-size: var(--font-size-3xl);
+            font-size: 1.875rem;
         }
 
         .election-card {
