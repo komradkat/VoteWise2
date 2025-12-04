@@ -31,9 +31,8 @@ reportlab==4.2.5
 matplotlib==3.9.3
 
 # Database Drivers (Production)
-# PostgreSQL is required for Render deployment
 psycopg2-binary==2.9.10
-dj-database-url==2.2.0  # Parse DATABASE_URL from Render
+dj-database-url==2.2.0
 
 # WSGI Server (Production)
 gunicorn==23.0.0

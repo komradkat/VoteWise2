@@ -33,12 +33,11 @@ MIDDLEWARE = [
 ]
 
 # Database - PostgreSQL for production
-# Render provides DATABASE_URL, parse it with dj_database_url
 import dj_database_url
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
-    # Render or other platform providing DATABASE_URL
+    # Platform providing DATABASE_URL
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
