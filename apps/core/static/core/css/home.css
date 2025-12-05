@@ -210,7 +210,7 @@
 /* Features Section */
 .features-section {
     padding: 6rem 0;
-    background: linear-gradient(180deg, var(--color-slate-50) 0%, var(--color-white) 100%);
+    background: var(--color-navy);
 }
 
 .section-header {
@@ -221,13 +221,13 @@
 .section-title {
     font-size: var(--font-size-3xl);
     font-weight: var(--font-weight-bold);
-    color: var(--color-navy);
+    color: var(--color-white);
     margin-bottom: 1rem;
 }
 
 .section-subtitle {
     font-size: var(--font-size-lg);
-    color: var(--color-slate-500);
+    color: var(--color-slate-300);
     max-width: 600px;
     margin: 0 auto;
 }
@@ -239,10 +239,10 @@
 }
 
 .feature-card {
-    background: var(--color-white);
+    background: var(--color-slate-800);
     padding: 2rem;
     border-radius: 16px;
-    border: 1px solid var(--color-slate-200);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
     opacity: 0;
     transform: translateY(20px);
@@ -275,19 +275,19 @@
 .feature-title {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-semibold);
-    color: var(--color-navy);
+    color: var(--color-white);
     margin-bottom: 0.75rem;
 }
 
 .feature-description {
-    color: var(--color-slate-500);
+    color: var(--color-slate-300);
     line-height: 1.6;
 }
 
 /* How It Works Section */
 .how-it-works-section {
     padding: 6rem 0;
-    background: var(--color-white);
+    background: var(--color-slate-900);
 }
 
 .steps-container {
@@ -332,12 +332,12 @@
 .step-title {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-semibold);
-    color: var(--color-navy);
+    color: var(--color-white);
     margin-bottom: 0.5rem;
 }
 
 .step-description {
-    color: var(--color-slate-500);
+    color: var(--color-slate-300);
     line-height: 1.6;
 }
 
