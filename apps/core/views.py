@@ -94,7 +94,35 @@ def faq(request):
     return render(request, 'pages/faq.html')
 
 def candidate_portal(request):
-    return render(request, 'pages/candidate_portal.html')
+    """Display all approved candidates grouped by election and position."""
+    from apps.elections.models import Election, Candidate, Position
+    from collections import defaultdict
+    
+    # Get all elections (most recent first)
+    elections = Election.objects.all().order_by('-start_time')
+    
+    # Get all approved candidates
+    candidates = Candidate.objects.filter(is_approved=True).select_related(
+        'student_profile__user', 'position', 'partylist', 'election'
+    ).order_by('election__start_time', 'position__order_on_ballot')
+    
+    # Group candidates by election and position
+    candidates_by_election_temp = defaultdict(lambda: defaultdict(list))
+    for candidate in candidates:
+        candidates_by_election_temp[candidate.election][candidate.position].append(candidate)
+    
+    # Convert to regular nested dicts for Django template compatibility
+    candidates_by_election = {}
+    for election, positions_dict in candidates_by_election_temp.items():
+        candidates_by_election[election] = dict(positions_dict)
+    
+    context = {
+        'elections': elections,
+        'candidates_by_election': candidates_by_election,
+        'total_candidates': candidates.count(),
+    }
+    
+    return render(request, 'pages/candidate_portal.html', context)
 
 def election_rules(request):
     return render(request, 'pages/election_rules.html')

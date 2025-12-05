@@ -1,0 +1,391 @@
+/* Candidate Portal Styles - Dark Theme */
+
+.candidate-portal-page {
+    min-height: 100vh;
+    background-color: var(--color-slate-900);
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(239, 68, 68, 0.05) 0%, transparent 20%);
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+    color: var(--color-slate-200);
+}
+
+.candidate-portal-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* Hero Section */
+.portal-hero {
+    text-align: center;
+    margin-bottom: 4rem;
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.hero-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--color-blue);
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+}
+
+.portal-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--color-white) 0%, var(--color-slate-400) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.025em;
+}
+
+.portal-subtitle {
+    font-size: 1.25rem;
+    color: var(--color-slate-400);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Candidates Content */
+.candidates-content {
+    max-width: 100%;
+}
+
+/* Election Section */
+.election-section {
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.6s ease-out 0.1s backwards;
+}
+
+.election-header {
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.election-title-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.election-name {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
+}
+
+.election-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.election-status i {
+    font-size: 0.5rem;
+}
+
+.status-pending {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+}
+
+.status-active {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+}
+
+.status-closed {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+}
+
+.election-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-slate-400);
+    font-size: 0.9375rem;
+}
+
+.election-date i {
+    color: var(--color-blue);
+}
+
+/* Position Section */
+.position-section {
+    margin-bottom: 2.5rem;
+}
+
+.position-section:last-child {
+    margin-bottom: 0;
+}
+
+.position-header {
+    margin-bottom: 1.5rem;
+}
+
+.position-name {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin-bottom: 0.5rem;
+}
+
+.position-description {
+    color: var(--color-slate-400);
+    font-size: 0.9375rem;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Candidates Grid */
+.candidates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Candidate Card */
+.candidate-card {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+}
+
+.candidate-card:hover {
+    transform: translateY(-2px);
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.candidate-photo {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* 1:1 Aspect Ratio */
+    background: linear-gradient(135deg, rgba(71, 85, 105, 0.3) 0%, rgba(51, 65, 85, 0.3) 100%);
+    overflow: hidden;
+}
+
+.candidate-photo img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.partylist-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(37, 99, 235, 0.9);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 0.375rem 0.875rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.candidate-info {
+    padding: 1.25rem;
+}
+
+.candidate-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-white);
+    margin: 0 0 0.375rem 0;
+}
+
+.candidate-party {
+    font-size: 0.875rem;
+    color: var(--color-blue);
+    font-weight: 500;
+    margin: 0 0 0.75rem 0;
+}
+
+.candidate-party.independent {
+    color: var(--color-slate-500);
+    font-style: italic;
+}
+
+.candidate-bio {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.candidate-bio p {
+    font-size: 0.875rem;
+    color: var(--color-slate-400);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.8s ease-out 0.4s backwards;
+}
+
+.empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--color-blue);
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+    font-size: 3rem;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin-bottom: 0.75rem;
+}
+
+.empty-text {
+    color: var(--color-slate-400);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.75rem;
+    background: linear-gradient(135deg, var(--color-blue) 0%, #2563eb 100%);
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .portal-title {
+        font-size: 2.25rem;
+    }
+
+    .portal-subtitle {
+        font-size: 1rem;
+    }
+
+    .hero-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+
+    .election-section {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+
+    .election-name {
+        font-size: 1.375rem;
+    }
+
+    .position-name {
+        font-size: 1.125rem;
+    }
+
+    .candidates-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .empty-state {
+        padding: 3rem 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .candidate-portal-page {
+        padding-top: 1rem;
+    }
+
+    .portal-hero {
+        margin-bottom: 2.5rem;
+    }
+
+    .portal-title {
+        font-size: 1.875rem;
+    }
+
+    .election-title-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .election-section {
+        padding: 1.25rem;
+        margin-bottom: 2rem;
+    }
+}

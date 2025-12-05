@@ -1,23 +1,101 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Candidate Portal - VoteWise{% endblock %}
+{% block title %}Candidates - VoteWise{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/pages/candidate_portal.css' %}">
+<style>
+    body {
+        background: var(--color-slate-900) !important;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container" style="padding: 120px 1.5rem 60px;">
-    <div style="max-width: 800px; margin: 0 auto;">
-        <h1 style="color: var(--color-navy); margin-bottom: 2rem;">Candidate Portal</h1>
-        <p style="color: var(--color-slate-500); margin-bottom: 2rem;">Resources for aspiring and current candidates.</p>
-
-        <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid var(--color-slate-200);">
-            <div style="text-align: center; padding: 3rem 0;">
-                <i class="fas fa-user-tie" style="font-size: 4rem; color: var(--color-primary); margin-bottom: 1.5rem;"></i>
-                <h3 style="color: var(--color-navy); margin-bottom: 1rem;">Candidate Registration is Currently Closed</h3>
-                <p style="color: var(--color-slate-500); margin-bottom: 2rem; line-height: 1.6;">
-                    The filing period for candidacy has not yet started or has already ended. Please check the election timeline for more details.
-                </p>
-                <a href="{% url 'elections:list' %}" class="btn btn-primary" style="display: inline-block; padding: 0.75rem 1.5rem; background: var(--color-primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 500;">View Election Timeline</a>
+<div class="candidate-portal-page">
+    <div class="candidate-portal-container">
+        <!-- Hero Section -->
+        <div class="portal-hero">
+            <div class="hero-icon">
+                <i class="fas fa-users"></i>
             </div>
+            <h1 class="portal-title">Know Your Candidate</h1>
+            <p class="portal-subtitle">Learn about the candidates running for student council positions</p>
         </div>
+
+        {% if total_candidates > 0 %}
+            <!-- Candidates Content -->
+            <div class="candidates-content">
+                {% for election, positions in candidates_by_election.items %}
+                    <div class="election-section">
+                        <div class="election-header">
+                            <div class="election-title-group">
+                                <h2 class="election-name">{{ election.name }}</h2>
+                                <span class="election-status status-{{ election.status|lower }}">
+                                    <i class="fas fa-circle"></i>
+                                    {{ election.status }}
+                                </span>
+                            </div>
+                            <div class="election-date">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>{{ election.start_time|date:"F d, Y" }} - {{ election.end_time|date:"F d, Y" }}</span>
+                            </div>
+                        </div>
+
+                        {% for position, candidates in positions.items %}
+                            <div class="position-section">
+                                <div class="position-header">
+                                    <h3 class="position-name">{{ position.name }}</h3>
+                                    {% if position.description %}
+                                        <p class="position-description">{{ position.description }}</p>
+                                    {% endif %}
+                                </div>
+
+                                <div class="candidates-grid">
+                                    {% for candidate in candidates %}
+                                        <div class="candidate-card">
+                                            <div class="candidate-photo">
+                                                <img src="{{ candidate.get_photo_url }}" alt="{{ candidate.student_profile.user.get_full_name }}" loading="lazy">
+                                                {% if candidate.partylist %}
+                                                    <div class="partylist-badge">{{ candidate.partylist.short_code }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="candidate-info">
+                                                <h4 class="candidate-name">{{ candidate.student_profile.user.get_full_name }}</h4>
+                                                {% if candidate.partylist %}
+                                                    <p class="candidate-party">{{ candidate.partylist.name }}</p>
+                                                {% else %}
+                                                    <p class="candidate-party independent">Independent</p>
+                                                {% endif %}
+                                                {% if candidate.biography %}
+                                                    <div class="candidate-bio">
+                                                        <p>{{ candidate.biography|truncatewords:30 }}</p>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3 class="empty-title">No Candidates Yet</h3>
+                <p class="empty-text">Candidate registration is currently closed or no candidates have been approved yet. Please check the election timeline for more details.</p>
+                <a href="{% url 'elections:timeline' %}" class="btn-primary">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>View Election Timeline</span>
+                </a>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
