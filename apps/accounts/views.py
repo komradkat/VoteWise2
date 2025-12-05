@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, resolve_url
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -103,7 +105,7 @@ def login(request):
         return redirect('accounts:profile')
     
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             from django.contrib.auth import login as auth_login
             user = form.get_user()
@@ -133,8 +135,13 @@ def login(request):
                 recipient_list=[user.email]
             )
             
-            if 'next' in request.POST:
-                return redirect(request.POST.get('next'))
+            next_url = request.POST.get('next')
+            if next_url and url_has_allowed_host_and_scheme(
+                url=next_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure()
+            ):
+                return redirect(next_url)
             return redirect('accounts:profile')
     else:
         form = AuthenticationForm()
@@ -332,6 +339,14 @@ def set_language(request):
             
             # Get the redirect URL (previous page or profile)
             next_url = request.POST.get('next', request.META.get('HTTP_REFERER', 'accounts:profile'))
+            
+            # Validate URL to prevent Open Redirects
+            if not url_has_allowed_host_and_scheme(
+                url=next_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure()
+            ):
+                next_url = resolve_url('accounts:profile')
             
             response = HttpResponseRedirect(next_url)
             

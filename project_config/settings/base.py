@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'axes',  # Bruteforce protection
     'apps.core',
     'apps.accounts',
     'apps.elections',
@@ -40,6 +41,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'axes.middleware.AxesMiddleware',  # Axes Middleware
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -134,6 +136,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'core:home'
 LOGOUT_REDIRECT_URL = 'core:home'
+
+# Authentication Backends
+AUTHENTICATION_BACKENDS = [
+    # AxesBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
+    'axes.backends.AxesBackend',
+    # Django ModelBackend is the default authentication backend.
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Axes Configuration
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 0.5  # 30 minutes
+AXES_LOCKOUT_TEMPLATE = None  # Use default response or custom template if needed
+AXES_RESET_ON_SUCCESS = True
 
 # Gemini AI Configuration
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'YOUR_API_KEY_HERE')
