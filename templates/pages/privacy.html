@@ -1,43 +1,42 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Privacy Policy - VoteWise{% endblock %}
 
 {% block content %}
-<div class="container" style="padding: 120px 1.5rem 60px;">
-    <div style="max-width: 800px; margin: 0 auto;">
-        <h1 style="color: var(--color-navy); margin-bottom: 2rem;">Privacy Policy</h1>
-        <p style="color: var(--color-slate-500); margin-bottom: 2rem;">Last updated: November 2025</p>
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/pages/info_pages.css' %}">
+{% endblock %}
 
-        <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid var(--color-slate-200);">
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">1. Information Collection</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                We collect limited personal information necessary to verify your eligibility to vote, including your
-                student ID, name, and enrollment status. This data is sourced from the official student database.
+<div class="info-page-container">
+    <div class="info-content-wrapper">
+        <h1 class="info-page-title">Privacy Policy</h1>
+        <p class="info-page-subtitle">Last updated: November 2025</p>
+
+        <div class="info-card">
+            <h3 class="info-section-title">1. Data Collection</h3>
+            <p class="info-text">
+                We collect minimal personal information required to verify your eligibility, including your Student ID, full name, and enrollment status. This data is synchronized securely with the university's registrar database. We do <strong>not</strong> store your account password; authentication is handled via the university's central CAS system.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">2. Vote Anonymity</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                Your vote is secret. While we track <em>who</em> has voted to prevent double voting, your specific
-                ballot choices are encrypted and stored separately from your identity. It is impossible to link a
-                specific vote back to a specific student.
+            <h3 class="info-section-title">2. Use of Information</h3>
+            <p class="info-text">
+                Your information is used strictly for the administration of student elections. This includes verifying eligibility, preventing double voting, and auditing election integrity. We do not sell, share, or use your data for any commercial or marketing purposes.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">3. Data Usage</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                Your data is used solely for the purpose of administering student elections. We do not share your
-                personal information with third parties or use it for any other purpose.
+            <h3 class="info-section-title">3. Data Security</h3>
+            <p class="info-text">
+                VoteWise employs industry-standard security protocols. All data transmission is encrypted via TLS/SSL. Access to the election database is strictly limited to authorized election commissioners and is logged for audit purposes.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">4. Data Security</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                We implement industry-standard security measures to protect your data and the integrity of the election
-                results, including encryption, secure session management, and access controls.
+            <h3 class="info-section-title">4. Data Retention</h3>
+            <p class="info-text">
+                Election data, including voter logs and ballot records, is retained for 30 days after the certification of election results to allow for any dispute resolution. After this period, all personally identifiable voting records are permanently anonymized or deleted.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">5. Contact Us</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 0; line-height: 1.6;">
-                If you have questions about this privacy policy or how your data is handled, please contact the Student
-                Union Office or email election@school.edu.
+            <h3 class="info-section-title">5. User Rights</h3>
+            <p class="info-text">
+                You have the right to verify that your vote was recorded correctly using your unique ballot tracking number. You also have the right to request information about what data is stored about you by contacting the Election Commission.
             </p>
         </div>
     </div>

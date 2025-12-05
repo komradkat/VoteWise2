@@ -1,42 +1,42 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Terms of Service - VoteWise{% endblock %}
 
 {% block content %}
-<div class="container" style="padding: 120px 1.5rem 60px;">
-    <div style="max-width: 800px; margin: 0 auto;">
-        <h1 style="color: var(--color-navy); margin-bottom: 2rem;">Terms of Service</h1>
-        <p style="color: var(--color-slate-500); margin-bottom: 2rem;">Last updated: November 2025</p>
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/pages/info_pages.css' %}">
+{% endblock %}
 
-        <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid var(--color-slate-200);">
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">1. Acceptance of Terms</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                By accessing and using the VoteWise platform, you agree to be bound by these Terms of Service and all
-                applicable laws and regulations governing student elections.
+<div class="info-page-container">
+    <div class="info-content-wrapper">
+        <h1 class="info-page-title">Terms of Service</h1>
+        <p class="info-page-subtitle">Last updated: November 2025</p>
+
+        <div class="info-card">
+            <h3 class="info-section-title">1. Account Usage</h3>
+            <p class="info-text">
+                You are responsible for maintaining the security of your student account credentials. Any activity that occurs under your account is your responsibility. You agree to notify the Election Commission immediately of any unauthorized use of your account.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">2. Eligibility</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                You must be a currently enrolled student with a valid student ID to participate in elections. Your
-                eligibility to vote is determined by the student database records.
+            <h3 class="info-section-title">2. Acceptable Use</h3>
+            <p class="info-text">
+                You agree not to use the VoteWise platform for any unlawful purpose or to interfere with the election process. Prohibited activities include attempting to vote more than once, impersonating another student, or attempting to breach the system's security.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">3. User Conduct</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                You agree to use the platform only for lawful purposes. You are prohibited from attempting to vote more
-                than once, using another student's credentials, or interfering with the election process.
+            <h3 class="info-section-title">3. Intellectual Property</h3>
+            <p class="info-text">
+                The VoteWise platform, including its code, design, and content, is the intellectual property of the university and the development team. Unauthorized reproduction or modification of the platform is prohibited.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">4. Account Security</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                You are responsible for maintaining the confidentiality of your login credentials. You must immediately
-                notify the election administration of any unauthorized use of your account.
+            <h3 class="info-section-title">4. Disclaimers</h3>
+            <p class="info-text">
+                The platform is provided on an "as is" and "as available" basis. While we strive for 100% uptime and accuracy, we do not guarantee that the service will be uninterrupted or error-free. The Election Commission reserves the right to extend voting hours in case of technical issues.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">5. Election Integrity</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 0; line-height: 1.6;">
-                The platform employs security measures to ensure the integrity of the vote. Any attempt to manipulate
-                results or bypass security features will result in disciplinary action.
+            <h3 class="info-section-title">5. Termination</h3>
+            <p class="info-text">
+                The Election Commission reserves the right to suspend or terminate your access to the platform if you are found to be in violation of these Terms of Service or the Election Code of Conduct.
             </p>
         </div>
     </div>

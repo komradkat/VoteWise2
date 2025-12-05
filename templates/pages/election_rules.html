@@ -1,32 +1,42 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Election Rules - VoteWise{% endblock %}
 
 {% block content %}
-<div class="container" style="padding: 120px 1.5rem 60px;">
-    <div style="max-width: 800px; margin: 0 auto;">
-        <h1 style="color: var(--color-navy); margin-bottom: 2rem;">Election Rules</h1>
-        <p style="color: var(--color-slate-500); margin-bottom: 2rem;">Guidelines for a fair and transparent election.</p>
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/pages/info_pages.css' %}">
+{% endblock %}
 
-        <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid var(--color-slate-200);">
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">1. Campaigning</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                Campaigning is only allowed during the official campaign period. All campaign materials must be approved by the Election Commission. Negative campaigning and personal attacks are strictly prohibited.
+<div class="info-page-container">
+    <div class="info-content-wrapper">
+        <h1 class="info-page-title">Election Rules</h1>
+        <p class="info-page-subtitle">Guidelines for a fair and transparent election.</p>
+
+        <div class="info-card">
+            <h3 class="info-section-title">1. Voter Eligibility</h3>
+            <p class="info-text">
+                To be eligible to vote, you must be a currently enrolled student with a valid student ID and active status for the current academic term. Students on leave of absence or suspension are not eligible to participate.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">2. Voting</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                Each student is entitled to one vote per position. Proxy voting or selling of votes is a serious offense and will result in disciplinary action.
+            <h3 class="info-section-title">2. Candidacy Requirements</h3>
+            <p class="info-text">
+                Candidates must maintain a minimum GPA of 2.5 and have no record of major disciplinary infractions. All candidates must attend the mandatory election orientation and sign the Code of Conduct.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">3. Candidacy</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                Candidates must meet the academic and behavioral requirements set by the Student Affairs office. Failure to maintain these standards may result in disqualification.
+            <h3 class="info-section-title">3. Campaign Regulations</h3>
+            <p class="info-text">
+                Campaigning is permitted only within designated areas and timeframes. All campaign materials (posters, social media posts) must be approved by the Election Commission. Negative campaigning, slander, and harassment of other candidates are strictly prohibited.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">4. Disputes</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 0; line-height: 1.6;">
-                Any complaints regarding the election process must be filed formally with the Election Commission within 24 hours of the incident or result announcement.
+            <h3 class="info-section-title">4. Voting Procedures</h3>
+            <p class="info-text">
+                Voting is conducted electronically via the VoteWise platform. Each student is entitled to one vote per position. Any form of vote buying, coercion, or unauthorized access to another student's account is a serious violation of election integrity.
+            </p>
+
+            <h3 class="info-section-title">5. Violations & Penalties</h3>
+            <p class="info-text">
+                Violations of these rules may result in immediate disqualification of a candidate, invalidation of votes, and referral to the Student Disciplinary Committee for further action.
             </p>
         </div>
     </div>

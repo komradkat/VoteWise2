@@ -1,0 +1,95 @@
+/* Info Pages Styles (Rules, FAQ, Terms, Guide) */
+
+.info-page-container {
+    min-height: 100vh;
+    background-color: var(--color-slate-900);
+    padding: 120px 1.5rem 60px;
+    color: var(--color-slate-200);
+}
+
+.info-content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.info-page-title {
+    color: var(--color-white);
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--color-white) 0%, var(--color-slate-400) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.info-page-subtitle {
+    color: var(--color-slate-400);
+    margin-bottom: 2.5rem;
+    font-size: 1.1rem;
+}
+
+.info-card {
+    background: rgba(30, 41, 59, 0.5);
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+}
+
+.info-section-title {
+    color: var(--color-white);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.info-section-title::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 24px;
+    background: var(--color-blue);
+    border-radius: 2px;
+}
+
+.info-text {
+    color: var(--color-slate-300);
+    margin-bottom: 2rem;
+    line-height: 1.7;
+    font-size: 1rem;
+}
+
+.info-text:last-child {
+    margin-bottom: 0;
+}
+
+.info-link {
+    color: var(--color-blue);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.info-link:hover {
+    color: var(--color-white);
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .info-page-container {
+        padding-top: 100px;
+    }
+
+    .info-page-title {
+        font-size: 2rem;
+    }
+
+    .info-card {
+        padding: 1.5rem;
+    }
+}

@@ -1,31 +1,36 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}FAQ - VoteWise{% endblock %}
 
 {% block content %}
-<div class="container" style="padding: 120px 1.5rem 60px;">
-    <div style="max-width: 800px; margin: 0 auto;">
-        <h1 style="color: var(--color-navy); margin-bottom: 2rem;">Frequently Asked Questions</h1>
-        <p style="color: var(--color-slate-500); margin-bottom: 2rem;">Common questions about the student election process.</p>
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/pages/info_pages.css' %}">
+{% endblock %}
 
-        <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid var(--color-slate-200);">
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">When is the election?</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
-                Election dates are announced via official school channels and listed on the <a href="{% url 'elections:list' %}" style="color: var(--color-primary);">Elections</a> page.
+<div class="info-page-container">
+    <div class="info-content-wrapper">
+        <h1 class="info-page-title">Frequently Asked Questions</h1>
+        <p class="info-page-subtitle">Common questions about the student election process.</p>
+
+        <div class="info-card">
+            <h3 class="info-section-title">When is the election?</h3>
+            <p class="info-text">
+                Election dates are announced via official school channels and listed on the <a href="{% url 'elections:list' %}" class="info-link">Elections</a> page.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">Can I change my vote?</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
+            <h3 class="info-section-title">Can I change my vote?</h3>
+            <p class="info-text">
                 No. Once your ballot is submitted, it is final and cannot be changed. Please review your choices carefully before submitting.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">Is my vote anonymous?</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 1.5rem; line-height: 1.6;">
+            <h3 class="info-section-title">Is my vote anonymous?</h3>
+            <p class="info-text">
                 Yes. The system separates your identity from your ballot choices. We know <em>that</em> you voted, but not <em>who</em> you voted for.
             </p>
 
-            <h3 style="color: var(--color-navy); margin-bottom: 1rem;">What if I can't log in?</h3>
-            <p style="color: var(--color-slate-500); margin-bottom: 0; line-height: 1.6;">
+            <h3 class="info-section-title">What if I can't log in?</h3>
+            <p class="info-text">
                 If you are having trouble logging in, please contact the IT support desk or visit the Student Affairs office for assistance.
             </p>
         </div>
