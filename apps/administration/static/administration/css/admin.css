@@ -10,7 +10,7 @@ body {
 .list-container {
     background: rgba(30, 41, 59, 0.95);
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: none;
     padding: 2rem;
 }
 
@@ -81,7 +81,7 @@ body {
     min-height: 100vh;
     padding-top: 140px; /* Account for fixed header height (~120px) + padding */
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(23, 37, 84, 0.9) 100%),
-              url('/static/core/img/voting-background.png') center/cover no-repeat fixed;
+              url('/static/core/img/voting-background.png') center/cover no-repeat;
     position: relative;
 }
 
@@ -117,12 +117,11 @@ body {
     background: rgba(30, 41, 59, 0.95);
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
     display: flex;
     align-items: center;
     gap: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
 }
 
 .stat-icon {

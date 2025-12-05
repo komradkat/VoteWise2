@@ -124,12 +124,11 @@
     background: rgba(30, 41, 59, 0.95);
     border-radius: 16px;
     padding: 1.75rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: none;
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(10px);
 }
 
 .stat-card::before {
@@ -164,7 +163,7 @@
 
 .stat-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
     border-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -264,14 +263,13 @@
     border-radius: 16px;
     padding: 2rem;
     margin-bottom: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: none;
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
 }
 
 .election-card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
     border-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -582,9 +580,8 @@
     padding: 5rem 2rem;
     background: rgba(30, 41, 59, 0.95);
     border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: none;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
 }
 
 .empty-icon {
@@ -621,9 +618,8 @@
     background: rgba(30, 41, 59, 0.95);
     border-radius: 16px;
     padding: 1.75rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: none;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
 }
 
 .chart-card.chart-wide {

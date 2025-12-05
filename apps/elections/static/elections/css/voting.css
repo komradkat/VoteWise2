@@ -3,7 +3,6 @@
     min-height: 100vh;
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(23, 37, 84, 0.9) 100%),
               url('/static/core/img/voting-background.png') center/cover no-repeat;
-    background-attachment: fixed;
     padding: 2rem 1rem;
 }
 
@@ -37,7 +36,6 @@
     max-width: 1200px;
     margin: 0 auto 3rem;
     background: rgba(30, 41, 59, 0.95);
-    backdrop-filter: blur(20px);
     border-radius: 24px;
     padding: 2.5rem;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -214,7 +212,6 @@
     max-width: 1200px;
     margin: 0 auto;
     background: rgba(30, 41, 59, 0.95);
-    backdrop-filter: blur(20px);
     border-radius: 16px;
     padding: 1.5rem 2rem;
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
@@ -285,7 +282,6 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px);
     display: none;
     align-items: center;
     justify-content: center;
@@ -466,7 +462,6 @@
 
 .toast {
     background: rgba(30, 41, 59, 0.95);
-    backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-left: 4px solid #3b82f6;
     padding: 1rem 1.5rem;
@@ -545,7 +540,6 @@
     left: 0;
     width: 100%;
     background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(20px);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding: 1.5rem;
     z-index: 1000;
@@ -762,7 +756,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(10px);
+    justify-content: center;
 }
 
 .start-content {
