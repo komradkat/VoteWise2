@@ -17,11 +17,12 @@ Pillow==11.0.0
 
 # Face Recognition & Biometrics
 # TensorFlow 2.18.0 requires Python 3.9-3.12 (NOT 3.13)
+# Upgraded for Python 3.13 support
 deepface==0.0.93
-tf-keras==2.18.0
-tensorflow==2.18.0
+tf-keras>=2.18.0
+tensorflow>=2.20.0
 opencv-python-headless==4.10.0.84  # headless version for server deployment
-numpy==1.26.4  # Compatible with TensorFlow 2.18.0
+numpy>=1.26.4  # Compatible with TensorFlow
 
 # AI & Machine Learning (Google Gemini)
 google-generativeai==0.8.3
@@ -42,6 +43,7 @@ whitenoise==6.11.0
 
 # Security & CORS
 django-cors-headers==4.6.0
+django-axes==6.5.1  # Added for bruteforce protection
 
 # Email Backend (Production)
 # django-ses==4.2.0  # For AWS SES
