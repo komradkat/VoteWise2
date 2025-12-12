@@ -105,16 +105,16 @@
 
                 <div class="candidates-grid">
                     {% for candidate in position.candidates %}
-                    <div class="candidate-card {% if forloop.counter == 1 and not election.is_active %}winner{% endif %}" data-rank="{{ forloop.counter }}">
-                        {% if forloop.counter == 1 and not election.is_active %}
+                    <div class="candidate-card {% if candidate.is_winner and not election.is_active %}winner{% endif %}" data-rank="{{ candidate.rank }}">
+                        {% if candidate.is_winner and not election.is_active %}
                         <div class="winner-badge">
                             <i class="fas fa-crown"></i>
-                            <span>Winner</span>
+                            <span>{% if candidate.rank == 1 %}Winner{% else %}Winner #{{ candidate.rank }}{% endif %}</span>
                         </div>
                         {% endif %}
                         
                         <div class="candidate-rank">
-                            #{{ forloop.counter }}
+                            #{{ candidate.rank }}
                         </div>
                         
                         <div class="candidate-photo">

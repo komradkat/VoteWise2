@@ -102,8 +102,25 @@ def dashboard(request):
     total_voters = StudentProfile.objects.count()
     eligible_voters = StudentProfile.objects.filter(is_eligible_to_vote=True).count()
     
-    # Get the single active election (only one can be active at a time)
-    active_election = Election.objects.filter(is_active=True).first()
+    # Get all elections for dropdown selector
+    all_elections = Election.objects.all().order_by('-start_time')
+    
+    # Determine which election to display based on user selection
+    selected_election_id = request.GET.get('election_id')
+    active_election = None
+    
+    if selected_election_id:
+        # User selected a specific election via dropdown
+        try:
+            active_election = Election.objects.get(id=selected_election_id)
+        except Election.DoesNotExist:
+            pass
+    
+    if not active_election:
+        # Default: active election or most recent election
+        active_election = Election.objects.filter(is_active=True).first()
+        if not active_election:
+            active_election = all_elections.first()
     
     # Election analytics data
     election_analytics = []
@@ -363,6 +380,10 @@ def dashboard(request):
         
         # New Analytics
         'recent_activity': AuditLog.objects.select_related('user').order_by('-timestamp')[:5],
+        
+        # Election selector data
+        'all_elections': all_elections,
+        'selected_election_id': active_election.id if active_election else None,
     }
     
     # Calculate Peak Voting Hour

@@ -70,10 +70,16 @@ def results(request):
             # Sort candidates by votes descending
             candidates_data.sort(key=lambda x: x['votes'], reverse=True)
             
+            # Mark winners based on position.number_of_winners
+            for idx, cand in enumerate(candidates_data):
+                cand['is_winner'] = (idx < pos.number_of_winners)
+                cand['rank'] = idx + 1
+            
             context['positions_data'].append({
                 'name': pos.name,
                 'candidates': candidates_data,
-                'total_votes': pos_total_votes
+                'total_votes': pos_total_votes,
+                'number_of_winners': pos.number_of_winners
             })
             
     return render(request, 'core/election-results.html', context)

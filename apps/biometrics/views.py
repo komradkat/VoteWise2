@@ -335,7 +335,10 @@ def verify_face(request):
         # 0.6 was too loose and allowed spoofing. 0.4 is stricter.
         if distance < 0.4:
             # Match found! Login the user
-            login(request, user)
+            # Explicitly specify backend since multiple auth backends are configured
+            from django.contrib.auth.backends import ModelBackend
+            backend = f'{ModelBackend.__module__}.{ModelBackend.__qualname__}'
+            login(request, user, backend=backend)
             return JsonResponse({'success': True, 'redirect_url': '/auth/profile/'})
         
         return JsonResponse({'error': 'Face not recognized'}, status=401)

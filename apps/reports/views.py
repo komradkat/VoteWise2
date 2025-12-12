@@ -25,7 +25,26 @@ def is_admin(user):
 def reports_hub(request):
     """
     Central hub for generating and downloading system reports.
+    Requires password verification. Grants 5-minute sudo mode after verification.
     """
+    from django.shortcuts import redirect
+    from django.utils import timezone
+    
+    # Check if user has verified password recently (5 minute sudo mode)
+    last_verified = request.session.get('last_password_verified_at')
+    if last_verified:
+        # Convert timestamp to datetime and check if still valid (5 minutes)
+        verified_time = timezone.datetime.fromtimestamp(last_verified, tz=timezone.get_current_timezone())
+        time_diff = (timezone.now() - verified_time).total_seconds()
+        
+        if time_diff > 300:  # 5 minutes = 300 seconds
+            # Verification expired, require new password
+            request.session.pop('last_password_verified_at', None)
+            return redirect(f'/administration/verify-password/?next={request.path}')
+    else:
+        # No verification found, require password
+        return redirect(f'/administration/verify-password/?next={request.path}')
+    
     elections = Election.objects.all().order_by('-start_time')
     return render(request, 'reports/reports_hub.html', {'elections': elections})
 
@@ -34,7 +53,24 @@ def reports_hub(request):
 def generate_election_report(request, election_id):
     """
     Generates a PDF report for the given election.
+    Uses sudo mode from Reports Hub verification (5 minutes).
     """
+    from django.shortcuts import redirect
+    from django.utils import timezone
+    
+    # Check if user has active sudo mode (verified via Reports Hub)
+    last_verified = request.session.get('last_password_verified_at')
+    if last_verified:
+        verified_time = timezone.datetime.fromtimestamp(last_verified, tz=timezone.get_current_timezone())
+        time_diff = (timezone.now() - verified_time).total_seconds()
+        
+        if time_diff > 300:  # 5 minutes expired
+            # Redirect back to Reports Hub which will require password
+            return redirect('/reports/')
+    else:
+        # No verification, redirect to Reports Hub
+        return redirect('/reports/')
+    
     # Fetch data
     data = get_election_data(election_id)
     if not data:
@@ -173,7 +209,20 @@ def generate_election_report(request, election_id):
 def generate_voter_demographics_report(request):
     """
     Generates a PDF report for voter demographics.
+    Uses sudo mode from Reports Hub verification (5 minutes).
     """
+    from django.shortcuts import redirect
+    from django.utils import timezone
+    
+    # Check sudo mode
+    last_verified = request.session.get('last_password_verified_at')
+    if last_verified:
+        verified_time = timezone.datetime.fromtimestamp(last_verified, tz=timezone.get_current_timezone())
+        time_diff = (timezone.now() - verified_time).total_seconds()
+        if time_diff > 300:
+            return redirect('/reports/')
+    else:
+        return redirect('/reports/')
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter,
                             rightMargin=72, leftMargin=72,
@@ -272,7 +321,20 @@ def generate_voter_demographics_report(request):
 def generate_audit_log_report(request):
     """
     Generates a PDF report for system audit logs.
+    Uses sudo mode from Reports Hub verification (5 minutes).
     """
+    from django.shortcuts import redirect
+    from django.utils import timezone
+    
+    # Check sudo mode
+    last_verified = request.session.get('last_password_verified_at')
+    if last_verified:
+        verified_time = timezone.datetime.fromtimestamp(last_verified, tz=timezone.get_current_timezone())
+        time_diff = (timezone.now() - verified_time).total_seconds()
+        if time_diff > 300:
+            return redirect('/reports/')
+    else:
+        return redirect('/reports/')
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter,
                             rightMargin=50, leftMargin=50,
@@ -326,7 +388,20 @@ def generate_audit_log_report(request):
 def generate_candidate_summary_report(request):
     """
     Generates a PDF summary of all candidates.
+    Uses sudo mode from Reports Hub verification (5 minutes).
     """
+    from django.shortcuts import redirect
+    from django.utils import timezone
+    
+    # Check sudo mode
+    last_verified = request.session.get('last_password_verified_at')
+    if last_verified:
+        verified_time = timezone.datetime.fromtimestamp(last_verified, tz=timezone.get_current_timezone())
+        time_diff = (timezone.now() - verified_time).total_seconds()
+        if time_diff > 300:
+            return redirect('/reports/')
+    else:
+        return redirect('/reports/')
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter,
                             rightMargin=72, leftMargin=72,
