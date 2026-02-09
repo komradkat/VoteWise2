@@ -1,0 +1,58 @@
+[project]
+name = "votewise2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12.8"
+dependencies = [
+    "asgiref==3.8.1",
+    "deepface==0.0.93",
+    "dj-database-url==2.2.0",
+    "django==5.1.3",
+    "django-axes==6.5.1",
+    "django-cors-headers==4.6.0",
+    "google-generativeai==0.8.3",
+    "gunicorn==23.0.0",
+    "matplotlib==3.9.3",
+    "numpy>=1.26.4",
+    "opencv-python-headless==4.10.0.84",
+    "pillow==11.0.0",
+    "psycopg2-binary==2.9.10",
+    "python-decouple==3.8",
+    "python-dotenv==1.0.1",
+    "reportlab==4.2.5",
+    "sqlparse==0.5.3",
+    "tensorflow==2.17.0",
+    "tf-keras==2.17.0",
+    "torch>=2.9.1",
+    "torchvision>=0.24.1",
+    "whitenoise==6.11.0",
+]
+
+[dependency-groups]
+dev = [
+    "bandit>=1.9.2",
+    "black==24.10.0",
+    "coverage==7.6.10",
+    "django-debug-toolbar==4.4.6",
+    "django-extensions==3.2.3",
+    "django-silk==5.3.0",
+    "django-stubs==5.1.1",
+    "factory-boy==3.3.1",
+    "flake8==7.1.1",
+    "isort==5.13.2",
+    "mypy==1.13.0",
+    "pylint==3.3.2",
+    "pytest==8.3.4",
+    "pytest-cov==6.0.0",
+    "pytest-django==4.9.0",
+    "safety>=3.7.0",
+    "sphinx==8.1.3",
+    "sphinx-rtd-theme==3.0.2",
+]
+
+[tool.pytest.ini_options]
+
+DJANGO_SETTINGS_MODULE = "project_config.settings"
+python_files = ["tests.py", "test_*.py", "*_test.py", "tests_*.py"]
+addopts = "--cov=apps --cov-report=term-missing"

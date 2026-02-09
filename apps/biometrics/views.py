@@ -339,6 +339,25 @@ def verify_face(request):
             from django.contrib.auth.backends import ModelBackend
             backend = f'{ModelBackend.__module__}.{ModelBackend.__qualname__}'
             login(request, user, backend=backend)
+
+            # Security Logging
+            ip = request.META.get('REMOTE_ADDR')
+            logger.auth(f"User logged in via Face ID: {user.username}", user=user.username, ip=ip)
+            
+            # Send login notification
+            from apps.core.services.email_service import EmailService
+            EmailService.send_email(
+                subject="New Login to VoteWise (Face ID)",
+                template_name="login_notification",
+                context={
+                    'user': user,
+                    'username': user.get_full_name() or user.username,
+                    'ip_address': ip,
+                    'login_method': 'Face ID'
+                },
+                recipient_list=[user.email]
+            )
+
             return JsonResponse({'success': True, 'redirect_url': '/auth/profile/'})
         
         return JsonResponse({'error': 'Face not recognized'}, status=401)

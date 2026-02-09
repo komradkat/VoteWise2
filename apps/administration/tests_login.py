@@ -60,7 +60,7 @@ class AdminLoginTests(TestCase):
         
         self.assertEqual(response.status_code, 200)
         self.assertIn('total_voters', response.context)
-        self.assertIn('active_elections', response.context)
+        self.assertIn('all_elections', response.context) # Updated from active_elections
         self.assertIn('total_candidates', response.context)
         self.assertIn('total_votes', response.context)
         self.assertIn('course_labels', response.context)

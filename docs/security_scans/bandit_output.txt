@@ -1,0 +1,404 @@
+Run started:2025-12-14 19:15:59.732273+00:00
+
+Test results:
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\accounts\tests.py:9:20
+8	        self.client = Client()
+9	        self.user = User.objects.create_user(username='testuser', password='password')
+10	        self.login_url = reverse('accounts:login')
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\administration\tests.py:12:20
+11	        # Create regular user
+12	        self.user = User.objects.create_user(username='user', password='password')
+13	        self.student_profile = StudentProfile.objects.create(user=self.user, student_id='123', year_level=1)
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\administration\tests.py:16:26
+15	        # Create admin user
+16	        self.admin_user = User.objects.create_user(username='admin', password='password')
+17	        # ElectionAdmin links directly to User, not StudentProfile
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\administration\tests.py:28:8
+27	    def test_admin_access_denied_for_regular_user(self):
+28	        self.client.login(username='user', password='password')
+29	        response = self.client.get(self.dashboard_url)
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\administration\tests.py:33:8
+32	    def test_admin_access_granted_for_admin(self):
+33	        self.client.login(username='admin', password='password')
+34	        response = self.client.get(self.dashboard_url)
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\administration\tests.py:39:8
+38	    def test_election_crud(self):
+39	        self.client.login(username='admin', password='password')
+40	        
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\administration\tests_login.py:13:26
+12	        # Create admin user
+13	        self.admin_user = User.objects.create_user(username='admin', password='password')
+14	        self.election_admin = ElectionAdmin.objects.create(user=self.admin_user, admin_type='EMP')
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\administration\tests_login.py:17:20
+16	        # Create regular user
+17	        self.user = User.objects.create_user(username='user', password='password')
+18	
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\administration\tests_login.py:48:20
+47	        # Create a superuser who doesn't have an ElectionAdmin profile
+48	        superuser = User.objects.create_superuser(username='superuser', password='password', email='super@example.com')
+49	        response = self.client.post(self.login_url, {
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/blacklists/blacklist_calls.html#b311-random
+   Location: .\apps\core\management\commands\manage_dummy_data.py:165:24
+164	            for i in range(100):
+165	                first = random.choice(first_names)
+166	                last = random.choice(last_names)
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/blacklists/blacklist_calls.html#b311-random
+   Location: .\apps\core\management\commands\manage_dummy_data.py:166:23
+165	                first = random.choice(first_names)
+166	                last = random.choice(last_names)
+167	                username = f"{first.lower()}{last.lower()}{i}"
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password123'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\core\management\commands\manage_dummy_data.py:174:23
+173	                
+174	                user = User.objects.create_user(username=username, password='password123', first_name=first, last_name=last, email=f"{username}@example.com")
+175	                
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/blacklists/blacklist_calls.html#b311-random
+   Location: .\apps\core\management\commands\manage_dummy_data.py:179:31
+178	                    student_id=student_id,
+179	                    year_level=random.choice(YearLevel.values),
+180	                    course=random.choice(Course.values),
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/blacklists/blacklist_calls.html#b311-random
+   Location: .\apps\core\management\commands\manage_dummy_data.py:180:27
+179	                    year_level=random.choice(YearLevel.values),
+180	                    course=random.choice(Course.values),
+181	                    section=random.choice(Section.values),
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/blacklists/blacklist_calls.html#b311-random
+   Location: .\apps\core\management\commands\manage_dummy_data.py:181:28
+180	                    course=random.choice(Course.values),
+181	                    section=random.choice(Section.values),
+182	                    is_eligible_to_vote=True
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password123'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\core\management\commands\manage_dummy_data.py:197:33
+196	                if not User.objects.filter(username=admin_data['username']).exists():
+197	                    admin_user = User.objects.create_user(
+198	                        username=admin_data['username'],
+199	                        password='password123',
+200	                        first_name=admin_data['first'],
+201	                        last_name=admin_data['last'],
+202	                        email=f"{admin_data['username']}@example.com",
+203	                        is_staff=True
+204	                    )
+205	                    ElectionAdmin.objects.create(
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/blacklists/blacklist_calls.html#b311-random
+   Location: .\apps\core\management\commands\manage_dummy_data.py:234:38
+233	                            election=election,
+234	                            partylist=random.choice(partylists),
+235	                            is_approved=True,
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/blacklists/blacklist_calls.html#b311-random
+   Location: .\apps\core\management\commands\manage_dummy_data.py:247:38
+246	                            election=election,
+247	                            partylist=random.choice(partylists),
+248	                            is_approved=True,
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/blacklists/blacklist_calls.html#b311-random
+   Location: .\apps\core\management\commands\manage_dummy_data.py:260:38
+259	                            election=election,
+260	                            partylist=random.choice(partylists),
+261	                            is_approved=True,
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/blacklists/blacklist_calls.html#b311-random
+   Location: .\apps\core\management\commands\manage_dummy_data.py:285:39
+284	                    if pres_cands:
+285	                        choices.append(random.choice(pres_cands))
+286	                    
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/blacklists/blacklist_calls.html#b311-random
+   Location: .\apps\core\management\commands\manage_dummy_data.py:290:39
+289	                    if vp_cands:
+290	                        choices.append(random.choice(vp_cands))
+291	                    
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/blacklists/blacklist_calls.html#b311-random
+   Location: .\apps\core\management\commands\manage_dummy_data.py:295:39
+294	                    if len(sen_cands) >= 3:
+295	                        choices.extend(random.sample(sen_cands, 3))
+296	                    elif sen_cands:
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b101_assert_used.html
+   Location: .\apps\core\management\commands\test_enhancements.py:25:4
+24	    form = ElectionAdminForm()
+25	    assert 'student_profile' in form.fields, "student_profile field missing"
+26	    assert 'confirm_password' in form.fields, "confirm_password field missing"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b101_assert_used.html
+   Location: .\apps\core\management\commands\test_enhancements.py:26:4
+25	    assert 'student_profile' in form.fields, "student_profile field missing"
+26	    assert 'confirm_password' in form.fields, "confirm_password field missing"
+27	    assert form.fields['password'].required == False, "password should be optional"
+
+--------------------------------------------------
+>> Issue: [B101:assert_used] Use of assert detected. The enclosed code will be removed when compiling to optimised byte code.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b101_assert_used.html
+   Location: .\apps\core\management\commands\test_enhancements.py:27:4
+26	    assert 'confirm_password' in form.fields, "confirm_password field missing"
+27	    assert form.fields['password'].required == False, "password should be optional"
+28	    print("✓ student_profile field exists")
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'testpass123'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\core\tests\test_email_service.py:19:20
+18	        """Set up test data"""
+19	        self.user = User.objects.create_user(
+20	            username='testuser',
+21	            email='test@example.com',
+22	            password='testpass123',
+23	            first_name='Test',
+24	            last_name='User'
+25	        )
+26	        
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'pass123'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\core\tests\test_email_service.py:76:8
+75	        # Create additional users
+76	        User.objects.create_user(
+77	            username='user2',
+78	            email='user2@example.com',
+79	            password='pass123'
+80	        )
+81	        
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'adminpass123'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\core\tests\test_email_service.py:94:16
+93	        # Create superuser
+94	        admin = User.objects.create_superuser(
+95	            username='admin',
+96	            email='admin@example.com',
+97	            password='adminpass123'
+98	        )
+99	        
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\elections\tests.py:12:20
+11	        # Create User and StudentProfile
+12	        self.user = User.objects.create_user(username='voter', password='password')
+13	        self.student = StudentProfile.objects.create(
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\elections\tests.py:33:26
+32	        # We need dummy users for candidates too
+33	        self.cand_user1 = User.objects.create_user(username='cand1', password='password')
+34	        self.cand_profile1 = StudentProfile.objects.create(user=self.cand_user1, year_level=1, course='BSCS')
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\elections\tests.py:41:26
+40	
+41	        self.cand_user2 = User.objects.create_user(username='cand2', password='password')
+42	        self.cand_profile2 = StudentProfile.objects.create(user=self.cand_user2, year_level=1, course='BSCS')
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\elections\tests.py:49:26
+48	        
+49	        self.cand_user3 = User.objects.create_user(username='cand3', password='password')
+50	        self.cand_profile3 = StudentProfile.objects.create(user=self.cand_user3, year_level=1, course='BSCS')
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\elections\tests_load.py:37:25
+36	        # Create a candidate profile first
+37	        self.cand_user = User.objects.create_user(username='candidate1', password='password')
+38	        self.cand_profile = StudentProfile.objects.create(
+
+--------------------------------------------------
+>> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded password: 'password'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b106_hardcoded_password_funcarg.html
+   Location: .\apps\elections\tests_load.py:65:19
+64	        for i in range(self.TOTAL_VOTERS):
+65	            user = User.objects.create_user(username=f'voter{i}', password='password')
+66	            profile = StudentProfile.objects.create(
+
+--------------------------------------------------
+>> Issue: [B112:try_except_continue] Try, Except, Continue detected.
+   Severity: Low   Confidence: High
+   CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b112_try_except_continue.html
+   Location: .\apps\reports\utils.py:113:8
+112	            
+113	        except Exception as e:
+114	            # Continue without this chart
+115	            continue
+116	        
+
+--------------------------------------------------
+>> Issue: [B105:hardcoded_password_string] Possible hardcoded password: ''
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   More Info: https://bandit.readthedocs.io/en/1.9.2/plugins/b105_hardcoded_password_string.html
+   Location: .\project_config\settings\base.py:164:22
+163	EMAIL_HOST_USER = ''
+164	EMAIL_HOST_PASSWORD = ''
+165	DEFAULT_FROM_EMAIL = 'VoteWise <noreply@votewise.local>'
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 33274
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 36
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 21
+		High: 15
+Files skipped (0):

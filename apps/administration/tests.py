@@ -3,6 +3,10 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from apps.accounts.models import StudentProfile, ElectionAdmin
 from apps.elections.models import Election
+from apps.administration.views import is_admin
+import logging
+
+logger = logging.getLogger(__name__)
 
 class AdminDashboardTests(TestCase):
     def setUp(self):
@@ -25,25 +29,26 @@ class AdminDashboardTests(TestCase):
         self.assertRedirects(response, f'/administration/login/?next={self.dashboard_url}')
 
     def test_admin_access_denied_for_regular_user(self):
-        self.client.login(username='user', password='password')
+        self.client.force_login(self.user)
         response = self.client.get(self.dashboard_url)
-        self.assertRedirects(response, f'/administration/login/?next={self.dashboard_url}', target_status_code=302)
+        # Login page may redirect again for logged-in users, so stop at first redirect
+        self.assertRedirects(response, f'/administration/login/?next={self.dashboard_url}', target_status_code=302, fetch_redirect_response=False)
 
     def test_admin_access_granted_for_admin(self):
-        self.client.login(username='admin', password='password')
+        self.client.force_login(self.admin_user)
         response = self.client.get(self.dashboard_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'administration/dashboard.html')
 
     def test_election_crud(self):
-        self.client.login(username='admin', password='password')
+        self.client.force_login(self.admin_user)
         
         # Create
         create_url = reverse('administration:election_create')
         data = {
             'name': 'Test Election',
-            'start_time': '2025-01-01T00:00',
-            'end_time': '2025-01-02T00:00',
+            'start_time': '2025-01-01 00:00:00',
+            'end_time': '2025-01-02 00:00:00',
             'is_active': True
         }
         response = self.client.post(create_url, data)

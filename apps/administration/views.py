@@ -22,7 +22,15 @@ from django.http import HttpResponse
 from django.utils import timezone
 
 def is_admin(user):
-    return user.is_authenticated and (user.is_superuser or hasattr(user, 'election_admin_profile'))
+    if not user.is_authenticated:
+        return False
+    if user.is_superuser:
+        return True
+    try:
+        # Accessing reverse OneToOneField raises generic AttributeError or ObjectDoesNotExist if missing
+        return user.election_admin_profile is not None
+    except Exception:
+        return False
 
 @ensure_csrf_cookie
 def admin_login(request):
