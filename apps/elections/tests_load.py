@@ -53,8 +53,8 @@ class ConcurrentVotingLoadTests(TransactionTestCase):
         
         # 3. Pre-create Voters
         # Adjust count based on DB capacity
-        db_engine = connection.settings_dict['ENGINE']
-        if 'sqlite' in db_engine:
+        self.db_engine = connection.settings_dict['ENGINE']
+        if 'sqlite' in self.db_engine:
             self.TOTAL_VOTERS = 10
         else:
             self.TOTAL_VOTERS = 50
@@ -121,13 +121,13 @@ class ConcurrentVotingLoadTests(TransactionTestCase):
                 connection.close()
 
         # Determine safe concurrency level based on DB
-        if 'sqlite' in db_engine:
+        if 'sqlite' in self.db_engine:
             print("\n[Admin] SQLite detected: Skipping high-concurrency test as it does not support row-locking.")
             self.skipTest("SQLite cannot handle concurrent writes required for this test. Run with PostgreSQL.")
         else:
             # Postgres/MySQL can handle real load
             MAX_WORKERS = 50
-            print(f"\n[Admin] Detected Production DB ({db_engine}): using 50 threads.")
+            print(f"\n[Admin] Detected Production DB ({self.db_engine}): using 50 threads.")
 
         # Run concurrent threads
         with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
