@@ -93,9 +93,12 @@ def vote_view(request, election_id):
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                # Generate a unique ballot ID for this voting session
+                # Generate unique IDs to ensure anonymity
+                # CRITICAL: We use different IDs for the Vote records (anonymous)
+                # and the VoterReceipt (linked to user) so they cannot be correlated.
                 import uuid
-                ballot_id = uuid.uuid4()
+                vote_group_id = uuid.uuid4() # Groups the votes together anonymously
+                receipt_id = uuid.uuid4()    # Links to the user receipt
                 
                 # Process votes for each position
                 votes_cast = []
@@ -129,7 +132,7 @@ def vote_view(request, election_id):
                             election=election,
                             candidate=candidate,
                             position=position,
-                            ballot_id=ballot_id
+                            ballot_id=vote_group_id
                         )
                         votes_cast.append(vote)
                 
@@ -137,7 +140,7 @@ def vote_view(request, election_id):
                 receipt = VoterReceipt.objects.create(
                     voter=student_profile,
                     election=election,
-                    ballot_id=ballot_id,
+                    ballot_id=receipt_id,
                     encrypted_choices='{}',  # TODO: Implement encryption
                     voter_ip_address=get_client_ip(request)
                 )
